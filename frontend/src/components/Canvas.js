@@ -4,21 +4,17 @@ import { connect } from 'react-redux'
 import { setThisCanvas } from '../actions'
 
 class Canvas extends Component {
+  canvasWidth = 750
+  canvasHeight = 1334
+
+
   componentDidMount() {
     this.props.setCanvas(this.refs.playArea)
-    // const styling =
-    // `background: url('../timesSquare.jpg');
-    // background-size: 1000px 1000px;
-    // background-position: top;
-    // background-repeat: no-repeat;
-    // background-color: black;`
-    // this.refs.playArea.style = styling
-
   }
 
   render() {
     return (
-      <canvas width='750' height='1334' ref='playArea'></canvas>
+      <canvas width={this.canvasWidth} height={this.canvasHeight} ref='playArea'></canvas>
     )
   }
 }
