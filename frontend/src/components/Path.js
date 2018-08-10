@@ -6,7 +6,7 @@ class Path extends Component {
   brickSpacingBetweenColAtEnd = 50
   brickSpacingBetweenRows = 1
   initialBrickSpacingBetweenRows = 1
-  depthMultiplier = 1.1
+  depthMultiplier = 0.001
   numOfBricksInARow = 10
 
   state = {
@@ -27,65 +27,67 @@ class Path extends Component {
     const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(this.props.canvas.width, 2)
     const denominator = (2 * Math.pow(sideOfPath, 2))
 
-    const angleOfTruth = Math.acos(numerator/denominator)
-
-    return angleOfTruth
+    return Math.acos(numerator/denominator)
   }
 
-  makeBricks = (ctx) => {
-    console.log("CALLED MAKE BRICKS")
-    const centralX = this.props.canvas.width/2
+  drawHorizontalRow = (ctx, row) => {
+    ctx.beginPath()
+    ctx.moveTo(0, row)
+    ctx.lineTo(this.props.canvas.width, row)
+    ctx.stroke()
+  }
 
-    const angleOfTruth = this.findAngle()
+  drawVerticals = (ctx, previousPoints, currentPoints, shouldAlternateOdd) => {
+    for ( let i = 0; i < previousPoints.length; i++ ) {
+      if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 ) ) {
+        ctx.beginPath()
+        ctx.moveTo(previousPoints[i].x, previousPoints[i].y)
+        ctx.lineTo(currentPoints[i].x, currentPoints[i].y)
+        ctx.stroke()
+      }
+    }
+  }
 
-    // This is responsible for alternating the bricks in each row (so their vertical border is on the previous row's brick middle)
-    let shouldAlternateOdd = true
-
+  initializePreviousPoints = (centralX) => {
     let previousPoints = []
     for ( let i = 0; i <= this.numOfBricksInARow; i++ ) {
       previousPoints.push({x: centralX, y: this.horizonPosition})
     }
+    return previousPoints
+  }
+
+  recordCurrentPoints = (horizontalPathLength, xStartOfHorizontalLines, row) => {
     let currentPoints = []
+    for ( let brick = 0; brick <= this.numOfBricksInARow; brick++) {
+      const widthOfBrick = horizontalPathLength/this.numOfBricksInARow
+      currentPoints.push({x: xStartOfHorizontalLines+(brick*widthOfBrick), y: row})
+    }
+    return currentPoints
+  }
 
-    for ( let row = this.horizonPosition + this.state.movement; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
-      console.log(row)
+  makeBricks = (ctx) => {
+    const centralX = this.props.canvas.width/2
+    const angleOfConvergence = this.findAngle()
+
+    // This is responsible for alternating the bricks in each row (so their vertical border is on the previous row's brick middle)
+    let shouldAlternateOdd = true
+
+    let previousPoints = this.initializePreviousPoints(centralX)
+    for ( let row = this.horizonPosition + (this.brickSpacingBetweenRows*this.state.movement); row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
       const distanceFromHorizon = row - this.horizonPosition
-      const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfTruth/2)
+      const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
       const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
-
-      ctx.beginPath()
-      ctx.moveTo(xStartOfHorizontalLines, row)
-      ctx.lineTo(xStartOfHorizontalLines + horizontalPathLength, row)
-      ctx.stroke()
-      this.brickSpacingBetweenRows *= this.depthMultiplier
-
-      for ( let brick = 0; brick <= this.numOfBricksInARow; brick++) {
-        const widthOfBrick = horizontalPathLength/this.numOfBricksInARow
-        currentPoints.push({x: xStartOfHorizontalLines+(brick*widthOfBrick), y: row})
-      }
-
-      for ( let i = 0; i < previousPoints.length; i++ ) {
-        if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 ) ) {
-          ctx.beginPath()
-          ctx.moveTo(previousPoints[i].x, previousPoints[i].y)
-          ctx.lineTo(currentPoints[i].x, currentPoints[i].y)
-          ctx.stroke()
-        }
-      }
-
+      this.brickSpacingBetweenRows += 0.001*distanceFromHorizon
+      this.drawHorizontalRow(ctx, row)
+      let currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
+      this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
       previousPoints = [...currentPoints]
-      currentPoints = []
-
       shouldAlternateOdd = !shouldAlternateOdd
-
-      // DIRTY MANIPULATION FOR THE NEAREST BRICKS
-      // if ( row + this.brickSpacingBetweenRows > this.props.canvas.height ) {
-      //   row = this.props.canvas.height - this.brickSpacingBetweenRows
-      // }
     }
 
     this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
   }
+
 
   makeSideStructures = (ctx) => {
     const centralX = this.props.canvas.width/2
@@ -112,6 +114,9 @@ class Path extends Component {
         this.setState({movement: this.state.movement + 1})
       } else if (e.keyCode === 39) {
       } else if (e.keyCode === 40) {
+        if ( this.state.movement - 1 >= 0 ) {
+          this.setState({movement: this.state.movement - 1})
+        }
       }
     }
 
