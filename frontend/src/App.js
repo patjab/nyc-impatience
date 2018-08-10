@@ -10,7 +10,6 @@ class App extends Component {
     return (
       <Fragment>
         <Canvas />
-        <Path />
       </Fragment>
     )
   }

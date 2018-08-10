@@ -76,8 +76,6 @@ class Path extends Component {
     const rowsWithBrickBorders = []
 
     for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
-      const distanceFromHorizon = row - this.horizonPosition
-
       // BRICK STARTS: row
       // BRICK ENDS: row+this.brickSpacingBetweenRows
       // BRICK LENGTH Y: row+this.brickSpacingBetweenRows - row = this.brickSpacingBetweenRows
@@ -85,15 +83,12 @@ class Path extends Component {
       // SO WE DONT OVERSTEP THE BRICK : (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) % this.brickSpacingBetweenRows
       // ABSOLUTE PROGRESS ON THE BRICK: row + (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) % this.brickSpacingBetweenRows
 
+      const distanceFromHorizon = row - this.horizonPosition
       let rowWithBorderBrick = row + (this.brickSpacingBetweenRows * (this.state.movement * this.brickPerMovement)) % this.brickSpacingBetweenRows
-
-      // if ( (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) > this.brickSpacingBetweenRows ) {
-      //   rowsWithBrickBorders.push(Math.round(rowWithBorderBrick-1))
-      // }
       rowsWithBrickBorders.push(Math.round(rowWithBorderBrick))
-
       this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
     }
+    rowsWithBrickBorders.push(this.props.canvas.height)
 
     for ( let row = this.horizonPosition; row < this.props.canvas.height; row++ ) {
       const distanceFromHorizon = row - this.horizonPosition
@@ -137,13 +132,10 @@ class Path extends Component {
       } else if (e.keyCode === 38) {
         this.setState({movement: this.state.movement + 1})
       } else if (e.keyCode === 39) {
-      } else if (e.keyCode === 40) {
-        if ( this.state.movement - 1 >= 0 ) {
-          this.setState({movement: this.state.movement - 1})
-        }
+      } else if (e.keyCode === 40 && this.state.movement - 1 >= 0 ) {
+        this.setState({movement: this.state.movement - 1})
       }
     }
-
   }
 
   render() {
