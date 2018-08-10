@@ -8,9 +8,7 @@ import Path from './components/Path'
 class App extends Component {
   render() {
     return (
-      <Fragment>
-        <Canvas />
-      </Fragment>
+      <Canvas />
     )
   }
 }

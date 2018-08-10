@@ -4,15 +4,13 @@ import { connect } from 'react-redux'
 import { setThisCanvas } from '../actions'
 
 import Path from './Path'
-
 import Player from './Player'
+import Tourist from './Tourist'
 
 
 class Canvas extends Component {
   canvasWidth = 750
   canvasHeight = 1334
-  canvasWidth = window.innerWidth
-  canvasHeight = window.innerHeight
 
   componentDidMount() {
     this.props.setCanvas(this.refs.playArea)
@@ -24,6 +22,7 @@ class Canvas extends Component {
         <canvas width={this.canvasWidth} height={this.canvasHeight} ref='playArea'></canvas>
         <Path />
         <Player />
+        <Tourist />
       </Fragment>
     )
   }

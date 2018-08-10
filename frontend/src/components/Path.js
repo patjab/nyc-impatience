@@ -15,6 +15,8 @@ class Path extends Component {
   }
 
   drawPathBackground = (ctx) => {
+    console.log("CALLED PATH BACKGROUND")
+    // HOW DO WE FIX THIS
     ctx.rect(0, this.horizonPosition, this.props.canvas.width, this.props.canvas.height)
     ctx.fillStyle = '#CBCBCB'
     ctx.fill()
@@ -129,10 +131,14 @@ class Path extends Component {
     if (e.keyCode > 36 && e.keyCode < 41 ) {
       e.preventDefault()
       if (e.keyCode === 37) {
+        this.setState({movement: this.state.movement})
       } else if (e.keyCode === 38) {
         this.setState({movement: this.state.movement + 1})
-      } else if (e.keyCode === 39) {
-      } else if (e.keyCode === 40 && this.state.movement - 1 >= 0 ) {
+      }
+      // else if (e.keyCode === 39) {
+      //   this.setState({movement: this.state.movement})
+      // }
+      else if (e.keyCode === 40 && this.state.movement - 1 >= 0 ) {
         this.setState({movement: this.state.movement - 1})
       }
     }

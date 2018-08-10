@@ -5,7 +5,9 @@ const initialState = {
     yPosition: 1334-(150*1.5)
   },
   backgroundMagnification: 1,
-  initialPeopleSizes: 150
+  initialPeopleSizes: 150,
+  progressMultiplier: 1,
+  movement: 0
 }
 
 const gameController = (state = initialState, action) => {

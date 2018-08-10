@@ -22,9 +22,11 @@ class Player extends Component {
         this.props.moveLeft()
       } else if (e.keyCode === 38) {
         this.props.moveUp()
-      } else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) {
+      }
+      else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) {
         this.props.moveRight()
-      } else if (e.keyCode === 40) {
+      }
+      else if (e.keyCode === 40) {
         this.props.moveDown()
       }
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
@@ -32,6 +34,7 @@ class Player extends Component {
   }
 
   componentDidMount() {
+    console.log("PLAYER MOUNTED")
     window.addEventListener('keydown', this.handleWalking)
 
     this.refs.playerImg.onload = () => {
@@ -41,10 +44,8 @@ class Player extends Component {
   }
 
   componentDidUpdate() {
-    // this.props.canvas.getContext("2d").clearRect(0, 0, this.props.canvas.width, this.props.canvas.height);
-
-      this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
-      this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
+    this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
+    this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
   }
 
   render() {

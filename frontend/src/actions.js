@@ -6,7 +6,6 @@ export const setThisCanvas = (canvas) => {
 }
 
 export const movePlayer = (x, y) => {
-  console.log("INSIDE MOVE PLAYER")
   return {
     type: "MOVE_PLAYER",
     payload: {x, y}
