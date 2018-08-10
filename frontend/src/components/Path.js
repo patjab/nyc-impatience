@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 class Path extends Component {
   horizonPosition = 400
   brickSpacingBetweenColAtEnd = 50
-  brickSpacingBetweenRows = 1
+  brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
   initialBrickSpacingBetweenRows = 1
   depthMultiplier = 0.001
   numOfBricksInARow = 10

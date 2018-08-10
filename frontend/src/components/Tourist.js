@@ -8,14 +8,15 @@ const Tourist = class extends Component {
     walkingCycle: 0
   }
 
+  mysteryCoefficient = 0.01
+
   progressionMagnification = () => {
-    this.setState({walkingCycle: this.state.walkingCycle % 4}) // force component to rerender so that it may access componentDidUpdate's characteristics of increasing/decreasing
+    this.setState({walkingCycle: this.state.walkingCycle % 4}) // CHEAP FIX force component to rerender so that it may access componentDidUpdate's characteristics of increasing/decreasing
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
-
-    const sizeOfSide = this.props.initialPeopleSizes
+    const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     console.log("TOURIST MOUNTED", sizeOfSide)
     this.refs.touristImg.onload = () => {
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
@@ -23,7 +24,7 @@ const Tourist = class extends Component {
   }
 
   componentDidUpdate() {
-    const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*0.10
+    const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     console.log("TOURIST UPDATED", this.props.canvas.getContext("2d"), this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide)
   }
@@ -36,7 +37,6 @@ const Tourist = class extends Component {
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    progressMultiplier: state.progressMultiplier,
     initialPeopleSizes: state.initialPeopleSizes,
     movement: state.movement
   }

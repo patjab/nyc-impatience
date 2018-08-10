@@ -5,7 +5,6 @@ const initialState = {
     yPosition: 1334-(150*1.5)
   },
   initialPeopleSizes: 150,
-  progressMultiplier: 1,
   movement: 0
 }
 
