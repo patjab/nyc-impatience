@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, depthCoefficient, playerStartX, playerStartY, canvasWidth, canvasHeight } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
 
 const Tourist = class extends Component {
   state = {
@@ -40,37 +40,27 @@ const Tourist = class extends Component {
     const lowerLeftTouristX = this.state.positionX
     const lowerLeftTouristY = this.state.positionY + sizeOfSide
     const lowerRightTouristX = this.state.positionX + sizeOfSide
-    const lowerRightTouristY = this.state.positionY + sizeOfSide
+    const upperLeftTouristY = this.state.positionY
 
     const upperLeftPlayerX = this.props.playerX
     const upperLeftPlayerY = this.props.playerY
     const upperRightPlayerX = this.props.playerX + initialPlayerSize
-    const upperRightPlayerY = this.props.playerY
+    const lowerLeftPlayerY = this.props.playerY + initialPlayerSize
 
     let xConditional = (lowerRightTouristX >= upperLeftPlayerX && lowerRightTouristX <= upperRightPlayerX) || (lowerLeftTouristX >= upperLeftPlayerX && lowerLeftTouristX <= upperRightPlayerX)
-    let yConditional = upperLeftPlayerY <= lowerLeftTouristY
-
-    console.log("----------------")
-    console.log("TOURIST X ", lowerLeftTouristX, " TO ", lowerRightTouristX)
-    console.log("TOURIST Y ", lowerLeftTouristY, " TO ", lowerRightTouristY)
-    console.log("PLAYER X ", upperLeftPlayerX, " TO ", upperRightPlayerX)
-    console.log("PLAYER Y ", upperLeftPlayerY, " TO ", upperRightPlayerY)
-
-    console.log("X CONDITIONAL ", xConditional)
-    console.log("Y CONDITIONAL ", yConditional)
-    console.log("----------------")
+    let yConditional = (upperLeftPlayerY <= lowerLeftTouristY) && (lowerLeftPlayerY >= upperLeftTouristY)
 
     if ( xConditional && yConditional ) {
-      alert("BUMP")
+      console.log("BUMP")
+    } else {
+      console.log("NOT BUMP")
     }
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
-    console.log('event listener attached?')
     // const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     const sizeOfSide = this.howBigShouldIBe()
-    console.log(sizeOfSide, this.state.positionX, this.state.positionY)
     this.refs.touristImg.onload = () => {
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     }
