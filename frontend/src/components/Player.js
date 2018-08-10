@@ -60,7 +60,6 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     player: state.player,
-    backgroundMagnification: state.backgroundMagnification,
     initialPeopleSizes: state.initialPeopleSizes
   }
 }
@@ -69,8 +68,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     moveUp: () => dispatch(movePlayer(0, 1)),
     moveDown: () => dispatch(movePlayer(0, -1)),
-    moveLeft: () => dispatch(movePlayer(-1, 0)),
-    moveRight: () => dispatch(movePlayer(1, 0)),
+    moveLeft: () => {dispatch(movePlayer(-1, -2)); dispatch(movePlayer(-1, 2)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
+    moveRight: () => {dispatch(movePlayer(1, -2)); dispatch(movePlayer(0, 2)); },
     changeSpeed: () => dispatch(changeSpeed())
   }
 }

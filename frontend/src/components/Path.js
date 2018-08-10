@@ -69,7 +69,6 @@ class Path extends Component {
   }
 
   makeBricks = (ctx) => {
-    const centralX = this.props.canvas.width/2
     const angleOfConvergence = this.findAngle()
     let shouldAlternateOdd = true
 
@@ -127,30 +126,12 @@ class Path extends Component {
     ctx.closePath()
   }
 
-  handleWalking = (e) => {
-    // if (e.keyCode > 36 && e.keyCode < 41 ) {
-    //   e.preventDefault()
-    //   if (e.keyCode === 37) {
-    //     this.setState({movement: this.state.movement})
-    //   } else if (e.keyCode === 38) {
-    //     this.setState({movement: this.state.movement + 1})
-    //   }
-    //   else if (e.keyCode === 39) {
-    //     this.setState({movement: this.state.movement})
-    //   }
-    //   else if (e.keyCode === 40 && this.state.movement - 1 >= 0 ) {
-    //     this.setState({movement: this.state.movement - 1})
-    //   }
-    // }
-  }
-
   render() {
     const ctx = this.props.canvas && this.props.canvas.getContext("2d")
     if (ctx) {
       this.drawPathBackground(ctx)
       this.makeBricks(ctx)
       this.makeSideStructures(ctx)
-      window.addEventListener('keydown', this.handleWalking)
     }
     return <div></div>
   }

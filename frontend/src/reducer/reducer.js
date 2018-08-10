@@ -4,7 +4,6 @@ const initialState = {
     xPosition: 375-(150/2),
     yPosition: 1334-(150*1.5)
   },
-  backgroundMagnification: 1,
   initialPeopleSizes: 150,
   progressMultiplier: 1,
   movement: 0
@@ -24,8 +23,7 @@ const gameController = (state = initialState, action) => {
           ...state.player,
           xPosition: state.player.xPosition + (action.payload.x)
         },
-        backgroundMagnification: state.backgroundMagnification * Math.pow(state.progressMultiplier, action.payload.y),
-        movement: state.movement + 1
+        movement: state.movement + (action.payload.y)
       }
     default:
       return state
