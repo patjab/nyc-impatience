@@ -27,25 +27,38 @@ const Tourist = class extends Component {
       } else if (e.keyCode === 40) {
         this.setState({positionY: this.state.positionY-1})
       }
-    } else {
-      this.setState({walkingCycle: this.state.walkingCycle % 4}) // CHEAP FIX force component to rerender so that it may access componentDidUpdate's characteristics of increasing/decreasing
     }
+    // else {
+    //   // this.setState({walkingCycle: this.state.walkingCycle % 4}) // CHEAP FIX force component to rerender so that it may access componentDidUpdate's characteristics of increasing/decreasing
+    // }
 
   }
 
   checkForCollision = () => {
     const sizeOfSide = this.howBigShouldIBe()
-    let xConditional = this.state.positionX > this.props.playerX && this.state.positionX + sizeOfSide < this.props.playerX
-    let yConditional = this.state.positionY > this.props.playerY && this.state.positionY + sizeOfSide < this.props.playerY
 
-    console.log("TOURIST X ", this.state.positionX)
-    console.log("TOURIST Y ", this.state.positionY)
-    console.log("PLAYER X ", this.props.playerX)
-    console.log("PLAYER Y ", this.props.playerY)
+    const lowerLeftTouristX = this.state.positionX
+    const lowerLeftTouristY = this.state.positionY + sizeOfSide
+    const lowerRightTouristX = this.state.positionX + sizeOfSide
+    const lowerRightTouristY = this.state.positionY + sizeOfSide
 
-    console.log(xConditional)
-    console.log(yConditional)  
-    console.log(sizeOfSide)
+    const upperLeftPlayerX = this.props.playerX
+    const upperLeftPlayerY = this.props.playerY
+    const upperRightPlayerX = this.props.playerX + initialPlayerSize
+    const upperRightPlayerY = this.props.playerY
+
+    let xConditional = (lowerRightTouristX >= upperLeftPlayerX && lowerRightTouristX <= upperRightPlayerX) || (lowerLeftTouristX >= upperLeftPlayerX && lowerLeftTouristX <= upperRightPlayerX)
+    let yConditional = upperLeftPlayerY <= lowerLeftTouristY
+
+    console.log("----------------")
+    console.log("TOURIST X ", lowerLeftTouristX, " TO ", lowerRightTouristX)
+    console.log("TOURIST Y ", lowerLeftTouristY, " TO ", lowerRightTouristY)
+    console.log("PLAYER X ", upperLeftPlayerX, " TO ", upperRightPlayerX)
+    console.log("PLAYER Y ", upperLeftPlayerY, " TO ", upperRightPlayerY)
+
+    console.log("X CONDITIONAL ", xConditional)
+    console.log("Y CONDITIONAL ", yConditional)
+    console.log("----------------")
 
     if ( xConditional && yConditional ) {
       alert("BUMP")
