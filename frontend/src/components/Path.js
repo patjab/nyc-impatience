@@ -8,6 +8,7 @@ class Path extends Component {
   initialBrickSpacingBetweenRows = 1
   depthMultiplier = 0.001
   numOfBricksInARow = 10
+  brickPerMovement = 0.10
 
   state = {
     movement: 0
@@ -68,21 +69,44 @@ class Path extends Component {
   makeBricks = (ctx) => {
     const centralX = this.props.canvas.width/2
     const angleOfConvergence = this.findAngle()
-
-    // This is responsible for alternating the bricks in each row (so their vertical border is on the previous row's brick middle)
     let shouldAlternateOdd = true
 
-    let previousPoints = this.initializePreviousPoints(centralX)
-    for ( let row = this.horizonPosition + (this.brickSpacingBetweenRows*this.state.movement); row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
+    let previousPoints = this.initializePreviousPoints()
+
+    const rowsWithBrickBorders = []
+
+    for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
       const distanceFromHorizon = row - this.horizonPosition
-      const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
-      const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
-      this.brickSpacingBetweenRows += 0.001*distanceFromHorizon
-      this.drawHorizontalRow(ctx, row)
-      let currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
-      this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
-      previousPoints = [...currentPoints]
-      shouldAlternateOdd = !shouldAlternateOdd
+
+      // BRICK STARTS: row
+      // BRICK ENDS: row+this.brickSpacingBetweenRows
+      // BRICK LENGTH Y: row+this.brickSpacingBetweenRows - row = this.brickSpacingBetweenRows
+      // PROGRESS ON THE BRICK: this.brickSpacingBetweenRows * (this.state.movement * 0.50)
+      // SO WE DONT OVERSTEP THE BRICK : (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) % this.brickSpacingBetweenRows
+      // ABSOLUTE PROGRESS ON THE BRICK: row + (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) % this.brickSpacingBetweenRows
+
+      let rowWithBorderBrick = row + (this.brickSpacingBetweenRows * (this.state.movement * this.brickPerMovement)) % this.brickSpacingBetweenRows
+
+      // if ( (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) > this.brickSpacingBetweenRows ) {
+      //   rowsWithBrickBorders.push(Math.round(rowWithBorderBrick-1))
+      // }
+      rowsWithBrickBorders.push(Math.round(rowWithBorderBrick))
+
+      this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
+    }
+
+    for ( let row = this.horizonPosition; row < this.props.canvas.height; row++ ) {
+      const distanceFromHorizon = row - this.horizonPosition
+      if (rowsWithBrickBorders.includes(row)) {
+        this.drawHorizontalRow(ctx, row)
+        const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
+        const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
+        let currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
+        this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
+
+        previousPoints = [...currentPoints]
+        shouldAlternateOdd = !shouldAlternateOdd
+      }
     }
 
     this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
