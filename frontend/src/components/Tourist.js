@@ -33,6 +33,25 @@ const Tourist = class extends Component {
 
   }
 
+  checkForCollision = () => {
+    const sizeOfSide = this.howBigShouldIBe()
+    let xConditional = this.state.positionX > this.props.playerX && this.state.positionX + sizeOfSide < this.props.playerX
+    let yConditional = this.state.positionY > this.props.playerY && this.state.positionY + sizeOfSide < this.props.playerY
+
+    console.log("TOURIST X ", this.state.positionX)
+    console.log("TOURIST Y ", this.state.positionY)
+    console.log("PLAYER X ", this.props.playerX)
+    console.log("PLAYER Y ", this.props.playerY)
+
+    console.log(xConditional)
+    console.log(yConditional)  
+    console.log(sizeOfSide)
+
+    if ( xConditional && yConditional ) {
+      alert("BUMP")
+    }
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
     console.log('event listener attached?')
@@ -48,6 +67,8 @@ const Tourist = class extends Component {
     // const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+
+    this.checkForCollision()
   }
 
   render() {
@@ -59,7 +80,9 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     initialPeopleSizes: state.initialPeopleSizes,
-    movement: state.movement
+    movement: state.movement,
+    playerX: state.player.xPosition,
+    playerY: state.player.yPosition
   }
 }
 
