@@ -7,10 +7,10 @@ import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
 
+import { canvasWidth, canvasHeight } from '../setupData'
+
 
 class Canvas extends Component {
-  canvasWidth = 750
-  canvasHeight = 1334
 
   componentDidMount() {
     this.props.setCanvas(this.refs.playArea)
@@ -19,7 +19,7 @@ class Canvas extends Component {
   render() {
     return (
       <Fragment>
-        <canvas width={this.canvasWidth} height={this.canvasHeight} ref='playArea'></canvas>
+        <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
         <Path />
         <Player />
         <Tourist />

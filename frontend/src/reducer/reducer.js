@@ -1,11 +1,14 @@
+import { playerStartX, playerStartY } from '../setupData'
+
 const initialState = {
   canvas: null,
   player: {
-    xPosition: 375-(150/2),
-    yPosition: 1334-(150*1.5)
+    xPosition: playerStartX,
+    yPosition: playerStartY
   },
-  initialPeopleSizes: 150,
-  movement: 0
+  initialPeopleSizes: 150, // POSSIBLY move this to setupData
+  movement: 0,
+  centersOfBricks: []
 }
 
 const gameController = (state = initialState, action) => {
@@ -23,6 +26,11 @@ const gameController = (state = initialState, action) => {
           xPosition: state.player.xPosition + (action.payload.x)
         },
         movement: state.movement + (action.payload.y)
+      }
+    case "ADD_BRICK_TO_LIST":
+      return {
+        ...state,
+        centersOfBricks: [...state.centersOfBricks, {x: action.payload.x, y: action.payload.y}]
       }
     default:
       return state

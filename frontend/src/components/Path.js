@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { addBrickToList } from '../actions'
+
+import { depthCoefficient, horizonLine } from '../setupData'
+
 class Path extends Component {
-  horizonPosition = 400
+  horizonPosition = horizonLine
   brickSpacingBetweenColAtEnd = 50
   brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
   initialBrickSpacingBetweenRows = 1
-  depthMultiplier = 0.001
+  depthMultiplier = depthCoefficient
   numOfBricksInARow = 10
   brickPerMovement = 0.10
 
@@ -15,8 +19,6 @@ class Path extends Component {
   }
 
   drawPathBackground = (ctx) => {
-    console.log("CALLED PATH BACKGROUND")
-    // HOW DO WE FIX THIS
     ctx.rect(0, this.horizonPosition, this.props.canvas.width, this.props.canvas.height)
     ctx.fillStyle = '#CBCBCB'
     ctx.fill()
@@ -40,15 +42,24 @@ class Path extends Component {
     ctx.stroke()
   }
 
+  // CHEAP FIX need separation of concerns here
   drawVerticals = (ctx, previousPoints, currentPoints, shouldAlternateOdd) => {
-    for ( let i = 0; i < previousPoints.length; i++ ) {
+    const bricksList = []
+
+    for ( let i = 1; i < previousPoints.length-1; i++ ) {
       if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 ) ) {
         ctx.beginPath()
         ctx.moveTo(previousPoints[i].x, previousPoints[i].y)
         ctx.lineTo(currentPoints[i].x, currentPoints[i].y)
         ctx.stroke()
+
+        const brickCenterX = ((previousPoints[i+1].x - previousPoints[i].x) / 2) + previousPoints[i].x
+        const brickCenterY = ((currentPoints[i+1].y - previousPoints[i+1].y) / 2) + previousPoints[i+1].y
+
+        bricksList.push({x: brickCenterX, y: brickCenterY})
       }
     }
+
   }
 
   initializePreviousPoints = (centralX) => {
@@ -140,8 +151,15 @@ class Path extends Component {
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    movement: state.movement
+    movement: state.movement,
+    currentBricks: state.centersOfBricks
   }
 }
 
-export default connect(mapStateToProps)(Path)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addBrick: (x, y) => dispatch(addBrickToList(x, y))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Path)

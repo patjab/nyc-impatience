@@ -17,3 +17,10 @@ export const changeSpeed = () => {
     type: "CHANGE_SPEED"
   }
 }
+
+export const addBrickToList = (x, y) => {
+  return {
+    type: "ADD_BRICK_TO_LIST",
+    payload: {x, y}
+  }
+}

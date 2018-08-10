@@ -34,7 +34,6 @@ class Player extends Component {
   }
 
   componentDidMount() {
-    console.log("PLAYER MOUNTED")
     window.addEventListener('keydown', this.handleWalking)
 
     this.refs.playerImg.onload = () => {
@@ -51,7 +50,7 @@ class Player extends Component {
   render() {
     const currentImageSrc = this.state.walkingCollection[this.state.walkingCycle]
     return (
-      <img src={currentImageSrc} ref='playerImg' className='hidden'/>
+      <img src={currentImageSrc} ref='playerImg' className='hidden' alt='player'/>
     )
   }
 }
