@@ -22,9 +22,10 @@ const gameController = (state = initialState, action) => {
         ...state,
         player: {
           ...state.player,
-          xPosition: state.player.xPosition + (action.payload.x),
+          xPosition: state.player.xPosition + (action.payload.x)
         },
-        backgroundMagnification: state.backgroundMagnification * Math.pow(state.progressMultiplier, action.payload.y)
+        backgroundMagnification: state.backgroundMagnification * Math.pow(state.progressMultiplier, action.payload.y),
+        movement: state.movement + 1
       }
     default:
       return state

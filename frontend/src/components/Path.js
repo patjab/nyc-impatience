@@ -81,12 +81,12 @@ class Path extends Component {
       // BRICK STARTS: row
       // BRICK ENDS: row+this.brickSpacingBetweenRows
       // BRICK LENGTH Y: row+this.brickSpacingBetweenRows - row = this.brickSpacingBetweenRows
-      // PROGRESS ON THE BRICK: this.brickSpacingBetweenRows * (this.state.movement * 0.50)
-      // SO WE DONT OVERSTEP THE BRICK : (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) % this.brickSpacingBetweenRows
-      // ABSOLUTE PROGRESS ON THE BRICK: row + (this.brickSpacingBetweenRows * (this.state.movement * 0.50)) % this.brickSpacingBetweenRows
+      // PROGRESS ON THE BRICK: this.brickSpacingBetweenRows * (this.props.movement * 0.50)
+      // SO WE DONT OVERSTEP THE BRICK : (this.brickSpacingBetweenRows * (this.props.movement * 0.50)) % this.brickSpacingBetweenRows
+      // ABSOLUTE PROGRESS ON THE BRICK: row + (this.brickSpacingBetweenRows * (this.props.movement * 0.50)) % this.brickSpacingBetweenRows
 
       const distanceFromHorizon = row - this.horizonPosition
-      let rowWithBorderBrick = row + (this.brickSpacingBetweenRows * (this.state.movement * this.brickPerMovement)) % this.brickSpacingBetweenRows
+      let rowWithBorderBrick = row + (this.brickSpacingBetweenRows * (this.props.movement * this.brickPerMovement)) % this.brickSpacingBetweenRows
       rowsWithBrickBorders.push(Math.round(rowWithBorderBrick))
       this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
     }
@@ -128,20 +128,20 @@ class Path extends Component {
   }
 
   handleWalking = (e) => {
-    if (e.keyCode > 36 && e.keyCode < 41 ) {
-      e.preventDefault()
-      if (e.keyCode === 37) {
-        this.setState({movement: this.state.movement})
-      } else if (e.keyCode === 38) {
-        this.setState({movement: this.state.movement + 1})
-      }
-      // else if (e.keyCode === 39) {
-      //   this.setState({movement: this.state.movement})
-      // }
-      else if (e.keyCode === 40 && this.state.movement - 1 >= 0 ) {
-        this.setState({movement: this.state.movement - 1})
-      }
-    }
+    // if (e.keyCode > 36 && e.keyCode < 41 ) {
+    //   e.preventDefault()
+    //   if (e.keyCode === 37) {
+    //     this.setState({movement: this.state.movement})
+    //   } else if (e.keyCode === 38) {
+    //     this.setState({movement: this.state.movement + 1})
+    //   }
+    //   else if (e.keyCode === 39) {
+    //     this.setState({movement: this.state.movement})
+    //   }
+    //   else if (e.keyCode === 40 && this.state.movement - 1 >= 0 ) {
+    //     this.setState({movement: this.state.movement - 1})
+    //   }
+    // }
   }
 
   render() {
@@ -158,7 +158,8 @@ class Path extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas
+    canvas: state.canvas,
+    movement: state.movement
   }
 }
 
