@@ -18,30 +18,9 @@ export const changeSpeed = () => {
   }
 }
 
-export const addBrickRowList = (brickRowList) => {
-  return {
-    type: "ADD_BRICK_ROW_LIST",
-    payload: brickRowList
-  }
-}
-
-
-export const addBrickToList = (brick) => {
+export const addBrickToList = (x, y) => {
   return {
     type: "ADD_BRICK_TO_LIST",
-    payload: brick
-  }
-}
-
-export const clearBrickRowList = () => {
-  return {
-    type: "CLEAR_BRICK_ROW_LIST"
-  }
-}
-
-export const updateExistingBrick = (id, x, y) => {
-  return {
-    type: "UPDATE_EXISTING_BRICK",
-    payload: {id, x, y}
+    payload: {x, y}
   }
 }

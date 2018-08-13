@@ -1,59 +1,46 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, depthCoefficient } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
 
 const Tourist = class extends Component {
-  brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
-  depthMultiplier = depthCoefficient
-  horizonPosition = horizonLine
-  brickPerMovement = 0.10
-  blueParrotInTheSky = 0
-
   state = {
     positionX: canvasWidth/2,
-    walkingCycle: 0,
-    positionOnArray: 0,
-    previousPositionY: -1
+    positionY: horizonLine+1,
+    walkingCycle: 0
   }
 
   mysteryCoefficient = 150/784
-
-  truncate = (number, decimalPlaces = 0) => {
-    return Math.trunc(number*Math.pow(10, decimalPlaces))/Math.pow(10, decimalPlaces)
-  }
 
   // PRIORITY FIX THIS IS WRONG AND NEEDS FIXING
   // ATTEMPT THIS NEXT:
   // EACH SUCCEEDING ROW OF BRICKS IS ALWAYS BIGGER BY DEPTHMULTIPLIER X DISTANCEFROMHORIZON
   howBigShouldIBe = () => {
-    return (this.props.rowsWithBrickBorders[this.state.positionOnArray] - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
+    return (this.state.positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
   }
 
   progressionMagnification = (e) => {
     if (e.keyCode === 38 || e.keyCode === 40) {
       e.preventDefault()
       if (e.keyCode === 38 ) {
-        if (this.blueParrotInTheSky % 20 === 0) {
-          this.setState({positionOnArray: this.state.positionOnArray+1})
-        }
-
+        this.setState({positionY: this.state.positionY+1})
       } else if (e.keyCode === 40) {
-        this.setState({positionOnArray: this.state.positionOnArray-1})
+        this.setState({positionY: this.state.positionY-1})
       }
     }
+    // else {
+    //   // this.setState({walkingCycle: this.state.walkingCycle % 4}) // CHEAP FIX force component to rerender so that it may access componentDidUpdate's characteristics of increasing/decreasing
+    // }
 
   }
 
-  // FIX: LATER JUST CHANGE FOR LEG COLLISION INSTEAD OF FULL SQUARE COLLISION
   checkForCollision = () => {
     const sizeOfSide = this.howBigShouldIBe()
-    const positionY = this.props.rowsWithBrickBorders[this.state.positionOnArray]
 
     const lowerLeftTouristX = this.state.positionX
-    const lowerLeftTouristY = positionY + sizeOfSide
+    const lowerLeftTouristY = this.state.positionY + sizeOfSide
     const lowerRightTouristX = this.state.positionX + sizeOfSide
-    const upperLeftTouristY = positionY
+    const upperLeftTouristY = this.state.positionY
 
     const upperLeftPlayerX = this.props.playerX
     const upperLeftPlayerY = this.props.playerY
@@ -64,30 +51,30 @@ const Tourist = class extends Component {
     let yConditional = (upperLeftPlayerY <= lowerLeftTouristY) && (lowerLeftPlayerY >= upperLeftTouristY)
 
     if ( xConditional && yConditional ) {
-      // console.log("BUMP")
+      console.log("BUMP")
     } else {
-      // console.log("NOT BUMP")
+      console.log("NOT BUMP")
     }
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
+    // const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     const sizeOfSide = this.howBigShouldIBe()
     this.refs.touristImg.onload = () => {
-      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.props.rowsWithBrickBorders[this.state.positionOnArray], sizeOfSide, sizeOfSide)
+      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     }
   }
 
   componentDidUpdate() {
+    // const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     const sizeOfSide = this.howBigShouldIBe()
-    const positionY = this.props.rowsWithBrickBorders[this.state.positionOnArray]
+    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
 
-    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()
   }
 
   render() {
-    // console.log(this.props.rowsWithBrickBorders)
     return <img src='../tourist.png' ref='touristImg' className='hidden' alt='tourist'/>
   }
 }
@@ -98,8 +85,7 @@ const mapStateToProps = (state) => {
     initialPeopleSizes: state.initialPeopleSizes,
     movement: state.movement,
     playerX: state.player.xPosition,
-    playerY: state.player.yPosition,
-    rowsWithBrickBorders: state.brickRowList
+    playerY: state.player.yPosition
   }
 }
 

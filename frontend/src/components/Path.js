@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { addBrickToList, addBrickRowList, updateExistingBrick, clearBrickRowList } from '../actions'
+import { addBrickToList } from '../actions'
 
 import { depthCoefficient, horizonLine } from '../setupData'
 
@@ -14,13 +14,9 @@ class Path extends Component {
   numOfBricksInARow = 10
   brickPerMovement = 0.10
 
-  static brickId = 0
-
-  // ADD THIS.rowsWithBrickBorders
-
-  // state = {
-  //   movement: 0
-  // }
+  state = {
+    movement: 0
+  }
 
   drawPathBackground = (ctx) => {
     ctx.rect(0, this.horizonPosition, this.props.canvas.width, this.props.canvas.height)
@@ -47,8 +43,9 @@ class Path extends Component {
   }
 
   // CHEAP FIX need separation of concerns here
-  bricksList = []
   drawVerticals = (ctx, previousPoints, currentPoints, shouldAlternateOdd) => {
+    const bricksList = []
+
     for ( let i = 1; i < previousPoints.length-1; i++ ) {
       if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 ) ) {
         ctx.beginPath()
@@ -59,11 +56,10 @@ class Path extends Component {
         const brickCenterX = ((previousPoints[i+1].x - previousPoints[i].x) / 2) + previousPoints[i].x
         const brickCenterY = ((currentPoints[i+1].y - previousPoints[i+1].y) / 2) + previousPoints[i+1].y
 
-        if ( !this.bricksList.find(brick => brick.x === brickCenterX && brick.y === brickCenterY) && brickCenterX && brickCenterY) {
-          this.bricksList.push({id: -1, x: brickCenterX, y: brickCenterY})
-        }
+        bricksList.push({x: brickCenterX, y: brickCenterY})
       }
     }
+
   }
 
   initializePreviousPoints = (centralX) => {
@@ -83,7 +79,6 @@ class Path extends Component {
     return currentPoints
   }
 
-  // NON-PRIORITY FIX: THIS CAN BE WRITTEN MORE MATHEMATICALLY ELEGANTLY
   getRows = () => {
     const rowsWithBrickBorders = []
     for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
@@ -92,7 +87,7 @@ class Path extends Component {
       const absoluteChunkOfBrick = this.brickSpacingBetweenRows * percentageOfBrick
       const rowWithBorderBrick = row + (absoluteChunkOfBrick)
       rowsWithBrickBorders.push(rowWithBorderBrick)
-      this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier * distanceFromHorizon)
+      this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
     }
     rowsWithBrickBorders.push(this.props.canvas.height)
     rowsWithBrickBorders.sort((a,b)=>a-b)
@@ -103,9 +98,9 @@ class Path extends Component {
     const angleOfConvergence = this.findAngle()
     let shouldAlternateOdd = true
     let previousPoints = this.initializePreviousPoints()
-    this.rowsWithBrickBorders = this.getRows()
+    const rowsWithBrickBorders = this.getRows()
 
-    for ( let row of this.rowsWithBrickBorders ) {
+    for ( let row of rowsWithBrickBorders ) {
       const distanceFromHorizon = row - this.horizonPosition
         this.drawHorizontalRow(ctx, row)
         const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
@@ -119,6 +114,7 @@ class Path extends Component {
 
     this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
   }
+
 
   makeSideStructures = (ctx) => {
     const centralX = this.props.canvas.width/2
@@ -137,31 +133,6 @@ class Path extends Component {
     ctx.closePath()
   }
 
-  componentDidUpdate() {
-    const middleOfBricks = []
-    for (let i = 1; i < this.rowsWithBrickBorders.length; i++) {
-      middleOfBricks.push((this.rowsWithBrickBorders[i-1] + this.rowsWithBrickBorders[i])/2)
-    }
-    this.props.addBrickRowList(middleOfBricks)
-
-    console.log(this.props.brickList)
-    // INITIALIZE INITIAL BRICKS
-    if ( this.props.brickList.length === 0 ) {
-      for (let i = this.bricksList.length - 1; i > 0; i--) {
-        this.props.addBrickToList({id: Path.brickId++, x: this.bricksList[i].x, y: this.bricksList[i].y})
-      }
-    }
-
-    // CYCLE THESE TWO
-    // UPDATE BRICK POSITIONS
-    // updateExistingBrick
-
-
-
-    // ADD NEW BRICKS FROM HORIZON
-
-  }
-
   render() {
     const ctx = this.props.canvas && this.props.canvas.getContext("2d")
     if (ctx) {
@@ -177,18 +148,75 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
-    currentBricks: state.centersOfBricks,
-    brickList: state.brickList
+    currentBricks: state.centersOfBricks
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addBrickToList: (brick) => dispatch(addBrickToList(brick)),
-    addBrickRowList: (list) => dispatch(addBrickRowList(list)),
-    clearBrickRows: () => dispatch(clearBrickRowList()),
-    updateExistingBrick: (id, x, y) => dispatch(updateExistingBrick(id, x, y))
+    addBrick: (x, y) => dispatch(addBrickToList(x, y))
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//
+// makeBricks = (ctx) => {
+//   const angleOfConvergence = this.findAngle()
+//   let shouldAlternateOdd = true
+//
+//   let previousPoints = this.initializePreviousPoints()
+//
+//   const rowsWithBrickBorders = []
+//
+//   // HAHAHHAHAHAHAHA
+//
+//   for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
+//     // BRICK STARTS: row
+//     // BRICK ENDS: row+this.brickSpacingBetweenRows
+//     // BRICK LENGTH Y: row+this.brickSpacingBetweenRows - row = this.brickSpacingBetweenRows
+//     // PROGRESS ON THE BRICK: this.brickSpacingBetweenRows * (this.props.movement * 0.50)
+//     // SO WE DONT OVERSTEP THE BRICK : (this.brickSpacingBetweenRows * (this.props.movement * 0.50)) % this.brickSpacingBetweenRows
+//     // ABSOLUTE PROGRESS ON THE BRICK: row + (this.brickSpacingBetweenRows * (this.props.movement * 0.50)) % this.brickSpacingBetweenRows
+//
+//     const distanceFromHorizon = row - this.horizonPosition
+//     let rowWithBorderBrick = row + (this.brickSpacingBetweenRows * (this.props.movement * this.brickPerMovement)) % this.brickSpacingBetweenRows
+//     rowsWithBrickBorders.push(Math.trunc(rowWithBorderBrick))
+//     this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
+//   }
+//   rowsWithBrickBorders.push(this.props.canvas.height)
+//   console.log(rowsWithBrickBorders)
+//
+//   for ( let row = this.horizonPosition; row < this.props.canvas.height; row++ ) {
+//     const distanceFromHorizon = row - this.horizonPosition
+//     if (rowsWithBrickBorders.includes(row)) {
+//       this.drawHorizontalRow(ctx, row)
+//       const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
+//       const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
+//       let currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
+//       this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
+//
+//       previousPoints = [...currentPoints]
+//       shouldAlternateOdd = !shouldAlternateOdd
+//     }
+//   }
+//
+//   this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
+// }

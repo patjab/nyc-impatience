@@ -8,9 +8,7 @@ const initialState = {
   },
   initialPeopleSizes: 150, // POSSIBLY move this to setupData
   movement: 0,
-  brickFellOffScreen: false,
-  brickRowList: [],
-  brickList: []
+  centersOfBricks: []
 }
 
 const gameController = (state = initialState, action) => {
@@ -29,29 +27,15 @@ const gameController = (state = initialState, action) => {
         },
         movement: state.movement + (action.payload.y)
       }
-    case "ADD_BRICK_ROW_LIST":
-      return {
-        ...state,
-        brickRowList: action.payload
-      }
     case "ADD_BRICK_TO_LIST":
       return {
         ...state,
-        brickList: [...state.brickList, action.payload]
-      }
-    case "UPDATE_EXISTING_BRICK":
-      return {
-        ...state,
-        brickList: [...[...state.brickList].filter(brick => brick.id !== action.payload.id), {id: action.payload.id, x: action.payload.x, y: action.payload.y}]
-      }
-    case "CLEAR_BRICK_ROW_LIST":
-      return {
-        ...state,
-        rowsWithBrickBorders: []
+        centersOfBricks: [...state.centersOfBricks, {x: action.payload.x, y: action.payload.y}]
       }
     default:
       return state
   }
 }
+
 
 export default gameController

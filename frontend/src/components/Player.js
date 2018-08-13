@@ -26,7 +26,7 @@ class Player extends Component {
       else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) {
         this.props.moveRight()
       }
-      else if (e.keyCode === 40 && this.props.movement > 0) {
+      else if (e.keyCode === 40) {
         this.props.moveDown()
       }
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
@@ -59,8 +59,7 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     player: state.player,
-    initialPeopleSizes: state.initialPeopleSizes,
-    movement: state.movement
+    initialPeopleSizes: state.initialPeopleSizes
   }
 }
 
