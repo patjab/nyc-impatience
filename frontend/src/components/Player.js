@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed } from '../actions'
+import { walking, running } from '../setupData'
 
 class Player extends Component {
 
@@ -16,7 +17,7 @@ class Player extends Component {
       this.props.changeSpeed()
     }
 
-    if (e.keyCode > 36 && e.keyCode < 41 ) {
+    if ((e.keyCode > 36 && e.keyCode < 41) || e.key === 'r' ) {
       e.preventDefault()
       if (e.keyCode === 37 && this.props.player.xPosition - this.state.speed > 0) {
         this.props.moveLeft()
@@ -28,6 +29,12 @@ class Player extends Component {
       }
       else if (e.keyCode === 40) {
         this.props.moveDown()
+      } else if (e.key === 'r') {
+        if (this.props.movementPerBrick === walking) {
+          this.props.changeSpeed(running, running)
+        } else {
+          this.props.changeSpeed(walking)
+        }
       }
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
     }
@@ -59,7 +66,8 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     player: state.player,
-    initialPeopleSizes: state.initialPeopleSizes
+    initialPeopleSizes: state.initialPeopleSizes,
+    movementPerBrick: state.movementPerBrick
   }
 }
 
@@ -69,7 +77,7 @@ const mapDispatchToProps = (dispatch) => {
     moveDown: () => dispatch(movePlayer(0, -1)),
     moveLeft: () => {dispatch(movePlayer(-1, -2)); dispatch(movePlayer(-1, 2)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
     moveRight: () => {dispatch(movePlayer(1, -2)); dispatch(movePlayer(0, 2)); },
-    changeSpeed: () => dispatch(changeSpeed())
+    changeSpeed: (speed) => dispatch(changeSpeed(speed))
   }
 }
 

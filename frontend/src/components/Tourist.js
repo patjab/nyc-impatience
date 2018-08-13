@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, brickPerMovementSpeed } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
 
 const Tourist = class extends Component {
   state = {
@@ -22,17 +22,10 @@ const Tourist = class extends Component {
   progressionMagnification = (e) => {
     if (e.keyCode === 38 || e.keyCode === 40) {
       e.preventDefault()
-      if (e.keyCode === 38 ) {
-        let index = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*brickPerMovementSpeed)*9)
-        let currentPosition = this.props.centersOfBricks[index]
+      let index = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*this.props.movementPerBrick)*9)
+      let currentPosition = this.props.centersOfBricks[index]
 
-        this.setState({positionX: currentPosition.x, positionY: currentPosition.y})
-      } else if (e.keyCode === 40) {
-        let index = this.state.positionOnArray + (Math.trunc(this.props.movement / 20)*9)
-        let currentPosition = this.props.centersOfBricks[index]
-
-        this.setState({positionX: currentPosition.x, positionY: currentPosition.y})
-      }
+      this.setState({positionX: currentPosition.x, positionY: currentPosition.y})
     }
   }
 
@@ -86,7 +79,8 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
-    centersOfBricks: state.centersOfBricks
+    centersOfBricks: state.centersOfBricks,
+    movementPerBrick: state.movementPerBrick
   }
 }
 

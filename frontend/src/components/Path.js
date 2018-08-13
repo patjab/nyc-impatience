@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 
-import { depthCoefficient, horizonLine, brickPerMovementSpeed } from '../setupData'
+import { depthCoefficient, horizonLine } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
@@ -12,7 +12,6 @@ class Path extends Component {
   initialBrickSpacingBetweenRows = 1
   depthMultiplier = depthCoefficient
   numOfBricksInARow = 10
-  brickPerMovement = brickPerMovementSpeed
 
   cfBricksList = []
 
@@ -77,7 +76,7 @@ class Path extends Component {
     const rowsWithBrickBorders = []
     for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
       const distanceFromHorizon = row - this.horizonPosition
-      const percentageOfBrick = (this.props.movement * this.brickPerMovement) % 2
+      const percentageOfBrick = (this.props.movement * this.props.movementPerBrick) % 2
       const absoluteChunkOfBrick = this.brickSpacingBetweenRows * percentageOfBrick
       const rowWithBorderBrick = row + (absoluteChunkOfBrick)
       rowsWithBrickBorders.push(rowWithBorderBrick)
@@ -159,7 +158,8 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
-    centersOfBricks: state.centersOfBricks
+    centersOfBricks: state.centersOfBricks,
+    movementPerBrick: state.movementPerBrick
   }
 }
 

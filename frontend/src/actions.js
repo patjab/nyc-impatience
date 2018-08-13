@@ -12,9 +12,11 @@ export const movePlayer = (x, y) => {
   }
 }
 
-export const changeSpeed = () => {
+export const changeSpeed = (speed) => {
+  console.log('in changespeed', speed)
   return {
-    type: "CHANGE_SPEED"
+    type: "CHANGE_SPEED",
+    payload: speed
   }
 }
 

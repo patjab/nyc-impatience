@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY } from '../setupData'
+import { playerStartX, playerStartY, walking, running } from '../setupData'
 
 const initialState = {
   canvas: null,
@@ -8,6 +8,7 @@ const initialState = {
   },
   initialPeopleSizes: 150, // POSSIBLY move this to setupData
   movement: 0,
+  movementPerBrick: walking,
   centersOfBricks: []
 }
 
@@ -31,6 +32,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         centersOfBricks: action.payload
+      }
+    case "CHANGE_SPEED":
+      return {
+        ...state,
+        movementPerBrick: action.payload
       }
     default:
       return state
