@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, brickPerMovementSpeed } from '../setupData'
 
 const Tourist = class extends Component {
   state = {
@@ -23,7 +23,7 @@ const Tourist = class extends Component {
     if (e.keyCode === 38 || e.keyCode === 40) {
       e.preventDefault()
       if (e.keyCode === 38 ) {
-        let index = this.state.positionOnArray + (Math.trunc(this.props.movement / 20)*9)
+        let index = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*brickPerMovementSpeed)*9)
         let currentPosition = this.props.centersOfBricks[index]
 
         this.setState({positionX: currentPosition.x, positionY: currentPosition.y})

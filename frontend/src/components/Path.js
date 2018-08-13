@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 
-import { depthCoefficient, horizonLine } from '../setupData'
+import { depthCoefficient, horizonLine, brickPerMovementSpeed } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
@@ -12,7 +12,7 @@ class Path extends Component {
   initialBrickSpacingBetweenRows = 1
   depthMultiplier = depthCoefficient
   numOfBricksInARow = 10
-  brickPerMovement = 0.10
+  brickPerMovement = brickPerMovementSpeed
 
   cfBricksList = []
 
@@ -145,20 +145,12 @@ class Path extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.centersOfBricks && this.props.centersOfBricks.length === 0) {
-      console.log("initializing list")
       this.props.initializeBrickList(this.cfBricksList)
     }
 
     if (prevProps.movement !== this.props.movement) {
-      console.log("you moved!")
       this.props.initializeBrickList(this.cfBricksList)
     }
-    // let index = this.props.centersOfBricks.length-540 + (Math.trunc(this.props.movement / 20)*9)
-    // let inspect = this.props.centersOfBricks[index]
-    // if (inspect) {
-    //   console.log("COB: ", inspect)
-    //   var ctx = this.props.canvas.getContext("2d"); ctx.beginPath(); ctx.arc(inspect.x, inspect.y, 5, 0, 2 * Math.PI); ctx.fillStyle='red';ctx.fill(); ctx.stroke();
-    // }
   }
 
   render() {
