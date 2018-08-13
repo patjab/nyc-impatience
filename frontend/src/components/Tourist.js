@@ -12,7 +12,7 @@ const Tourist = class extends Component {
     progressionMagnificatonTemp: 0,
     walkingCycle: 0,
     initialSize: null,
-    unmountMe: false
+    outOfView: false
   }
 
   findAngle = () => {
@@ -108,15 +108,19 @@ const Tourist = class extends Component {
   }
 
   componentDidUpdate() {
-    const sizeOfSide = this.howBigShouldIBe()
-    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-    this.checkForCollision()
+    if (!this.state.outOfView) {
+      const sizeOfSide = this.howBigShouldIBe()
+      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+      this.checkForCollision()
 
-    if (this.state.positionY) {
-      if (this.state.positionY > (canvasHeight - (initialPlayerSize/2))) {
-        console.log("unmount me", this.props.id)
-        return null
+      if (this.state.positionY) {
+        if (this.state.positionY > (canvasHeight - (initialPlayerSize/2))) {
+          console.log("unmount me", this.props.id)
+          this.setState({outOfView: true})
+        }
       }
+    } else {
+      console.log("do unmounting")
     }
   }
 
