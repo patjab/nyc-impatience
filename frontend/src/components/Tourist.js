@@ -7,7 +7,8 @@ const Tourist = class extends Component {
   state = {
     positionX: canvasWidth/2,
     positionY: horizonLine,
-    positionOnArray: 50,
+    positionOnArray: 2,
+    progressionMagnificatonTemp: 0,
     // positionY: horizonLine+(Math.trunc(Math.random()*500)),
     walkingCycle: 0
   }
@@ -19,13 +20,26 @@ const Tourist = class extends Component {
     return (this.state.positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
   }
 
+  pythagoreanHelper = (a, b) => {
+    return Math.sqrt(Math.pow(a,2) + Math.pow(b,2))
+  }
+
   progressionMagnification = (e) => {
     if (e.keyCode === 38 || e.keyCode === 40) {
       e.preventDefault()
-      let index = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*this.props.movementPerBrick)*9)
-      let currentPosition = this.props.centersOfBricks[index]
-
-      this.setState({positionX: currentPosition.x, positionY: currentPosition.y})
+      const projectedIndex = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*this.props.movementPerBrick)*9)
+      const locusRangeFinder = 100
+      const centerOfBricks = this.props.centersOfBricks
+      .filter(brick => Math.abs(brick.x - this.state.positionX) < locusRangeFinder && Math.abs(brick.y - this.state.positionY) < locusRangeFinder)
+      .sort((brick1, brick2) => {
+        const distanceToBrick1 = this.pythagoreanHelper((brick1.x - this.state.positionX), (brick1.y - this.state.positionY))
+        const distanceToBrick2 = this.pythagoreanHelper((brick2.x - this.state.positionX), (brick2.y - this.state.positionY))
+        return distanceToBrick1 - distanceToBrick2
+      })
+      const refinedIndex = this.props.centersOfBricks.indexOf(centerOfBricks[0])
+      const index = projectedIndex !== refinedIndex ? refinedIndex : projectedIndex
+      const nextPosition = this.props.centersOfBricks[index]
+      this.setState({positionX: nextPosition.x, positionY: nextPosition.y})
     }
   }
 

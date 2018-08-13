@@ -17,7 +17,7 @@ class Player extends Component {
       this.props.changeSpeed()
     }
 
-    if ((e.keyCode > 36 && e.keyCode < 41) || e.key === 'r' ) {
+    if ((e.keyCode > 36 && e.keyCode < 41) || e.key === 's' ) {
       e.preventDefault()
       if (e.keyCode === 37 && this.props.player.xPosition - this.state.speed > 0) {
         this.props.moveLeft()
@@ -29,9 +29,9 @@ class Player extends Component {
       }
       else if (e.keyCode === 40) {
         this.props.moveDown()
-      } else if (e.key === 'r') {
+      } else if (e.key === 's') {
         if (this.props.movementPerBrick === walking) {
-          this.props.changeSpeed(running, running)
+          this.props.changeSpeed(running)
         } else {
           this.props.changeSpeed(walking)
         }
