@@ -18,9 +18,9 @@ export const changeSpeed = () => {
   }
 }
 
-export const addBrickToList = (x, y) => {
+export const initializeBrickList = (brickList) => {
   return {
-    type: "ADD_BRICK_TO_LIST",
-    payload: {x, y}
+    type: "INITIALIZE_BRICK_LIST",
+    payload: brickList
   }
 }

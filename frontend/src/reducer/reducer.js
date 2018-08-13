@@ -27,10 +27,10 @@ const gameController = (state = initialState, action) => {
         },
         movement: state.movement + (action.payload.y)
       }
-    case "ADD_BRICK_TO_LIST":
+    case "INITIALIZE_BRICK_LIST":
       return {
         ...state,
-        centersOfBricks: [...state.centersOfBricks, {x: action.payload.x, y: action.payload.y}]
+        centersOfBricks: action.payload
       }
     default:
       return state

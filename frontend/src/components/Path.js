@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { addBrickToList } from '../actions'
+import { initializeBrickList } from '../actions'
 
 import { depthCoefficient, horizonLine } from '../setupData'
 
@@ -13,6 +13,8 @@ class Path extends Component {
   depthMultiplier = depthCoefficient
   numOfBricksInARow = 10
   brickPerMovement = 0.10
+
+  cfBricksList = []
 
   state = {
     movement: 0
@@ -59,16 +61,16 @@ class Path extends Component {
         bricksList.push({x: brickCenterX, y: brickCenterY})
       }
     }
-
+    return bricksList
   }
 
-  initializePreviousPoints = (centralX) => {
-    let previousPoints = []
-    for ( let i = 0; i <= this.numOfBricksInARow; i++ ) {
-      previousPoints.push({x: centralX, y: this.horizonPosition})
-    }
-    return previousPoints
-  }
+  // initializePreviousPoints = (centralX) => {
+  //   let previousPoints = []
+  //   // for ( let i = 0; i <= this.numOfBricksInARow; i++ ) {
+  //   //   previousPoints.push({x: centralX, y: this.horizonPosition})
+  //   // }
+  //   return previousPoints
+  // }
 
   recordCurrentPoints = (horizontalPathLength, xStartOfHorizontalLines, row) => {
     let currentPoints = []
@@ -97,8 +99,10 @@ class Path extends Component {
   makeBricks = (ctx) => {
     const angleOfConvergence = this.findAngle()
     let shouldAlternateOdd = true
-    let previousPoints = this.initializePreviousPoints()
+    let previousPoints = []
     const rowsWithBrickBorders = this.getRows()
+
+    let bricksList = []
 
     for ( let row of rowsWithBrickBorders ) {
       const distanceFromHorizon = row - this.horizonPosition
@@ -106,13 +110,19 @@ class Path extends Component {
         const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
         const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
         const currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
-        this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
+        const bricksListInRow = this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
+
+        bricksList = [...bricksList, ...bricksListInRow]
 
         previousPoints = [...currentPoints]
         shouldAlternateOdd = !shouldAlternateOdd
     }
 
+    // FIX IMPURE
     this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
+
+    this.cfBricksList = bricksList
+    return bricksList
   }
 
 
@@ -133,6 +143,24 @@ class Path extends Component {
     ctx.closePath()
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.centersOfBricks && this.props.centersOfBricks.length === 0) {
+      console.log("initializing list")
+      this.props.initializeBrickList(this.cfBricksList)
+    }
+
+    if (prevProps.movement !== this.props.movement) {
+      console.log("you moved!")
+      this.props.initializeBrickList(this.cfBricksList)
+    }
+    // let index = this.props.centersOfBricks.length-540 + (Math.trunc(this.props.movement / 20)*9)
+    // let inspect = this.props.centersOfBricks[index]
+    // if (inspect) {
+    //   console.log("COB: ", inspect)
+    //   var ctx = this.props.canvas.getContext("2d"); ctx.beginPath(); ctx.arc(inspect.x, inspect.y, 5, 0, 2 * Math.PI); ctx.fillStyle='red';ctx.fill(); ctx.stroke();
+    // }
+  }
+
   render() {
     const ctx = this.props.canvas && this.props.canvas.getContext("2d")
     if (ctx) {
@@ -148,75 +176,14 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
-    currentBricks: state.centersOfBricks
+    centersOfBricks: state.centersOfBricks
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addBrick: (x, y) => dispatch(addBrickToList(x, y))
+    initializeBrickList: (brickList) => dispatch(initializeBrickList(brickList))
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Path)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-// makeBricks = (ctx) => {
-//   const angleOfConvergence = this.findAngle()
-//   let shouldAlternateOdd = true
-//
-//   let previousPoints = this.initializePreviousPoints()
-//
-//   const rowsWithBrickBorders = []
-//
-//   // HAHAHHAHAHAHAHA
-//
-//   for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
-//     // BRICK STARTS: row
-//     // BRICK ENDS: row+this.brickSpacingBetweenRows
-//     // BRICK LENGTH Y: row+this.brickSpacingBetweenRows - row = this.brickSpacingBetweenRows
-//     // PROGRESS ON THE BRICK: this.brickSpacingBetweenRows * (this.props.movement * 0.50)
-//     // SO WE DONT OVERSTEP THE BRICK : (this.brickSpacingBetweenRows * (this.props.movement * 0.50)) % this.brickSpacingBetweenRows
-//     // ABSOLUTE PROGRESS ON THE BRICK: row + (this.brickSpacingBetweenRows * (this.props.movement * 0.50)) % this.brickSpacingBetweenRows
-//
-//     const distanceFromHorizon = row - this.horizonPosition
-//     let rowWithBorderBrick = row + (this.brickSpacingBetweenRows * (this.props.movement * this.brickPerMovement)) % this.brickSpacingBetweenRows
-//     rowsWithBrickBorders.push(Math.trunc(rowWithBorderBrick))
-//     this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
-//   }
-//   rowsWithBrickBorders.push(this.props.canvas.height)
-//   console.log(rowsWithBrickBorders)
-//
-//   for ( let row = this.horizonPosition; row < this.props.canvas.height; row++ ) {
-//     const distanceFromHorizon = row - this.horizonPosition
-//     if (rowsWithBrickBorders.includes(row)) {
-//       this.drawHorizontalRow(ctx, row)
-//       const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
-//       const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
-//       let currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
-//       this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
-//
-//       previousPoints = [...currentPoints]
-//       shouldAlternateOdd = !shouldAlternateOdd
-//     }
-//   }
-//
-//   this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
-// }

@@ -6,11 +6,11 @@ import { horizonLine, initialPlayerSize, playerStartY, canvasWidth } from '../se
 const Tourist = class extends Component {
   state = {
     positionX: canvasWidth/2,
-    positionY: horizonLine+1,
+    positionY: horizonLine,
+    positionOnArray: 50,
+    // positionY: horizonLine+(Math.trunc(Math.random()*500)),
     walkingCycle: 0
   }
-
-  mysteryCoefficient = 150/784
 
   // PRIORITY FIX THIS IS WRONG AND NEEDS FIXING
   // ATTEMPT THIS NEXT:
@@ -23,15 +23,17 @@ const Tourist = class extends Component {
     if (e.keyCode === 38 || e.keyCode === 40) {
       e.preventDefault()
       if (e.keyCode === 38 ) {
-        this.setState({positionY: this.state.positionY+1})
+        let index = this.state.positionOnArray + (Math.trunc(this.props.movement / 20)*9)
+        let currentPosition = this.props.centersOfBricks[index]
+
+        this.setState({positionX: currentPosition.x, positionY: currentPosition.y})
       } else if (e.keyCode === 40) {
-        this.setState({positionY: this.state.positionY-1})
+        let index = this.state.positionOnArray + (Math.trunc(this.props.movement / 20)*9)
+        let currentPosition = this.props.centersOfBricks[index]
+
+        this.setState({positionX: currentPosition.x, positionY: currentPosition.y})
       }
     }
-    // else {
-    //   // this.setState({walkingCycle: this.state.walkingCycle % 4}) // CHEAP FIX force component to rerender so that it may access componentDidUpdate's characteristics of increasing/decreasing
-    // }
-
   }
 
   checkForCollision = () => {
@@ -51,15 +53,14 @@ const Tourist = class extends Component {
     let yConditional = (upperLeftPlayerY <= lowerLeftTouristY) && (lowerLeftPlayerY >= upperLeftTouristY)
 
     if ( xConditional && yConditional ) {
-      console.log("BUMP")
+      // console.log("BUMP")
     } else {
-      console.log("NOT BUMP")
+      // console.log("NOT BUMP")
     }
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
-    // const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     const sizeOfSide = this.howBigShouldIBe()
     this.refs.touristImg.onload = () => {
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
@@ -67,7 +68,6 @@ const Tourist = class extends Component {
   }
 
   componentDidUpdate() {
-    // const sizeOfSide = this.props.initialPeopleSizes*this.props.movement*this.mysteryCoefficient
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
 
@@ -85,7 +85,8 @@ const mapStateToProps = (state) => {
     initialPeopleSizes: state.initialPeopleSizes,
     movement: state.movement,
     playerX: state.player.xPosition,
-    playerY: state.player.yPosition
+    playerY: state.player.yPosition,
+    centersOfBricks: state.centersOfBricks
   }
 }
 
