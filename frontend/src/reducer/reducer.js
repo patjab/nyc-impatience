@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY, walking, running } from '../setupData'
+import { playerStartX, playerStartY, walking } from '../setupData'
 
 const initialState = {
   canvas: null,

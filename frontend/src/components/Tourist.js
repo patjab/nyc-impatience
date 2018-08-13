@@ -1,16 +1,51 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, canvasHeight } from '../setupData'
 
 const Tourist = class extends Component {
   state = {
-    positionX: canvasWidth/2,
-    positionY: horizonLine,
+    positionX: null,
+    positionY: this.props.yPos,
     positionOnArray: 2,
     progressionMagnificatonTemp: 0,
     // positionY: horizonLine+(Math.trunc(Math.random()*500)),
     walkingCycle: 0
+  }
+
+  findAngle = () => {
+    const lengthOfGroundTriangle = this.props.canvas.height - this.horizonPosition
+    const widthOfGroundTriangle = this.props.canvas.width/2
+
+    const sideOfPath = Math.sqrt(Math.pow(lengthOfGroundTriangle, 2) + Math.pow(widthOfGroundTriangle, 2))
+    const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(this.props.canvas.width, 2)
+    const denominator = (2 * Math.pow(sideOfPath, 2))
+
+    return Math.acos(numerator/denominator)
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.positionX === null ) {
+      const distanceFromHorizon = props.yPos - horizonLine
+
+      const lengthOfGroundTriangle = canvasHeight - horizonLine
+      const widthOfGroundTriangle = canvasWidth/2
+      const sideOfPath = Math.sqrt(Math.pow(lengthOfGroundTriangle, 2) + Math.pow(widthOfGroundTriangle, 2))
+      const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(canvasWidth, 2)
+      const denominator = (2 * Math.pow(sideOfPath, 2))
+      const angleOfConvergence = Math.acos(numerator/denominator)
+
+      const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
+      const startOfRange = (canvasWidth - horizontalPathLength)/2
+      const endOfRange = startOfRange + horizontalPathLength
+
+      return {
+        ...state,
+        positionX: startOfRange + Math.random(endOfRange - startOfRange)
+      }
+    } else {
+      return state
+    }
   }
 
   // PRIORITY FIX THIS IS WRONG AND NEEDS FIXING
@@ -75,9 +110,9 @@ const Tourist = class extends Component {
   }
 
   componentDidUpdate() {
+    // window.addEventListener('keydown', this.progressionMagnification)
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-
     this.checkForCollision()
   }
 

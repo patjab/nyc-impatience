@@ -97,16 +97,16 @@ class Path extends Component {
 
     for ( let row of rowsWithBrickBorders ) {
       const distanceFromHorizon = row - this.horizonPosition
-        this.drawHorizontalRow(ctx, row)
-        const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
-        const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
-        const currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
-        const bricksListInRow = this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
+      this.drawHorizontalRow(ctx, row)
+      const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
+      const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
+      const currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
+      const bricksListInRow = this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
 
-        bricksList = [...bricksList, ...bricksListInRow]
+      bricksList = [...bricksList, ...bricksListInRow]
 
-        previousPoints = [...currentPoints]
-        shouldAlternateOdd = !shouldAlternateOdd
+      previousPoints = [...currentPoints]
+      shouldAlternateOdd = !shouldAlternateOdd
     }
 
     // FIX IMPURE

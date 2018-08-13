@@ -7,7 +7,7 @@ import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
 
-import { canvasWidth, canvasHeight } from '../setupData'
+import { canvasWidth, canvasHeight, horizonLine } from '../setupData'
 
 
 class Canvas extends Component {
@@ -16,13 +16,22 @@ class Canvas extends Component {
     this.props.setCanvas(this.refs.playArea)
   }
 
+  renderTourists = (numberOfTourists) => {
+    const xCenter = this.refs.playArea/2
+    let tourists = []
+    for ( let i = 0; i < numberOfTourists; i++ ) {
+      tourists.push(<Tourist xPos={xCenter} yPos={horizonLine+1+(Math.random()*(canvasHeight-horizonLine-1))} key={i}/>)
+    }
+    return tourists
+  }
+
   render() {
     return (
       <Fragment>
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
         <Path />
         <Player />
-        <Tourist />
+        {this.renderTourists(5)}
       </Fragment>
     )
   }
