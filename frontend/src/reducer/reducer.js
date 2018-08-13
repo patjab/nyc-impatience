@@ -21,6 +21,7 @@ const gameController = (state = initialState, action) => {
         canvas: action.payload
       }
     case "MOVE_PLAYER":
+      console.log(action.payload.y)
       return {
         ...state,
         player: {
@@ -43,6 +44,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         garbageOfTourists: [...state.garbageOfTourists, action.payload]
+      }
+    case "EMPTY_GARBAGE_OF_TOURISTS":
+      return {
+        ...state,
+        garbageOfTourists: []
       }
     default:
       return state

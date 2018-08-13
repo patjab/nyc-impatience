@@ -13,35 +13,38 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
-    if (e.keyCode === 32) {
-      this.props.changeSpeed()
-    }
+    const upperLeft = this.diagonalMap[37] && this.diagonalMap[38]
+    const upperRight= this.diagonalMap[38] && this.diagonalMap[39]
 
-    if ((e.keyCode > 36 && e.keyCode < 41) || e.key === 's' ) {
+    if ((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41) || (e.key === 's') ) {
       e.preventDefault()
-      if (e.keyCode === 37 && this.props.player.xPosition - this.state.speed > 0) {
-        this.props.moveLeft()
-      } else if (e.keyCode === 38) {
-        this.props.moveUp()
-      }
-      else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) {
-        this.props.moveRight()
-      }
-      else if (e.keyCode === 40) {
-        this.props.moveDown()
-      } else if (e.key === 's') {
-        if (this.props.movementPerBrick === walking) {
-          this.props.changeSpeed(running)
-        } else {
-          this.props.changeSpeed(walking)
-        }
-      }
+      if (e.keyCode === 37 && this.props.player.xPosition - this.state.speed > 0) { this.props.moveLeft() }
+      else if (e.keyCode === 38) { this.props.moveUp() }
+      else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) { this.props.moveRight() }
+      else if (e.keyCode === 40) { this.props.moveDown() }
+      else if (e.key === 's') { this.props.movementPerBrick === walking ? this.props.changeSpeed(running) : this.props.changeSpeed(walking) }
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
     }
+
+    if ( upperLeft ) {
+      this.props.moveUpLeft()
+    } else if ( upperRight ) {
+      this.props.moveUpRight()
+    }
+  }
+
+  diagonalMap = []
+  handleDiagonalWalking = (e) => {
+    this.diagonalMap[e.keyCode] = e.type === 'keydown'
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleWalking)
+
+    // FIX merge the event listeners
+    window.addEventListener('keydown', this.handleDiagonalWalking)
+    window.addEventListener('keyup', this.handleDiagonalWalking)
+
 
     this.refs.playerImg.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
@@ -75,8 +78,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     moveUp: () => dispatch(movePlayer(0, 1)),
     moveDown: () => dispatch(movePlayer(0, -1)),
-    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, -2)); dispatch(movePlayer(0, 2)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
-    moveRight: () => {dispatch(movePlayer(shiftingSpeed, -2)); dispatch(movePlayer(0, 2)); },
+    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, 0)); dispatch(movePlayer(0, 2)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
+    moveRight: () => {dispatch(movePlayer(shiftingSpeed, 0)); dispatch(movePlayer(0, 2)); },
+    moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
+    moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed))
   }
 }

@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react'
 
 import { connect } from 'react-redux'
-import { setThisCanvas } from '../actions'
+import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
+import { touristDensity } from '../setupData'
 
 import Path from './Path'
 import Player from './Player'
@@ -9,8 +10,12 @@ import Tourist from './Tourist'
 
 import { canvasWidth, canvasHeight } from '../setupData'
 
-
 class Canvas extends Component {
+  componentDidUpdate() {
+    if ( this.props.garbageOfTourists.length === touristDensity ) {
+      this.props.emptyGarbageOfTourists()
+    }
+  }
 
   componentDidMount() {
     this.props.setCanvas(this.refs.playArea)
@@ -32,7 +37,7 @@ class Canvas extends Component {
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
         <Path />
         <Player />
-        {this.renderTourists(5)}
+        {this.renderTourists(touristDensity)}
       </Fragment>
     )
   }
@@ -46,7 +51,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCanvas: (canvas) => dispatch(setThisCanvas(canvas))
+    setCanvas: (canvas) => dispatch(setThisCanvas(canvas)),
+    emptyGarbageOfTourists: () => dispatch(emptyGarbageOfTourists())
   }
 }
 

@@ -30,9 +30,9 @@ const Tourist = class extends Component {
 
   static getDerivedStateFromProps(props, state) {
     if (state.positionOnArray === null && state.positionX === null && state.positionY === null && state.initialSize === null && props.centersOfBricks.length > 0) {
-      const lowerBound = 40
+      const lowerBound = 40 // FIX why does 40 work but 10 only works until 20 goombas have disappeared?
       const sizeOfRange = props.centersOfBricks.length - ((initialPlayerSize/2) + 10)
-      const randomPositionOnArray = lowerBound + Math.trunc(Math.random() * sizeOfRange)
+      const randomPositionOnArray = lowerBound+ Math.trunc(Math.random() * sizeOfRange)
       const positionX = props.centersOfBricks[randomPositionOnArray].x
       const positionY = props.centersOfBricks[randomPositionOnArray].y
       const startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))

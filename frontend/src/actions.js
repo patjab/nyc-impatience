@@ -5,10 +5,10 @@ export const setThisCanvas = (canvas) => {
   }
 }
 
-export const movePlayer = (x, y) => {
+export const movePlayer = (x, y, simultaneous=false) => {
   return {
     type: "MOVE_PLAYER",
-    payload: {x, y}
+    payload: {x, y, simultaneous}
   }
 }
 
@@ -33,9 +33,8 @@ export const addTouristToGarbage = (id) => {
   }
 }
 
-// export const removeTourist = (id) => {
-//   return {
-//     type: "REMOVE_TOURIST",
-//     payload: id
-//   }
-// }
+export const emptyGarbageOfTourists = (id) => {
+  return {
+    type: "EMPTY_GARBAGE_OF_TOURISTS"
+  }
+}
