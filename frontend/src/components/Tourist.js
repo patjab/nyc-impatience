@@ -6,11 +6,12 @@ import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, canvasHeight
 const Tourist = class extends Component {
   state = {
     positionX: null,
-    positionY: this.props.yPos,
-    positionOnArray: 2,
+    positionY: null,
+    positionOnArray: null,
     progressionMagnificatonTemp: 0,
     // positionY: horizonLine+(Math.trunc(Math.random()*500)),
-    walkingCycle: 0
+    walkingCycle: 0,
+    initialSize: null
   }
 
   findAngle = () => {
@@ -25,23 +26,18 @@ const Tourist = class extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (state.positionX === null ) {
-      const distanceFromHorizon = props.yPos - horizonLine
-
-      const lengthOfGroundTriangle = canvasHeight - horizonLine
-      const widthOfGroundTriangle = canvasWidth/2
-      const sideOfPath = Math.sqrt(Math.pow(lengthOfGroundTriangle, 2) + Math.pow(widthOfGroundTriangle, 2))
-      const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(canvasWidth, 2)
-      const denominator = (2 * Math.pow(sideOfPath, 2))
-      const angleOfConvergence = Math.acos(numerator/denominator)
-
-      const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
-      const startOfRange = (canvasWidth - horizontalPathLength)/2
-      const endOfRange = startOfRange + horizontalPathLength
-
+    if (state.positionOnArray === null && state.positionX === null && state.positionY === null && props.centersOfBricks.length > 0) {
+      const randomPositionOnArray = 40 + Math.trunc(Math.random() * props.centersOfBricks.length - 40)
+      const positionX = props.centersOfBricks[randomPositionOnArray].x
+      const positionY = props.centersOfBricks[randomPositionOnArray].y
+      const startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
+      console.log(startingSize)
       return {
         ...state,
-        positionX: startOfRange + Math.random(endOfRange - startOfRange)
+        positionX: positionX,
+        positionY: positionY,
+        positionOnArray: randomPositionOnArray,
+        initialSize: startingSize
       }
     } else {
       return state
@@ -103,14 +99,15 @@ const Tourist = class extends Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
-    const sizeOfSide = this.howBigShouldIBe()
+    console.log(this.state)
     this.refs.touristImg.onload = () => {
+      const sizeOfSide = this.state.initialSize
+      console.log(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     }
   }
 
   componentDidUpdate() {
-    // window.addEventListener('keydown', this.progressionMagnification)
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()
