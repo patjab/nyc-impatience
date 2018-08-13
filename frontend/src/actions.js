@@ -26,9 +26,16 @@ export const initializeBrickList = (brickList) => {
   }
 }
 
-export const addTourist = (tourist) => {
+export const addTouristToGarbage = (id) => {
   return {
-    type: "ADD_TOURIST",
-    payload: tourist
+    type: "ADD_TOURIST_TO_GARBAGE",
+    payload: id
   }
 }
+
+// export const removeTourist = (id) => {
+//   return {
+//     type: "REMOVE_TOURIST",
+//     payload: id
+//   }
+// }

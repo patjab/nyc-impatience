@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { horizonLine, initialPlayerSize, playerStartY, canvasHeight } from '../setupData'
-import { addTourist } from '../actions'
+import { addTouristToGarbage } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -14,6 +14,8 @@ const Tourist = class extends Component {
     initialSize: null,
     outOfView: false
   }
+
+  static touristId = 0
 
   findAngle = () => {
     const lengthOfGroundTriangle = this.props.canvas.height - this.horizonPosition
@@ -28,7 +30,9 @@ const Tourist = class extends Component {
 
   static getDerivedStateFromProps(props, state) {
     if (state.positionOnArray === null && state.positionX === null && state.positionY === null && state.initialSize === null && props.centersOfBricks.length > 0) {
-      const randomPositionOnArray = 40 + Math.trunc(Math.random() * props.centersOfBricks.length - 40)
+      const lowerBound = 40
+      const sizeOfRange = props.centersOfBricks.length - ((initialPlayerSize/2) + 10)
+      const randomPositionOnArray = lowerBound + Math.trunc(Math.random() * sizeOfRange)
       const positionX = props.centersOfBricks[randomPositionOnArray].x
       const positionY = props.centersOfBricks[randomPositionOnArray].y
       const startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
@@ -98,30 +102,32 @@ const Tourist = class extends Component {
     }
   }
 
+  checkIfTouristStillInView = () => {
+    if (this.state.positionY) {
+      if (this.state.positionY > (canvasHeight - (initialPlayerSize/2))) {
+        this.props.addTouristToGarbage(this.props.id)
+      }
+    }
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
     this.refs.touristImg.onload = () => {
       const sizeOfSide = this.state.initialSize
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     }
-    this.props.addTourist(this)
   }
 
   componentDidUpdate() {
-    if (!this.state.outOfView) {
-      const sizeOfSide = this.howBigShouldIBe()
-      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-      this.checkForCollision()
+    const sizeOfSide = this.howBigShouldIBe()
+    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+    this.checkForCollision()
+    this.checkIfTouristStillInView()
+  }
 
-      if (this.state.positionY) {
-        if (this.state.positionY > (canvasHeight - (initialPlayerSize/2))) {
-          console.log("unmount me", this.props.id)
-          this.setState({outOfView: true})
-        }
-      }
-    } else {
-      console.log("do unmounting")
-    }
+  componentWillUnmount() {
+    console.log("Goodbye Tourist")
+    window.removeEventListener('keydown', this.progressionMagnification)
   }
 
   render() {
@@ -143,7 +149,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addTourist: (tourist) => dispatch(addTourist(tourist))
+    addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id))
   }
 }
 

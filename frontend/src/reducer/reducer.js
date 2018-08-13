@@ -10,7 +10,7 @@ const initialState = {
   movement: 0,
   movementPerBrick: walking,
   centersOfBricks: [],
-  currentTourists: []
+  garbageOfTourists: []
 }
 
 const gameController = (state = initialState, action) => {
@@ -39,10 +39,10 @@ const gameController = (state = initialState, action) => {
         ...state,
         movementPerBrick: action.payload
       }
-    case "ADD_TOURIST": 
+    case "ADD_TOURIST_TO_GARBAGE":
       return {
         ...state,
-        currentTourists: [...state.currentTourists, action.payload]
+        garbageOfTourists: [...state.garbageOfTourists, action.payload]
       }
     default:
       return state
