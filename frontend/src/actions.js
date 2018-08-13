@@ -38,3 +38,9 @@ export const emptyGarbageOfTourists = (id) => {
     type: "EMPTY_GARBAGE_OF_TOURISTS"
   }
 }
+
+export const signalTimeOut = () => {
+  return {
+    type: "SIGNAL_TIME_OUT"
+  }
+}

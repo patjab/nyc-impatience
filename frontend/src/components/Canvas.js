@@ -7,6 +7,7 @@ import { touristDensity } from '../setupData'
 import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
+import Timer from './Timer'
 
 import { canvasWidth, canvasHeight } from '../setupData'
 
@@ -35,6 +36,7 @@ class Canvas extends Component {
     return (
       <Fragment>
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
+        <Timer />
         <Path />
         <Player />
         {this.renderTourists(touristDensity)}

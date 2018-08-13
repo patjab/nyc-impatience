@@ -5,7 +5,6 @@ import { movePlayer, changeSpeed } from '../actions'
 import { walking, running, shiftingSpeed } from '../setupData'
 
 class Player extends Component {
-
   state = {
     speed: 4,
     walkingCycle: 0,
@@ -13,8 +12,9 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
-    const upperLeft = this.diagonalMap[37] && this.diagonalMap[38]
-    const upperRight= this.diagonalMap[38] && this.diagonalMap[39]
+    // REMEMBER TO FIX - MAKE SURE FUNCTION ONLY CHANGES STATE IN RESPONSE TO ARROW KEYS AND NOTHING ELSE
+    const upperLeft = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
+    const upperRight = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
 
     if ((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41) || (e.key === 's') ) {
       e.preventDefault()
@@ -33,9 +33,9 @@ class Player extends Component {
     }
   }
 
-  diagonalMap = []
+  diagonalMapSimultaneous = []
   handleDiagonalWalking = (e) => {
-    this.diagonalMap[e.keyCode] = e.type === 'keydown'
+    this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
   }
 
   componentDidMount() {
@@ -44,7 +44,6 @@ class Player extends Component {
     // FIX merge the event listeners
     window.addEventListener('keydown', this.handleDiagonalWalking)
     window.addEventListener('keyup', this.handleDiagonalWalking)
-
 
     this.refs.playerImg.onload = () => {
       const ctx = this.props.canvas.getContext("2d")

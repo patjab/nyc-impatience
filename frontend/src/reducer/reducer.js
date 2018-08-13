@@ -10,7 +10,8 @@ const initialState = {
   movement: 0,
   movementPerBrick: walking,
   centersOfBricks: [],
-  garbageOfTourists: []
+  garbageOfTourists: [],
+  signalTimeOut: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -48,6 +49,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         garbageOfTourists: []
+      }
+    case "SIGNAL_TIME_OUT":
+      return {
+        ...state,
+        signalTimeOut: true
       }
     default:
       return state
