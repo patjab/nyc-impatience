@@ -64,14 +64,6 @@ class Path extends Component {
     return bricksList
   }
 
-  // initializePreviousPoints = (centralX) => {
-  //   let previousPoints = []
-  //   // for ( let i = 0; i <= this.numOfBricksInARow; i++ ) {
-  //   //   previousPoints.push({x: centralX, y: this.horizonPosition})
-  //   // }
-  //   return previousPoints
-  // }
-
   recordCurrentPoints = (horizontalPathLength, xStartOfHorizontalLines, row) => {
     let currentPoints = []
     for ( let brick = 0; brick <= this.numOfBricksInARow; brick++) {
@@ -124,7 +116,6 @@ class Path extends Component {
     this.cfBricksList = bricksList
     return bricksList
   }
-
 
   makeSideStructures = (ctx) => {
     const centralX = this.props.canvas.width/2
