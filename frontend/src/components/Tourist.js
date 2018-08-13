@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, canvasHeight } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasHeight } from '../setupData'
+import { addTourist } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -9,9 +10,9 @@ const Tourist = class extends Component {
     positionY: null,
     positionOnArray: null,
     progressionMagnificatonTemp: 0,
-    // positionY: horizonLine+(Math.trunc(Math.random()*500)),
     walkingCycle: 0,
-    initialSize: null
+    initialSize: null,
+    unmountMe: false
   }
 
   findAngle = () => {
@@ -26,12 +27,12 @@ const Tourist = class extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (state.positionOnArray === null && state.positionX === null && state.positionY === null && props.centersOfBricks.length > 0) {
+    if (state.positionOnArray === null && state.positionX === null && state.positionY === null && state.initialSize === null && props.centersOfBricks.length > 0) {
       const randomPositionOnArray = 40 + Math.trunc(Math.random() * props.centersOfBricks.length - 40)
       const positionX = props.centersOfBricks[randomPositionOnArray].x
       const positionY = props.centersOfBricks[randomPositionOnArray].y
       const startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
-      console.log(startingSize)
+
       return {
         ...state,
         positionX: positionX,
@@ -99,18 +100,24 @@ const Tourist = class extends Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.progressionMagnification)
-    console.log(this.state)
     this.refs.touristImg.onload = () => {
       const sizeOfSide = this.state.initialSize
-      console.log(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     }
+    this.props.addTourist(this)
   }
 
   componentDidUpdate() {
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()
+
+    if (this.state.positionY) {
+      if (this.state.positionY > (canvasHeight - (initialPlayerSize/2))) {
+        console.log("unmount me", this.props.id)
+        return null
+      }
+    }
   }
 
   render() {
@@ -130,4 +137,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Tourist)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addTourist: (tourist) => dispatch(addTourist(tourist))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tourist)

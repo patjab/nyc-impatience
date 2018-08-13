@@ -9,7 +9,8 @@ const initialState = {
   initialPeopleSizes: 150, // POSSIBLY move this to setupData
   movement: 0,
   movementPerBrick: walking,
-  centersOfBricks: []
+  centersOfBricks: [],
+  currentTourists: []
 }
 
 const gameController = (state = initialState, action) => {
@@ -37,6 +38,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         movementPerBrick: action.payload
+      }
+    case "ADD_TOURIST": 
+      return {
+        ...state,
+        currentTourists: [...state.currentTourists, action.payload]
       }
     default:
       return state

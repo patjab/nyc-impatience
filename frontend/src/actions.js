@@ -25,3 +25,10 @@ export const initializeBrickList = (brickList) => {
     payload: brickList
   }
 }
+
+export const addTourist = (tourist) => {
+  return {
+    type: "ADD_TOURIST",
+    payload: tourist
+  }
+}

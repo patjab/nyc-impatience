@@ -20,10 +20,24 @@ class Canvas extends Component {
     const xCenter = this.refs.playArea/2
     let tourists = []
     for ( let i = 0; i < numberOfTourists; i++ ) {
-      tourists.push(<Tourist xPos={xCenter} yPos={horizonLine+1+(Math.random()*(canvasHeight-horizonLine-1))} key={i}/>)
+      tourists.push(<Tourist key={i} id={i} />)
     }
     return tourists
   }
+
+  // renderTouristsWithCheck = (numberOfTourists) => {
+  //   const stillMounted = []
+  //   const touristsColl = this.renderTourists(numberOfTourists)
+  //   for ( let tourist1 of touristsColl) {
+  //     console.log(this.props)
+  //     if ( this.props.currentTourists.map(tourist2 => tourist2.props.id).includes(tourist1.props.id) ) {
+  //       stillMounted.push(tourist1)
+  //     }
+  //   }
+  //   console.log(stillMounted)
+  //   return stillMounted
+  // }
+
 
   render() {
     return (
@@ -37,10 +51,16 @@ class Canvas extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    currentTourists: state.currentTourists
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     setCanvas: (canvas) => dispatch(setThisCanvas(canvas))
   }
 }
 
-export default connect(null, mapDispatchToProps)(Canvas)
+export default connect(mapStateToProps, mapDispatchToProps)(Canvas)
