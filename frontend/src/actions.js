@@ -5,10 +5,10 @@ export const setThisCanvas = (canvas) => {
   }
 }
 
-export const movePlayer = (x, y, simultaneous=false) => {
+export const movePlayer = (x, y) => {
   return {
     type: "MOVE_PLAYER",
-    payload: {x, y, simultaneous}
+    payload: {x, y}
   }
 }
 

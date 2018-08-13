@@ -61,7 +61,7 @@ const Tourist = class extends Component {
   }
 
   progressionMagnification = (e) => {
-    if (e.keyCode === 38 || e.keyCode === 40) {
+    if (e.keyCode >= 37 && e.keyCode <= 40) {
       e.preventDefault()
       const projectedIndex = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*this.props.movementPerBrick)*9)
       const locusRangeFinder = 100
