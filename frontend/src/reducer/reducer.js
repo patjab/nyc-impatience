@@ -23,7 +23,6 @@ const gameController = (state = initialState, action) => {
         canvas: action.payload
       }
     case "MOVE_PLAYER":
-      console.log(state.movement + (action.payload.y))
       return {
         ...state,
         player: {

@@ -12,17 +12,28 @@ import Timer from './Timer'
 import { canvasWidth, canvasHeight } from '../setupData'
 
 class Canvas extends Component {
+  somethingDimensions = 483
   componentDidUpdate() {
-    this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, 500)
+    this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
     if ( this.props.garbageOfTourists.length === touristDensity ) {
       this.props.emptyGarbageOfTourists()
     }
   }
 
   componentDidMount() {
+    window.addEventListener('keydown', (e) => {
+      if (!document.querySelector("#backgroundMusic")) {
+        const backgroundMusicEl = document.createElement("audio")
+        backgroundMusicEl.setAttribute("id", "backgroundMusic")
+        backgroundMusicEl.src = '../backgroundMusic.mp3'
+        document.head.appendChild(backgroundMusicEl)
+        backgroundMusicEl.play()
+      }
+    })
+
     this.props.setCanvas(this.refs.playArea)
     this.refs.nySkyline.onload = () => {
-      this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, 500)
+      this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
     }
 
   }
