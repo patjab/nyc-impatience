@@ -65,15 +65,23 @@ class Player extends Component {
     window.addEventListener('keydown', this.handleWalking)
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
-    this.refs.playerImg.onload = () => {
-      const ctx = this.props.canvas.getContext("2d")
-      ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
+
+    if (this.refs.playerImg && this.props.canvas && this.props.canvas.getContext("2d")) {
+      this.refs.playerImg.onload = () => {
+        const ctx = this.props.canvas.getContext("2d")
+        ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
+      }
     }
   }
 
   componentDidUpdate() {
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
     this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleWalking)
+    window.removeEventListener('keyup', this.releaseCriteria)
   }
 
   render() {

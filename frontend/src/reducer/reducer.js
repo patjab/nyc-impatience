@@ -24,13 +24,17 @@ const gameController = (state = initialState, action) => {
         canvas: action.payload
       }
     case "MOVE_PLAYER":
-      return {
-        ...state,
-        player: {
-          ...state.player,
-          xPosition: state.player.xPosition + (action.payload.x)
-        },
-        movement: state.movement !== 0 && state.movement - action.payload.y < 0 ? 0 : state.movement + action.payload.y
+      if (state.lives > 0) {
+        return {
+          ...state,
+          player: {
+            ...state.player,
+            xPosition: state.player.xPosition + (action.payload.x)
+          },
+          movement: state.movement !== 0 && state.movement - action.payload.y < 0 ? 0 : state.movement + action.payload.y
+        }
+      } else {
+        return state
       }
     case "INITIALIZE_BRICK_LIST":
       return {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasHeight } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, canvasHeight } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, movePlayer, resetPlayer, decreaseLife } from '../actions'
 
 const Tourist = class extends Component {
@@ -95,7 +95,7 @@ const Tourist = class extends Component {
     const upperLeftPlayer = {x: this.props.playerX, y: this.props.playerY}
     const upperRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY}
 
-    let nearnessSpook = 40
+    let nearnessSpook = 20
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
@@ -107,6 +107,7 @@ const Tourist = class extends Component {
         this.props.resetPlayer()
         this.props.decreaseLife()
       })
+
     } else {
     }
   }

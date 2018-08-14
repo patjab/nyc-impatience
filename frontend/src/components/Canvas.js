@@ -18,11 +18,6 @@ class Canvas extends Component {
     if ( this.props.garbageOfTourists.length === touristDensity ) {
       this.props.emptyGarbageOfTourists()
     }
-
-    if (this.props.lives === 0) {
-      window.addEventListener('keydown', (e) => e.stopPropagation(), true)
-      window.addEventListener('keyup', (e) => e.stopPropagation(), true)
-    }
   }
 
   componentDidMount() {
@@ -46,11 +41,15 @@ class Canvas extends Component {
 
   renderTourists = (numberOfTourists) => {
     let tourists = []
-    for ( let i = 0; i < numberOfTourists; i++ ) {
-      if ( !this.props.garbageOfTourists.includes(i) ) {
-        tourists.push(<Tourist key={i} id={i} />)
+
+    if (this.props.lives > 0) {
+      for ( let i = 0; i < numberOfTourists; i++ ) {
+        if ( !this.props.garbageOfTourists.includes(i) ) {
+          tourists.push(<Tourist key={i} id={i} />)
+        }
       }
     }
+
     return tourists
   }
 
@@ -61,7 +60,7 @@ class Canvas extends Component {
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
         <Timer />
         <Path />
-        <Player />
+        {this.props.lives !== 0 ? <Player /> : null}
         {this.renderTourists(touristDensity)}
       </Fragment>
     )
@@ -71,6 +70,7 @@ class Canvas extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    canvas: state.canvas,
     garbageOfTourists: state.garbageOfTourists,
     lives: state.lives
   }
