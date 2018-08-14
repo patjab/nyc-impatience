@@ -13,6 +13,7 @@ import { canvasWidth, canvasHeight } from '../setupData'
 
 class Canvas extends Component {
   componentDidUpdate() {
+    this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, 500)
     if ( this.props.garbageOfTourists.length === touristDensity ) {
       this.props.emptyGarbageOfTourists()
     }
@@ -20,6 +21,10 @@ class Canvas extends Component {
 
   componentDidMount() {
     this.props.setCanvas(this.refs.playArea)
+    this.refs.nySkyline.onload = () => {
+      this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, 500)
+    }
+
   }
 
   renderTourists = (numberOfTourists) => {
@@ -35,6 +40,7 @@ class Canvas extends Component {
   render() {
     return (
       <Fragment>
+        <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
         <Timer />
         <Path />
