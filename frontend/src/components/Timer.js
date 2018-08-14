@@ -8,7 +8,8 @@ import { canvasWidth } from '../setupData'
 class Timer extends Component {
   state = {
     time: 0,
-    level: 0
+    lives: 3,
+    level: 1
   }
 
   formatTime() {
@@ -31,19 +32,34 @@ class Timer extends Component {
 
       ctx.font = "20px Geneva"
       ctx.fillStyle = "white"
-      ctx.fillText(`Steps Without Crashing`, 50, 30)
-
-      ctx.font = "36px Geneva"
-      ctx.fillStyle = "red"
-      ctx.fillText(`${this.formatMovement()}`, 100, 70)
+      ctx.fillText(`Steps Without Crashing`, 20, 30)
 
       ctx.font = "20px Geneva"
       ctx.fillStyle = "white"
-      ctx.fillText(`Timer`, canvasWidth-200, 30)
+      ctx.fillText(`Lives`, 375, 30)
+
+      const spacing = 10
+      let cursorCoordinateX = 290
+      const cursorCoordinateY = 45
+      const lifeWidth = 60
+      const lifeHeight = 40
+
+      for ( let i = 0; i < this.props.lives; i++ ) {
+        this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
+        cursorCoordinateX += spacing + lifeWidth
+      }
 
       ctx.font = "36px Geneva"
       ctx.fillStyle = "red"
-      ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-250, 70)
+      ctx.fillText(`${this.formatMovement()}`, 70, 70)
+
+      ctx.font = "20px Geneva"
+      ctx.fillStyle = "white"
+      ctx.fillText(`Timer`, canvasWidth-150, 30)
+
+      ctx.font = "36px Geneva"
+      ctx.fillStyle = "red"
+      ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-200, 70)
     }
   }
 
@@ -53,14 +69,15 @@ class Timer extends Component {
 
   render() {
     this.drawTimer()
-    return <div></div>
+    return <img src='../life.png' ref='lifeSymbol' className='hidden' alt='lifeSymbol'/>
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    movement: state.movement
+    movement: state.movement,
+    lives: state.lives
   }
 }
 

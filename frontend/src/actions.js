@@ -76,3 +76,9 @@ export const resetPlayer = () => {
     type: "RESET_PLAYER"
   }
 }
+
+export const decreaseLife = () => {
+  return {
+    type: "DECREASE_LIFE"
+  }
+}

@@ -50,6 +50,7 @@ class Canvas extends Component {
   }
 
   render() {
+    console.log("Current touristDensity: ", touristDensity)
     return (
       <Fragment>
         <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>

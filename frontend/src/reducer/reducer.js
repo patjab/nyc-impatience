@@ -12,7 +12,8 @@ const initialState = {
   centersOfBricks: [],
   garbageOfTourists: [],
   touristRoaster: [],
-  signalTimeOut: false
+  signalTimeOut: false,
+  lives: 3
 }
 
 const gameController = (state = initialState, action) => {
@@ -82,6 +83,11 @@ const gameController = (state = initialState, action) => {
         movement: 0,
         movementPerBrick: walking,
         signalTimeOut: false
+      }
+    case "DECREASE_LIFE":
+      return {
+        ...state,
+        lives: state.lives > -1 ? state.lives - 1 : 0
       }
     default:
       return state
