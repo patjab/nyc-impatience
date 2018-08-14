@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { horizonLine, initialPlayerSize, playerStartY, canvasHeight } from '../setupData'
-import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster } from '../actions'
+import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, movePlayer, resetPlayer} from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -12,7 +12,8 @@ const Tourist = class extends Component {
     progressionMagnificatonTemp: 0,
     walkingCycle: 0,
     initialSize: null,
-    outOfView: false
+    outOfView: false,
+    dontCallBumpAgain: false
   }
 
   static touristId = 0
@@ -92,13 +93,18 @@ const Tourist = class extends Component {
     const upperLeftPlayer = {x: this.props.playerX, y: this.props.playerY}
     const upperRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY}
 
-    let nearnessSpook = 35
+    let nearnessSpook = 40
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
-    if ( bumpOnTheLeft || bumpOnTheRight ) {
-      console.log("BUMP")
+    if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
+      // fix DOM manipulation later
+      document.querySelector("#bumpSoundEl").play()
+      // fix DOM manipulation later
+      // this.props.moveDown() <--- causes stack overflow inifinite
+      this.setState({dontCallBumpAgain: true}, () => {
+        this.props.resetPlayer()
+      })
     } else {
-      console.log("NO BUMP")
     }
   }
 
@@ -111,6 +117,13 @@ const Tourist = class extends Component {
   }
 
   componentDidMount() {
+    // fix DOM manipulation later
+    const bumpSoundEl = document.createElement("audio")
+    bumpSoundEl.setAttribute("id", "bumpSoundEl")
+    bumpSoundEl.src = "../bump.wav"
+    document.head.appendChild(bumpSoundEl)
+    // fix DOM manipulation later
+
     window.addEventListener('keydown', this.progressionMagnification)
     this.refs.touristImg.onload = () => {
       const sizeOfSide = this.state.initialSize
@@ -152,7 +165,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addTouristToRoaster: (tourist) => dispatch(addTouristToRoaster(tourist)),
     removeTouristFromRoaster: (id) => dispatch(removeTouristFromRoaster(id)),
-    addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id))
+    addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id)),
+    resetPlayer: () => dispatch(resetPlayer())
   }
 }
 

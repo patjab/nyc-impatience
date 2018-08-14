@@ -23,13 +23,14 @@ const gameController = (state = initialState, action) => {
         canvas: action.payload
       }
     case "MOVE_PLAYER":
+      console.log(state.movement + (action.payload.y))
       return {
         ...state,
         player: {
           ...state.player,
           xPosition: state.player.xPosition + (action.payload.x)
         },
-        movement: state.movement + (action.payload.y)
+        movement: state.movement !== 0 && state.movement - action.payload.y < 0 ? 0 : state.movement + action.payload.y
       }
     case "INITIALIZE_BRICK_LIST":
       return {
@@ -70,6 +71,18 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         signalTimeOut: true
+      }
+    case "RESET_PLAYER":
+      return {
+        ...state,
+        player: {
+          xPosition: playerStartX,
+          yPosition: playerStartY
+        },
+        initialPeopleSizes: 150, // POSSIBLY move this to setupData
+        movement: 0,
+        movementPerBrick: walking,
+        signalTimeOut: false
       }
     default:
       return state

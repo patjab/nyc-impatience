@@ -64,3 +64,15 @@ export const emptyTouristRoaster = () => {
     type: "EMPTY_TOURIST_ROASTER"
   }
 }
+
+export const playerBroughtBack = () => {
+  return {
+    type: "PLAYER_BROUGHT_BACK"
+  }
+}
+
+export const resetPlayer = () => {
+  return {
+    type: "RESET_PLAYER"
+  }
+}
