@@ -82,23 +82,23 @@ const Tourist = class extends Component {
   checkForCollision = () => {
     const sizeOfSide = this.howBigShouldIBe()
 
-    const lowerLeftTouristX = this.state.positionX
-    const lowerLeftTouristY = this.state.positionY + sizeOfSide
-    const lowerRightTouristX = this.state.positionX + sizeOfSide
-    const upperLeftTouristY = this.state.positionY
+    const lowerLeftTourist = {x: this.state.positionX, y: this.state.positionY + sizeOfSide}
+    const lowerRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY + sizeOfSide}
+    const upperLeftTourist = {x: this.state.positionX, y: this.state.positionY}
+    const upperRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY}
 
-    const upperLeftPlayerX = this.props.playerX
-    const upperLeftPlayerY = this.props.playerY
-    const upperRightPlayerX = this.props.playerX + initialPlayerSize
-    const lowerLeftPlayerY = this.props.playerY + initialPlayerSize
+    const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPlayerSize}
+    const lowerRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY + initialPlayerSize}
+    const upperLeftPlayer = {x: this.props.playerX, y: this.props.playerY}
+    const upperRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY}
 
-    let xConditional = (lowerRightTouristX >= upperLeftPlayerX && lowerRightTouristX <= upperRightPlayerX) || (lowerLeftTouristX >= upperLeftPlayerX && lowerLeftTouristX <= upperRightPlayerX)
-    let yConditional = (upperLeftPlayerY <= lowerLeftTouristY) && (lowerLeftPlayerY >= upperLeftTouristY)
-
-    if ( xConditional && yConditional ) {
-      // console.log("BUMP")
+    let nearnessSpook = 35
+    let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
+    let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
+    if ( bumpOnTheLeft || bumpOnTheRight ) {
+      console.log("BUMP")
     } else {
-      // console.log("NOT BUMP")
+      console.log("NO BUMP")
     }
   }
 
