@@ -7,7 +7,8 @@ import { canvasWidth } from '../setupData'
 
 class Timer extends Component {
   state = {
-    time: 0
+    time: 0,
+    level: 0
   }
 
   formatTime() {

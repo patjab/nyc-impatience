@@ -25,6 +25,7 @@ class Canvas extends Component {
       if (!document.querySelector("#backgroundMusic")) {
         const backgroundMusicEl = document.createElement("audio")
         backgroundMusicEl.setAttribute("id", "backgroundMusic")
+        backgroundMusicEl.setAttribute("loop", "true")
         backgroundMusicEl.src = '../backgroundMusic.mp3'
         document.head.appendChild(backgroundMusicEl)
         backgroundMusicEl.play()

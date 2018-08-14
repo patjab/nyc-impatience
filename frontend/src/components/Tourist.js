@@ -13,6 +13,8 @@ const Tourist = class extends Component {
     walkingCycle: 0,
     initialSize: null,
     outOfView: false,
+    image: Math.trunc(Math.random() * 3),
+    images: ['../tourist.png', '../tourist2.png', '../tourist3.png'],
     dontCallBumpAgain: false
   }
 
@@ -34,7 +36,9 @@ const Tourist = class extends Component {
       const lowerBound = 40 // FIX why does 40 work but 10 only works until 20 goombas have disappeared?
       // const sizeOfRange = props.centersOfBricks.length - ((initialPlayerSize/2) + 10)
       const sizeOfRange = props.centersOfBricks.length - 200
-      const randomPositionOnArray = lowerBound+ Math.trunc(Math.random() * sizeOfRange)
+      let randomPositionOnArray = lowerBound+ Math.trunc(Math.random() * sizeOfRange)
+      randomPositionOnArray = randomPositionOnArray - (randomPositionOnArray % 1)
+
       const positionX = props.centersOfBricks[randomPositionOnArray].x
       const positionY = props.centersOfBricks[randomPositionOnArray].y
       const startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
@@ -146,7 +150,7 @@ const Tourist = class extends Component {
   }
 
   render() {
-    return <img src='../tourist.png' ref='touristImg' className='hidden' alt='tourist'/>
+    return <img src={`${this.state.images[this.state.image]}`} ref='touristImg' className='hidden' alt='tourist'/>
   }
 }
 
