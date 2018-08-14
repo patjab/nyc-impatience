@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 
 import { connect } from 'react-redux'
-import { setThisCanvas, emptyGarbageOfTourists, addEventListenersToList } from '../actions'
+import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
 import { touristDensity } from '../setupData'
 
 import Path from './Path'

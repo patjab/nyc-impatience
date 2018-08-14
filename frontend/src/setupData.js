@@ -11,6 +11,8 @@ export const running = 0.80
 
 export const shiftingSpeed = 10
 
+export const nearnessSpook = 20
+
 export const touristDensity = 7
 
 export const playerStartX = (canvasWidth/2)-(initialPlayerSize/2)

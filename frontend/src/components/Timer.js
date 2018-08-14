@@ -20,7 +20,7 @@ class Timer extends Component {
     return `${("00000" + this.props.movement).slice(-6)}`
   }
 
-  drawTimer = () => {
+  drawStatusBar = () => {
     const statusBarHeight = 100
 
     const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
@@ -28,38 +28,49 @@ class Timer extends Component {
       ctx.clearRect(0, 0, canvasWidth, statusBarHeight)
       ctx.fillStyle = 'black'
       ctx.fillRect(0, 0, canvasWidth, statusBarHeight)
-      const currentTime = this.formatTime()
 
-      ctx.font = "20px Geneva"
-      ctx.fillStyle = "white"
-      ctx.fillText(`Steps Without Crashing`, 20, 30)
+      this.drawLives(ctx)
+      this.drawStepsCounter(ctx)
+      this.drawTime(ctx)
+    }
+  }
 
-      ctx.font = "20px Geneva"
-      ctx.fillStyle = "white"
-      ctx.fillText(`Lives`, 375, 30)
+  drawTime = (ctx) => {
+    const currentTime = this.formatTime()
 
-      const spacing = 10
-      let cursorCoordinateX = 290
-      const cursorCoordinateY = 45
-      const lifeWidth = 60
-      const lifeHeight = 40
+    ctx.font = "20px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText(`Time`, canvasWidth-140, 30)
 
-      for ( let i = 0; i < this.props.lives; i++ ) {
-        this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
-        cursorCoordinateX += spacing + lifeWidth
-      }
+    ctx.font = "36px Geneva"
+    ctx.fillStyle = "red"
+    ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-200, 70)
+  }
 
-      ctx.font = "36px Geneva"
-      ctx.fillStyle = "red"
-      ctx.fillText(`${this.formatMovement()}`, 60, 70)
+  drawStepsCounter = (ctx) => {
+    ctx.font = "20px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText(`Steps Without Crashing`, 20, 30)
 
-      ctx.font = "20px Geneva"
-      ctx.fillStyle = "white"
-      ctx.fillText(`Time`, canvasWidth-140, 30)
+    ctx.font = "36px Geneva"
+    ctx.fillStyle = "red"
+    ctx.fillText(`${this.formatMovement()}`, 60, 70)
+  }
 
-      ctx.font = "36px Geneva"
-      ctx.fillStyle = "red"
-      ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-200, 70)
+  drawLives = (ctx) => {
+    ctx.font = "20px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText(`Lives`, 375, 30)
+
+    const spacing = 10
+    let cursorCoordinateX = 290
+    const cursorCoordinateY = 45
+    const lifeWidth = 60
+    const lifeHeight = 40
+
+    for ( let i = 0; i < this.props.lives; i++ ) {
+      this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
+      cursorCoordinateX += spacing + lifeWidth
     }
   }
 
@@ -68,16 +79,9 @@ class Timer extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.willBeDone) {
-      return false
-    }
-
-    if (nextProps.lives <= 0) {
-      this.setState({willBeDone: true})
-      return true
-    } else {
-      return true
-    }
+    if (this.state.willBeDone) { return false }
+    if (nextProps.lives <= 0) { this.setState({willBeDone: true}) }
+    return true
   }
 
   showGameOverScreen = () => {
@@ -101,7 +105,7 @@ class Timer extends Component {
   }
 
   render() {
-    this.drawTimer()
+    this.drawStatusBar()
     return <img src='../life.png' ref='lifeSymbol' className='hidden' alt='lifeSymbol'/>
   }
 }

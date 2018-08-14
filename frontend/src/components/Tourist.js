@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasWidth, canvasHeight } from '../setupData'
-import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, movePlayer, resetPlayer, decreaseLife } from '../actions'
+import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
+import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, resetPlayer, decreaseLife } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -87,15 +87,9 @@ const Tourist = class extends Component {
 
     const lowerLeftTourist = {x: this.state.positionX, y: this.state.positionY + sizeOfSide}
     const lowerRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY + sizeOfSide}
-    const upperLeftTourist = {x: this.state.positionX, y: this.state.positionY}
-    const upperRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY}
-
     const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPlayerSize}
     const lowerRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY + initialPlayerSize}
-    const upperLeftPlayer = {x: this.props.playerX, y: this.props.playerY}
-    const upperRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY}
 
-    let nearnessSpook = 20
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {

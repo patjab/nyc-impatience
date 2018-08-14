@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 
-import { depthCoefficient, horizonLine, canvasWidth, canvasHeight } from '../setupData'
+import { depthCoefficient, horizonLine } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
