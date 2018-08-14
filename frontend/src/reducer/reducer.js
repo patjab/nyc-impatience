@@ -94,5 +94,4 @@ const gameController = (state = initialState, action) => {
   }
 }
 
-
 export default gameController

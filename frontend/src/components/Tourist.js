@@ -55,9 +55,6 @@ const Tourist = class extends Component {
     }
   }
 
-  // PRIORITY FIX THIS IS WRONG AND NEEDS FIXING
-  // ATTEMPT THIS NEXT:
-  // EACH SUCCEEDING ROW OF BRICKS IS ALWAYS BIGGER BY DEPTHMULTIPLIER X DISTANCEFROMHORIZON
   howBigShouldIBe = () => {
     return (this.state.positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
   }
@@ -163,7 +160,8 @@ const mapStateToProps = (state) => {
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
     centersOfBricks: state.centersOfBricks,
-    movementPerBrick: state.movementPerBrick
+    movementPerBrick: state.movementPerBrick,
+    lives: state.lives
   }
 }
 

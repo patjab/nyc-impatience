@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 
 import { connect } from 'react-redux'
-import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
+import { setThisCanvas, emptyGarbageOfTourists, addEventListenersToList } from '../actions'
 import { touristDensity } from '../setupData'
 
 import Path from './Path'
@@ -17,6 +17,11 @@ class Canvas extends Component {
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
     if ( this.props.garbageOfTourists.length === touristDensity ) {
       this.props.emptyGarbageOfTourists()
+    }
+
+    if (this.props.lives === 0) {
+      window.addEventListener('keydown', (e) => e.stopPropagation(), true)
+      window.addEventListener('keyup', (e) => e.stopPropagation(), true)
     }
   }
 
@@ -50,7 +55,6 @@ class Canvas extends Component {
   }
 
   render() {
-    console.log("Current touristDensity: ", touristDensity)
     return (
       <Fragment>
         <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
@@ -62,11 +66,13 @@ class Canvas extends Component {
       </Fragment>
     )
   }
+
 }
 
 const mapStateToProps = (state) => {
   return {
-    garbageOfTourists: state.garbageOfTourists
+    garbageOfTourists: state.garbageOfTourists,
+    lives: state.lives
   }
 }
 
