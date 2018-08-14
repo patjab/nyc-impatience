@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { signalTimeOut } from '../actions'
 
-import { canvasWidth, canvasHeight } from '../setupData'
+import { canvasWidth } from '../setupData'
 
 class Timer extends Component {
   state = {

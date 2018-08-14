@@ -44,3 +44,23 @@ export const signalTimeOut = () => {
     type: "SIGNAL_TIME_OUT"
   }
 }
+
+export const addTouristToRoaster = (tourist) => {
+  return {
+    type: "ADD_TOURIST_TO_ROASTER",
+    payload: tourist
+  }
+}
+
+export const removeTouristFromRoaster = (id) => {
+  return {
+    type: "REMOVE_TOURIST_FROM_ROASTER",
+    payload: id
+  }
+}
+
+export const emptyTouristRoaster = () => {
+  return {
+    type: "EMPTY_TOURIST_ROASTER"
+  }
+}

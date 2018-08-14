@@ -11,6 +11,7 @@ const initialState = {
   movementPerBrick: walking,
   centersOfBricks: [],
   garbageOfTourists: [],
+  touristRoaster: [],
   signalTimeOut: false
 }
 
@@ -45,10 +46,25 @@ const gameController = (state = initialState, action) => {
         ...state,
         garbageOfTourists: [...state.garbageOfTourists, action.payload]
       }
+    case "ADD_TOURIST_TO_ROASTER":
+      return {
+        ...state,
+        touristRoaster: [...state.touristRoaster, action.payload]
+      }
     case "EMPTY_GARBAGE_OF_TOURISTS":
       return {
         ...state,
         garbageOfTourists: []
+      }
+    case "EMPTY_TOURIST_ROASTER":
+      return {
+        ...state,
+        touristRoaster: []
+      }
+    case "REMOVE_TOURIST_FROM_ROASTER":
+      return {
+        ...state,
+        touristRoaster: state.touristRoaster.filter(tourist => action.payload !== tourist.props.id)
       }
     case "SIGNAL_TIME_OUT":
       return {

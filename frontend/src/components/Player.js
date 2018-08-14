@@ -5,6 +5,10 @@ import { movePlayer, changeSpeed } from '../actions'
 import { walking, running, shiftingSpeed } from '../setupData'
 
 class Player extends Component {
+  diagonalMapSimultaneous = []
+  stillHoldingUp = false
+  goodForMultipleUps = false
+
   state = {
     speed: 4,
     walkingCycle: 0,
@@ -12,7 +16,12 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
+    this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
+    this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+
     // REMEMBER TO FIX - MAKE SURE FUNCTION ONLY CHANGES STATE IN RESPONSE TO ARROW KEYS AND NOTHING ELSE
+    this.stillHoldingUp = e.keyCode === 38 ? true : false
+
     const upperLeft = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
     const upperRight = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
 
@@ -26,25 +35,36 @@ class Player extends Component {
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
     }
 
-    if ( upperLeft ) {
-      this.props.moveUpLeft()
-    } else if ( upperRight ) {
-      this.props.moveUpRight()
-    }
+    upperLeft ? this.props.moveUpLeft() : (upperRight ? this.props.moveUpRight() : null)
   }
 
-  diagonalMapSimultaneous = []
-  handleDiagonalWalking = (e) => {
+  syntheticListenerForRelease = () => {
+    const syntheticConstant = 33
+    setInterval(() => {
+      if (this.goodForMultipleUps) {
+        this.props.moveUp()
+        this.props.touristRoaster.forEach(tourist => tourist.progressionMagnification({keyCode: 38, preventDefault: ()=>null}))
+        this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+      }
+    }, syntheticConstant)
+  }
+
+  releaseCriteria = (e) => {
     this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
+    this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+
+    this.stillHoldingUp = e.key !== 'ArrowUp'
+    if ( (e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp) ) {
+      this.goodForMultipleUps = true
+    } else if (e.key === 'ArrowUp') {
+      this.goodForMultipleUps = false
+    }
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleWalking)
-
-    // FIX merge the event listeners
-    window.addEventListener('keydown', this.handleDiagonalWalking)
-    window.addEventListener('keyup', this.handleDiagonalWalking)
-
+    this.syntheticListenerForRelease()
+    window.addEventListener('keyup', this.releaseCriteria)
     this.refs.playerImg.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
       ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
@@ -69,7 +89,8 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     player: state.player,
     initialPeopleSizes: state.initialPeopleSizes,
-    movementPerBrick: state.movementPerBrick
+    movementPerBrick: state.movementPerBrick,
+    touristRoaster: state.touristRoaster
   }
 }
 
@@ -77,8 +98,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     moveUp: () => dispatch(movePlayer(0, 1)),
     moveDown: () => dispatch(movePlayer(0, -1)),
-    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, -2)); dispatch(movePlayer(0, 2)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
-    moveRight: () => {dispatch(movePlayer(shiftingSpeed, -2)); dispatch(movePlayer(0, 2)); },
+    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, -0.5)); dispatch(movePlayer(0, 0.5)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
+    moveRight: () => {dispatch(movePlayer(shiftingSpeed, -0.5)); dispatch(movePlayer(0, 0.5)); },
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed))

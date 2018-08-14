@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { horizonLine, initialPlayerSize, playerStartY, canvasHeight } from '../setupData'
-import { addTouristToGarbage } from '../actions'
+import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -115,6 +115,7 @@ const Tourist = class extends Component {
     this.refs.touristImg.onload = () => {
       const sizeOfSide = this.state.initialSize
       this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+      this.props.addTouristToRoaster(this)
     }
   }
 
@@ -126,7 +127,7 @@ const Tourist = class extends Component {
   }
 
   componentWillUnmount() {
-    console.log("Goodbye Tourist")
+    this.props.removeTouristFromRoaster(this.props.id)
     window.removeEventListener('keydown', this.progressionMagnification)
   }
 
@@ -149,6 +150,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    addTouristToRoaster: (tourist) => dispatch(addTouristToRoaster(tourist)),
+    removeTouristFromRoaster: (id) => dispatch(removeTouristFromRoaster(id)),
     addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id))
   }
 }
