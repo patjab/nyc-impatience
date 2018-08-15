@@ -74,8 +74,13 @@ class Timer extends Component {
     }
   }
 
-  componentDidMount() {
+  incrementTime = () => {
     setInterval(() => this.setState({time: this.state.time + 1}), 10)
+    window.removeEventListener('keydown', this.incrementTime)
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.incrementTime)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -88,12 +93,10 @@ class Timer extends Component {
     const ctx = this.props.canvas.getContext("2d")
     ctx.font = "200px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`GAME`, canvasWidth/2 - 250, canvasHeight/2 - 110 + 30)
-    ctx.fillText(`OVER`, canvasWidth/2 - 250, canvasHeight/2 + 110 + 30)
-  }
-
-  componentWillUnmount() {
-    console.log("TIMER HAS UNMOUNTED")
+    ctx.textAlign = 'center'
+    ctx.fillText(`GAME`, canvasWidth/2, canvasHeight/2 - 110)
+    ctx.fillText(`OVER`, canvasWidth/2, canvasHeight/2 + 110)
+    ctx.textAlign = 'left'
   }
 
   componentDidUpdate() {

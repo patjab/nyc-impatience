@@ -40,7 +40,7 @@ class Player extends Component {
 
   syntheticListenerForRelease = () => {
     const syntheticConstant = 40
-    setInterval(() => {
+    this.syntheticInterval = setInterval(() => {
       if (this.goodForMultipleUps && this.diagonalMapSimultaneous[38] ) {
         this.props.moveUp()
         this.props.touristRoaster.forEach(tourist => tourist.progressionMagnification({keyCode: 38, preventDefault: ()=>null}))
@@ -82,6 +82,7 @@ class Player extends Component {
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleWalking)
     window.removeEventListener('keyup', this.releaseCriteria)
+    clearInterval(this.syntheticInterval)
   }
 
   render() {

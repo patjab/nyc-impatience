@@ -35,7 +35,6 @@ class StartScreen extends Component {
 
     if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
       if ( e.key === 'ArrowUp' ) {
-        console.log(this.state.choice)
         this.setState({choice: (this.state.choice-1).mod(3)})
       } else if ( e.key === 'ArrowDown' ) {
         this.setState({choice: (this.state.choice+1).mod(3)})
@@ -56,7 +55,7 @@ class StartScreen extends Component {
 
   userMenu = (ctx) => {
     ctx.textAlign = 'center'
-    ctx.font = "100px Geneva"
+    ctx.font = "100px Impact"
     ctx.strokeText("New York", canvasWidth/2, canvasHeight/2 - 300)
     ctx.fillStyle = "black"
     ctx.fillText("New York", canvasWidth/2, canvasHeight/2 - 300)
