@@ -47,7 +47,7 @@ class Path extends Component {
   drawVerticals = (ctx, previousPoints, currentPoints, shouldAlternateOdd) => {
     const bricksList = []
 
-    for ( let i = 1; i < previousPoints.length-1; i++ ) {
+    for ( let i = 0; i < previousPoints.length-1; i++ ) {
       if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 ) ) {
         ctx.beginPath()
         ctx.moveTo(previousPoints[i].x, previousPoints[i].y)

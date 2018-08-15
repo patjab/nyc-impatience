@@ -25,7 +25,7 @@ class Player extends Component {
     const upperLeft = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
     const upperRight = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
 
-    if ((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41) || (e.key === 's') ) {
+    if (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's') ) {
       e.preventDefault()
       if (e.keyCode === 37 && this.props.player.xPosition - this.state.speed > 0) { this.props.moveLeft() }
       else if (e.keyCode === 38) { this.props.moveUp() }
