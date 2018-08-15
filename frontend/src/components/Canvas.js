@@ -20,8 +20,8 @@ class Canvas extends Component {
     }
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', (e) => {
+  backgroundMusicStart = (e) => {
+    if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       if (!document.querySelector("#backgroundMusic")) {
         const backgroundMusicEl = document.createElement("audio")
         backgroundMusicEl.setAttribute("id", "backgroundMusic")
@@ -29,8 +29,15 @@ class Canvas extends Component {
         backgroundMusicEl.src = '../backgroundMusic.mp3'
         document.head.appendChild(backgroundMusicEl)
         backgroundMusicEl.play()
+      } else {
+        document.querySelector("backgroundMusic").play()
       }
-    })
+      window.removeEventListener('keydown', this.backgroundMusicStart)
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.backgroundMusicStart)
 
     this.props.setCanvas(this.refs.playArea)
     this.refs.nySkyline.onload = () => {
