@@ -74,9 +74,11 @@ class Timer extends Component {
     }
   }
 
-  incrementTime = () => {
-    setInterval(() => this.setState({time: this.state.time + 1}), 10)
-    window.removeEventListener('keydown', this.incrementTime)
+  incrementTime = (e) => {
+    if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      setInterval(() => this.setState({time: this.state.time + 1}), 10)
+      window.removeEventListener('keydown', this.incrementTime)
+    }
   }
 
   componentDidMount() {
