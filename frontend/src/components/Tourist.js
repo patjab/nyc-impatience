@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
-import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, resetPlayer, decreaseLife } from '../actions'
+import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, resetPlayer, decreaseLife, recordStreak } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -98,11 +98,10 @@ const Tourist = class extends Component {
       // fix DOM manipulation later
       // this.props.moveDown() <--- causes stack overflow inifinite
       this.setState({dontCallBumpAgain: true}, () => {
+        this.props.recordStreak(this.props.movement)
         this.props.resetPlayer()
         this.props.decreaseLife()
       })
-
-    } else {
     }
   }
 
@@ -166,7 +165,8 @@ const mapDispatchToProps = (dispatch) => {
     removeTouristFromRoaster: (id) => dispatch(removeTouristFromRoaster(id)),
     addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id)),
     resetPlayer: () => dispatch(resetPlayer()),
-    decreaseLife: () => dispatch(decreaseLife())
+    decreaseLife: () => dispatch(decreaseLife()),
+    recordStreak: (streak) => dispatch(recordStreak(streak))
   }
 }
 

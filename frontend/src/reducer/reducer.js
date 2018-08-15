@@ -8,10 +8,12 @@ const initialState = {
   },
   initialPeopleSizes: 150, // POSSIBLY move this to setupData
   movement: 0,
+  distance: 0,
   movementPerBrick: walking,
   centersOfBricks: [],
   garbageOfTourists: [],
   touristRoaster: [],
+  streak: [], 
   signalTimeOut: false,
   lives: 3,
   startScreenPresent: true
@@ -32,7 +34,8 @@ const gameController = (state = initialState, action) => {
             ...state.player,
             xPosition: state.player.xPosition + (action.payload.x)
           },
-          movement: state.movement !== 0 && state.movement - action.payload.y < 0 ? 0 : state.movement + action.payload.y
+          movement: state.movement !== 0 && state.movement - action.payload.y < 0 ? 0 : state.movement + action.payload.y,
+          distance: state.distance + action.payload.y
         }
       } else {
         return state
@@ -98,6 +101,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         startScreenPresent: false
+      }
+    case "RECORD_STREAK":
+      return {
+        ...state,
+        streak: [...state.streak, action.payload]
       }
     default:
       return state

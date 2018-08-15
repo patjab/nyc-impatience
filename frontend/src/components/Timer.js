@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { signalTimeOut } from '../actions'
+import { signalTimeOut, recordStreak} from '../actions'
 
 import { canvasHeight, canvasWidth } from '../setupData'
 
@@ -18,6 +18,10 @@ class Timer extends Component {
 
   formatMovement() {
     return `${("00000" + this.props.movement).slice(-6)}`
+  }
+
+  formatDistance() {
+    return `${("00000" + this.props.distance).slice(-6)}`
   }
 
   drawStatusBar = () => {
@@ -50,23 +54,31 @@ class Timer extends Component {
   drawStepsCounter = (ctx) => {
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    ctx.fillText(`Steps Without Crashing`, 20, 30)
+    ctx.fillText(`Total`, 70, 30)
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`${this.formatMovement()}`, 60, 70)
+    ctx.fillText(`${this.formatDistance()}`, 20, 70)
+
+    ctx.font = "20px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText(`Streak`, 240, 30)
+
+    ctx.font = "36px Geneva"
+    ctx.fillStyle = "red"
+    ctx.fillText(`${this.formatMovement()}`, 200, 70)
   }
 
   drawLives = (ctx) => {
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    ctx.fillText(`Lives`, 375, 30)
+    ctx.fillText(`Lives`, 425, 30)
 
     const spacing = 10
-    let cursorCoordinateX = 290
+    let cursorCoordinateX = 375
     const cursorCoordinateY = 45
-    const lifeWidth = 60
-    const lifeHeight = 40
+    const lifeWidth = 40
+    const lifeHeight = 30
 
     for ( let i = 0; i < this.props.lives; i++ ) {
       this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
@@ -87,7 +99,10 @@ class Timer extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.state.willBeDone) { return false }
-    if (nextProps.lives <= 0) { this.setState({willBeDone: true}) }
+    if (nextProps.lives <= 0) {
+      console.log("STREAKS: ", this.props.streak)
+      this.setState({willBeDone: true})
+    }
     return true
   }
 
@@ -119,7 +134,9 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
-    lives: state.lives
+    distance: state.distance,
+    lives: state.lives,
+    streak: state.streak
   }
 }
 

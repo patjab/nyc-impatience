@@ -88,3 +88,10 @@ export const exitStartScreen = () => {
     type: "EXIT_START_SCREEN"
   }
 }
+
+export const recordStreak = (streak) => {
+  return {
+    type: "RECORD_STREAK",
+    payload: streak
+  }
+}
