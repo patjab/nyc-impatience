@@ -17,7 +17,7 @@ class Timer extends Component {
   }
 
   formatMovement() {
-    return `${("00000" + this.props.movement).slice(-6)}`
+    return this.state.willBeDone ? `${("00000" + Math.max.apply(null, this.props.streak)).slice(-6)}` : `${("00000" + this.props.movement).slice(-6)}`
   }
 
   formatDistance() {
@@ -25,7 +25,7 @@ class Timer extends Component {
   }
 
   drawStatusBar = () => {
-    const statusBarHeight = 100
+    const statusBarHeight = 90
 
     const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
     if (ctx) {
@@ -52,21 +52,26 @@ class Timer extends Component {
   }
 
   drawStepsCounter = (ctx) => {
+    ctx.textAlign = 'center'
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    ctx.fillText(`Total`, 70, 30)
+    this.state.willBeDone ? ctx.fillText(`Game Streak`, 90, 30) : ctx.fillText(`Current Streak`, 90, 30)
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`${this.formatDistance()}`, 20, 70)
+    ctx.fillText(`${this.formatMovement()}`, 90, 70)
 
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    ctx.fillText(`Streak`, 240, 30)
+    ctx.fillText(`Speed`, 260, 30)
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`${this.formatMovement()}`, 200, 70)
+    const speed = Math.trunc(this.props.distance/(this.state.time/100))
+    const formattedSpeed = isNaN(speed) ? '---' : speed + ' sps'
+    ctx.fillText(`${formattedSpeed}`, 260, 70)
+    ctx.textAlign = 'left'
+
   }
 
   drawLives = (ctx) => {
