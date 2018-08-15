@@ -82,3 +82,9 @@ export const decreaseLife = () => {
     type: "DECREASE_LIFE"
   }
 }
+
+export const exitStartScreen = () => {
+  return {
+    type: "EXIT_START_SCREEN"
+  }
+}

@@ -13,7 +13,8 @@ const initialState = {
   garbageOfTourists: [],
   touristRoaster: [],
   signalTimeOut: false,
-  lives: 3
+  lives: 3,
+  startScreenPresent: true
 }
 
 const gameController = (state = initialState, action) => {
@@ -92,6 +93,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         lives: state.lives > -1 ? state.lives - 1 : 0
+      }
+    case "EXIT_START_SCREEN":
+      return {
+        ...state,
+        startScreenPresent: false
       }
     default:
       return state

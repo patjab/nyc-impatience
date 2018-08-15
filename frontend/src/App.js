@@ -1,15 +1,23 @@
 import React, { Component} from 'react'
+import { connect } from 'react-redux'
+import StartScreen from './StartScreen'
+import Canvas from './components/Canvas'
 
 import './App.css'
 
-import Canvas from './components/Canvas'
 
 class App extends Component {
   render() {
     return (
-      <Canvas />
+      this.props.startScreenPresent ? <StartScreen/> : <Canvas />
     )
   }
 }
 
-export default App
+const mapStateToProps = (state) => {
+  return {
+    startScreenPresent: state.startScreenPresent
+  }
+}
+
+export default connect(mapStateToProps)(App)
