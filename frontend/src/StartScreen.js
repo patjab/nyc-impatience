@@ -3,6 +3,10 @@ import { connect } from 'react-redux'
 import { exitStartScreen } from './actions'
 import { canvasWidth, canvasHeight } from './setupData'
 
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n
+}
+
 class StartScreen extends Component {
   state = {
     choice: 0
@@ -12,6 +16,16 @@ class StartScreen extends Component {
     if ( e.key === 'Enter' ) {
       if ( this.state.choice === 0 ) {
         this.props.exitStartScreen()
+        // fix DOM manipulation
+        if (!document.querySelector('#startAudio')) {
+          const audioEl = document.createElement('audio')
+          audioEl.setAttribute('id', 'startAudio')
+          audioEl.src = './start.wav'
+          audioEl.play()
+        } else {
+          document.querySelector('#startAudio').play()
+        }
+        // fix DOM manipulation
       } else if ( this.state.choice === 1 ) {
         alert("High Scores Not Available")
       } else if ( this.state.choice === 2 ) {
@@ -19,11 +33,25 @@ class StartScreen extends Component {
       }
     }
 
-    if ( e.key === 'ArrowUp' ) {
-      this.setState({choice: (this.state.choice-1)%3 })
-    } else if ( e.key === 'ArrowDown' ) {
-      this.setState({choice: (this.state.choice+1)%3 })
+    if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
+      if ( e.key === 'ArrowUp' ) {
+        console.log(this.state.choice)
+        this.setState({choice: (this.state.choice-1).mod(3)})
+      } else if ( e.key === 'ArrowDown' ) {
+        this.setState({choice: (this.state.choice+1).mod(3)})
+      }
+      // fix DOM manipulation
+      if (!document.querySelector('#selectAudio')) {
+        const audioEl = document.createElement('audio')
+        audioEl.setAttribute('id', 'selectAudio')
+        audioEl.src = './select.wav'
+        audioEl.play()
+      } else {
+        document.querySelector('#selectAudio').play()
+      }
+      // fix DOM manipulation
     }
+
   }
 
   userMenu = (ctx) => {
