@@ -14,6 +14,7 @@ import { canvasWidth, canvasHeight } from '../setupData'
 class Canvas extends Component {
   somethingDimensions = 483
   componentDidUpdate() {
+    console.log("CANVAS DID UPDATE")
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
   }
 
@@ -45,7 +46,6 @@ class Canvas extends Component {
 
   renderTourists = (numberOfTourists) => {
     let tourists = []
-    console.log("Number of Tourists Allowed", (numberOfTourists+this.props.stage))
     if (this.props.lives > 0) {
       for ( let i = 0; i < (numberOfTourists+this.props.stage); i++ ) {
         if ( !this.props.garbageOfTourists.includes(i) ) {

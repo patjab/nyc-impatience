@@ -147,6 +147,7 @@ class Path extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log("PATH updated")
     if (this.props.centersOfBricks && this.props.centersOfBricks.length === 0) {
       this.props.initializeBrickList(this.cfBricksList)
     }
@@ -172,7 +173,8 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     movement: state.movement,
     centersOfBricks: state.centersOfBricks,
-    movementPerBrick: state.movementPerBrick
+    movementPerBrick: state.movementPerBrick,
+    pathUpdater: state.pathUpdater
   }
 }
 

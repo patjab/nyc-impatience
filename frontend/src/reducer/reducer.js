@@ -18,7 +18,9 @@ const initialState = {
   lives: 3,
   startScreenPresent: true,
   speed: 1,
-  stage: 0
+  stage: 0,
+  pathUpdater: 0,
+  playerUpdater: 0
 }
 
 const gameController = (state = initialState, action) => {
@@ -109,6 +111,16 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         streak: [...state.streak, action.payload]
+      }
+    case "FORCE_UPDATE_OF_PATH_FOR_ANIMATION":
+      return {
+        ...state,
+        pathUpdater: state.pathUpdater + 1
+      }
+    case "FORCE_UPDATE_OF_PLAYER_FOR_ANIMATION":
+      return {
+        ...state,
+        playerUpdater: state.playerUpdater + 1
       }
     default:
       return state

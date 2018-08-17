@@ -95,3 +95,15 @@ export const recordStreak = (streak) => {
     payload: streak
   }
 }
+
+export const forceUpdateOfPathForAnimation = () => {
+  return {
+    type: "FORCE_UPDATE_OF_PATH_FOR_ANIMATION"
+  }
+}
+
+export const forceUpdateOfPlayerForAnimation = () => {
+  return {
+    type: "FORCE_UPDATE_OF_PLAYER_FOR_ANIMATION"
+  }
+}

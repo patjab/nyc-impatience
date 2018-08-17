@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
-import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, resetPlayer, decreaseLife, recordStreak } from '../actions'
+import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, canvasWidth, nearnessSpook } from '../setupData'
+import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation, forceUpdateOfPlayerForAnimation } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -16,7 +16,9 @@ const Tourist = class extends Component {
     image: Math.trunc(Math.random() * 3),
     images: ['../touristA.png', '../tourist2.png', '../tourist3.png'],
     dontCallBumpAgain: false,
-    mountedOnMovement: null
+    mountedOnMovement: null,
+    derivedStateOverride: false,
+    touristUpdater: 0
   }
 
   findAngle = () => {
@@ -34,7 +36,7 @@ const Tourist = class extends Component {
     let chosenRow, chosenCol, positionX, positionY, startingSize, initialRow, initialCol, mountedOnMovement
     const percentageOfRows = 0.50
 
-    if (state.positionOnArray === null && props.centersOfBricks.length > 0) {
+    if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * percentageOfRows)
       initialCol = chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
       positionX = props.centersOfBricks[chosenRow][chosenCol].x
@@ -42,20 +44,22 @@ const Tourist = class extends Component {
       startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
-      try {
-        initialRow = state.initialRow
-        initialCol = state.initialCol
-        // 0.5 because each cycle of bricks involves two rows since adjacent rows are not similar in style
-        const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
-        chosenRow = (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
+      initialRow = state.initialRow
+      initialCol = state.initialCol
+      // 0.5 because each cycle of bricks involves two rows since adjacent rows are not similar in style
+      const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
+      chosenRow = (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
+      chosenCol = state.positionOnArray.col
+
+      if ( state.derivedStateOverride ) {
+        chosenRow = state.positionOnArray.row
         chosenCol = state.positionOnArray.col
-        positionX = props.centersOfBricks[chosenRow][chosenCol].x
-        positionY = props.centersOfBricks[chosenRow][chosenCol].y
-        startingSize = state.startingSize
-        mountedOnMovement = state.mountedOnMovement
-      } catch (err) {
-        debugger
       }
+
+      positionX = props.centersOfBricks[chosenRow][chosenCol].x
+      positionY = props.centersOfBricks[chosenRow][chosenCol].y
+      startingSize = state.startingSize
+      mountedOnMovement = state.mountedOnMovement
     } else {
       return state
     }
@@ -80,6 +84,35 @@ const Tourist = class extends Component {
     return Math.sqrt(Math.pow(a,2) + Math.pow(b,2))
   }
 
+  bumpAnimation = () => {
+    const touristImg = this.refs.touristImg
+    const currentRow = this.state.positionOnArray.row
+    const currentCol = this.state.positionOnArray.col
+    let i = 1
+
+    let animation = setInterval(() => {
+      if ( this.state.positionOnArray.row <= 0 ) {
+        clearInterval(animation)
+        this.props.addTouristToGarbage(this.props.id)
+
+      } else {
+        this.setState({
+          positionOnArray: {
+            col: currentCol,
+            row: currentRow-i
+          },
+          derivedStateOverride: true
+        }, () => {
+          this.props.forceUpdateOfPathForAnimation()
+          this.props.forceUpdateOfPlayerForAnimation()
+          this.setState({touristUpdater: this.state.touristUpdater+1})
+          i += 1
+        })
+      }
+    }, 30)
+
+  }
+
   checkForCollision = () => {
     const sizeOfSide = this.howBigShouldIBe()
 
@@ -96,7 +129,7 @@ const Tourist = class extends Component {
       // fix DOM manipulation later
       // this.props.moveDown() <--- causes stack overflow inifinite
       this.setState({dontCallBumpAgain: true}, () => {
-        this.props.addTouristToGarbage(this.props.id)
+        this.bumpAnimation()
         this.props.recordStreak(this.props.movement)
         this.props.resetPlayer()
         this.props.decreaseLife()
@@ -133,6 +166,7 @@ const Tourist = class extends Component {
 
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("Tourist updated")
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()
@@ -169,7 +203,9 @@ const mapDispatchToProps = (dispatch) => {
     addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id)),
     resetPlayer: () => dispatch(resetPlayer()),
     decreaseLife: () => dispatch(decreaseLife()),
-    recordStreak: (streak) => dispatch(recordStreak(streak))
+    recordStreak: (streak) => dispatch(recordStreak(streak)),
+    forceUpdateOfPathForAnimation: () => dispatch(forceUpdateOfPathForAnimation()),
+    forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation())
   }
 }
 
