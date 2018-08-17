@@ -169,7 +169,6 @@ const Tourist = class extends Component {
 
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("Tourist updated")
     const sizeOfSide = this.howBigShouldIBe()
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()

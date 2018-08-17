@@ -20,3 +20,6 @@ export const playerStartX = (canvasWidth/2)-(initialPlayerSize/2)
 export const playerStartY = (canvasHeight)-(initialPlayerSize*2)
 
 export const movementsPerStage = 1000
+
+export const loudnessSpookLevel = 0.4
+export const loudnessRechargeInSeconds = 10

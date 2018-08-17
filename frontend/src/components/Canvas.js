@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 
 import { connect } from 'react-redux'
 import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
-import { touristDensity, movementsPerStage } from '../setupData'
+import { touristDensity, movementsPerStage, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
 
 import Path from './Path'
 import Player from './Player'
@@ -11,10 +11,16 @@ import Timer from './Timer'
 
 import { canvasWidth, canvasHeight } from '../setupData'
 
+import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
+
 class Canvas extends Component {
+
+  state = {
+    playerYelled: false
+  }
+
   somethingDimensions = 483
   componentDidUpdate() {
-    console.log("CANVAS DID UPDATE")
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
   }
 
@@ -35,7 +41,23 @@ class Canvas extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props.touristRoaster)
+
     window.addEventListener('keydown', this.backgroundMusicStart)
+    microphoneRunner(loudnessSpookLevel)
+    setInterval( () => {
+      if (loudEnough && !this.state.playerYelled ) {
+        this.setState({playerYelled: true}, () => {
+          for ( let tourist of this.props.touristRoaster ) {
+            tourist.bumpAnimation()
+          }
+          setTimeout( () => {
+            this.setState({playerYelled: false})
+          }, loudnessRechargeInSeconds * 1000)
+        })
+      }
+    }, 1)
+
 
     this.props.setCanvas(this.refs.playArea)
     this.refs.nySkyline.onload = () => {

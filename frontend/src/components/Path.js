@@ -147,7 +147,6 @@ class Path extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("PATH updated")
     if (this.props.centersOfBricks && this.props.centersOfBricks.length === 0) {
       this.props.initializeBrickList(this.cfBricksList)
     }
