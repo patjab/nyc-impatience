@@ -44,7 +44,6 @@ class Player extends Component {
     this.syntheticInterval = setInterval(() => {
       if (this.goodForMultipleUps && this.diagonalMapSimultaneous[38] ) {
         this.props.moveUp()
-        // this.props.touristRoaster.forEach(tourist => tourist.progressionMagnification({keyCode: 38, preventDefault: ()=>null}))
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
     }, syntheticConstant)

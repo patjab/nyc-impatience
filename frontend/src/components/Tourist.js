@@ -32,7 +32,7 @@ const Tourist = class extends Component {
 
   static getDerivedStateFromProps(props, state) {
     let chosenRow, chosenCol, positionX, positionY, startingSize, initialRow, initialCol, mountedOnMovement
-    const percentageOfRows = 0.10
+    const percentageOfRows = 0.50
 
     if (state.positionOnArray === null && props.centersOfBricks.length > 0) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * percentageOfRows)
@@ -91,12 +91,12 @@ const Tourist = class extends Component {
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
-      console.log("BUMP ACTIVATED " + this.props.id)
       // fix DOM manipulation later
       document.querySelector("#bumpSoundEl").play()
       // fix DOM manipulation later
       // this.props.moveDown() <--- causes stack overflow inifinite
       this.setState({dontCallBumpAgain: true}, () => {
+        this.props.addTouristToGarbage(this.props.id)
         this.props.recordStreak(this.props.movement)
         this.props.resetPlayer()
         this.props.decreaseLife()
@@ -113,8 +113,6 @@ const Tourist = class extends Component {
   }
 
   componentDidMount() {
-    console.log("TOURIST MOUNTED  " + this.state.positionX + ", " + this.state.positionY)
-
     // fix DOM manipulation later
     const bumpSoundEl = document.createElement("audio")
     bumpSoundEl.setAttribute("id", "bumpSoundEl")
@@ -135,20 +133,13 @@ const Tourist = class extends Component {
 
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("TOURIST FIRST UPDATE " + this.state.mountedOnMovement)
-    // console.log(`TOURIST ${this.props.id} MOUNTED at ${this.state.positionX}, ${this.state.positionY}`)
     const sizeOfSide = this.howBigShouldIBe()
-    try {
-      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-    } catch(err) {
-      debugger
-    }
+    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()
     this.checkIfTouristStillInView()
   }
 
   componentWillUnmount() {
-    console.log(`TOURIST ${this.props.id} UNMOUNTED`)
     this.props.removeTouristFromRoaster(this.props.id)
   }
 

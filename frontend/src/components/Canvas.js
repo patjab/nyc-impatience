@@ -15,9 +15,6 @@ class Canvas extends Component {
   somethingDimensions = 483
   componentDidUpdate() {
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
-    if ( this.props.garbageOfTourists.length === touristDensity ) {
-      this.props.emptyGarbageOfTourists()
-    }
   }
 
   backgroundMusicStart = (e) => {
@@ -53,6 +50,8 @@ class Canvas extends Component {
       for ( let i = 0; i < numberOfTourists; i++ ) {
         if ( !this.props.garbageOfTourists.includes(i) ) {
           tourists.push(<Tourist key={i} id={i} />)
+        } else {
+          numberOfTourists++
         }
       }
     }
@@ -79,7 +78,8 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     garbageOfTourists: state.garbageOfTourists,
-    lives: state.lives
+    lives: state.lives,
+    touristRoaster: state.touristRoaster
   }
 }
 
