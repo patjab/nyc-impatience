@@ -103,6 +103,9 @@ const Tourist = class extends Component {
           },
           derivedStateOverride: true
         }, () => {
+          for ( let tourist of this.props.touristRoaster ) {
+            tourist.setState({touristUpdater: tourist.state.touristUpdater+1})
+          }
           this.props.forceUpdateOfPathForAnimation()
           this.props.forceUpdateOfPlayerForAnimation()
           this.setState({touristUpdater: this.state.touristUpdater+1})
@@ -192,7 +195,8 @@ const mapStateToProps = (state) => {
     playerY: state.player.yPosition,
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
-    lives: state.lives
+    lives: state.lives,
+    touristRoaster: state.touristRoaster
   }
 }
 
