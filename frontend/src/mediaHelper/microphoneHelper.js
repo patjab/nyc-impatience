@@ -33,8 +33,6 @@ Access the clipping through node.checkClipping(); use node.shutdown to get rid o
 
 let audioContext = null;
 export let meter = null;
-let canvasContext = null;
-let rafID = null;
 export let loudEnough = false;
 
 function createAudioMeter(audioContext,clipLevel,averaging,clipLag) {

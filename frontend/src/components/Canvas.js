@@ -1,22 +1,19 @@
 import React, { Component, Fragment } from 'react'
-
 import { connect } from 'react-redux'
 import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
-import { touristDensity, movementsPerStage, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
+import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth, canvasHeight  } from '../setupData'
+import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
 
 import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
 import Timer from './Timer'
 
-import { canvasWidth, canvasHeight } from '../setupData'
-
-import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
-
 class Canvas extends Component {
 
   state = {
-    playerYelled: false
+    playerYelled: false,
+    scaredTouristListener: null
   }
 
   somethingDimensions = 483
@@ -40,12 +37,9 @@ class Canvas extends Component {
     }
   }
 
-  componentDidMount() {
-    console.log(this.props.touristRoaster)
-
-    window.addEventListener('keydown', this.backgroundMusicStart)
+  scaredTouristListener = () => {
     microphoneRunner(loudnessSpookLevel)
-    setInterval( () => {
+    return setInterval( () => {
       if (loudEnough && !this.state.playerYelled ) {
         this.setState({playerYelled: true}, () => {
           for ( let tourist of this.props.touristRoaster ) {
@@ -57,13 +51,20 @@ class Canvas extends Component {
         })
       }
     }, 1)
+  }
 
-
+  componentDidMount() {
+    window.addEventListener('keydown', this.backgroundMusicStart)
+    const scaredTouristListener = this.scaredTouristListener()
+    this.setState({scaredTouristListener: scaredTouristListener})
     this.props.setCanvas(this.refs.playArea)
     this.refs.nySkyline.onload = () => {
       this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
     }
+  }
 
+  componentWillUnmount() {
+    clearInterval(this.state.scaredTouristListener)
   }
 
   renderTourists = (numberOfTourists) => {
@@ -78,7 +79,6 @@ class Canvas extends Component {
         }
       }
     }
-
     return tourists
   }
 

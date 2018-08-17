@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
@@ -7,9 +7,7 @@ import { depthMultiplier, horizonLine, numOfBricksInARow } from '../setupData'
 
 
 class Path extends Component {
-  static color = 0
   horizonPosition = horizonLine
-  brickSpacingBetweenColAtEnd = 50
   brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
   initialBrickSpacingBetweenRows = 1
 
@@ -50,6 +48,7 @@ class Path extends Component {
         ctx.beginPath()
         ctx.moveTo(previousPoints[i].x, previousPoints[i].y)
         ctx.lineTo(currentPoints[i].x, currentPoints[i].y)
+        ctx.strokeStyle = '#000000'
         ctx.stroke()
       }
 
@@ -62,13 +61,6 @@ class Path extends Component {
         } else {
           bricksList.push([{x: brickCenterX, y: brickCenterY}])
         }
-
-        // var ctx=this.props.canvas.getContext("2d");
-        // ctx.beginPath();
-        // ctx.arc(brickCenterX,brickCenterY,1,0,2*Math.PI);
-        // ctx.fillStyle = ['red', '#CBCBCB', '#CBCBCB'][Path.color]
-        // Path.color = (Path.color+1) % 3
-        // ctx.fill();
 
         previousY = brickCenterY
       }
@@ -163,7 +155,7 @@ class Path extends Component {
       this.makeBricks(ctx)
       this.makeSideStructures(ctx)
     }
-    return <div></div>
+    return <Fragment></Fragment>
   }
 }
 

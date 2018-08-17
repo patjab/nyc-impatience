@@ -107,3 +107,10 @@ export const forceUpdateOfPlayerForAnimation = () => {
     type: "FORCE_UPDATE_OF_PLAYER_FOR_ANIMATION"
   }
 }
+
+export const changeMovementAbility = (isDisabled) => {
+  return {
+    type: "CHANGE_MOVEMENT_ABILITY",
+    payload: isDisabled
+  }
+}

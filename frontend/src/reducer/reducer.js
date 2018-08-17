@@ -20,7 +20,8 @@ const initialState = {
   speed: 1,
   stage: 0,
   pathUpdater: 0,
-  playerUpdater: 0
+  playerUpdater: 0,
+  disabled: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -37,9 +38,9 @@ const gameController = (state = initialState, action) => {
           ...state,
           player: {
             ...state.player,
-            xPosition: state.player.xPosition + (action.payload.x)
+            xPosition: state.disabled ? state.player.xPosition : state.player.xPosition + (action.payload.x)
           },
-          movement: allowedMovement,
+          movement: state.disabled ? state.movement : allowedMovement,
           distance: state.distance + (action.payload.y * state.speed),
           stage: Math.trunc(allowedMovement/movementsPerStage)
         }
@@ -89,10 +90,7 @@ const gameController = (state = initialState, action) => {
     case "RESET_PLAYER":
       return {
         ...state,
-        player: {
-          xPosition: playerStartX,
-          yPosition: playerStartY
-        },
+        disabled: true,
         initialPeopleSizes: 150, // POSSIBLY move this to setupData
         movementPerBrick: walking,
         signalTimeOut: false
@@ -121,6 +119,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         playerUpdater: state.playerUpdater + 1
+      }
+    case "CHANGE_MOVEMENT_ABILITY":
+      return {
+        ...state,
+        disabled: action.payload
       }
     default:
       return state

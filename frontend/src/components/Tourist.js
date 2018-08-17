@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, canvasWidth, nearnessSpook } from '../setupData'
-import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster, resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation, forceUpdateOfPlayerForAnimation } from '../actions'
+import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
+import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
+  resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
+  forceUpdateOfPlayerForAnimation, changeMovementAbility } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -85,7 +87,6 @@ const Tourist = class extends Component {
   }
 
   bumpAnimation = () => {
-    const touristImg = this.refs.touristImg
     const currentRow = this.state.positionOnArray.row
     const currentCol = this.state.positionOnArray.col
     let i = 1
@@ -127,6 +128,9 @@ const Tourist = class extends Component {
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
+
+      setTimeout(()=>this.props.changeMovementAbility(false), 3000)
+
       // fix DOM manipulation later
       document.querySelector("#bumpSoundEl").play()
       // fix DOM manipulation later
@@ -208,7 +212,8 @@ const mapDispatchToProps = (dispatch) => {
     decreaseLife: () => dispatch(decreaseLife()),
     recordStreak: (streak) => dispatch(recordStreak(streak)),
     forceUpdateOfPathForAnimation: () => dispatch(forceUpdateOfPathForAnimation()),
-    forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation())
+    forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation()),
+    changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled))
   }
 }
 
