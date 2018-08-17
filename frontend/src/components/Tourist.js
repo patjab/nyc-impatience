@@ -8,17 +8,16 @@ const Tourist = class extends Component {
   state = {
     positionX: null,
     positionY: null,
+    initialRow: null,
+    initialCol: null,
     positionOnArray: null,
-    progressionMagnificatonTemp: 0,
     walkingCycle: 0,
     initialSize: null,
-    outOfView: false,
     image: Math.trunc(Math.random() * 3),
-    images: ['../tourist.png', '../tourist2.png', '../tourist3.png'],
-    dontCallBumpAgain: false
+    images: ['../touristA.png', '../tourist2.png', '../tourist3.png'],
+    dontCallBumpAgain: false,
+    mountedOnMovement: null
   }
-
-  static touristId = 0
 
   findAngle = () => {
     const lengthOfGroundTriangle = this.props.canvas.height - this.horizonPosition
@@ -32,54 +31,53 @@ const Tourist = class extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (state.positionOnArray === null && state.positionX === null && state.positionY === null && state.initialSize === null && props.centersOfBricks.length > 0) {
-      const lowerBound = 40 // FIX why does 40 work but 10 only works until 20 goombas have disappeared?
-      // const sizeOfRange = props.centersOfBricks.length - ((initialPlayerSize/2) + 10)
-      const sizeOfRange = props.centersOfBricks.length - 200
-      let randomPositionOnArray = lowerBound+ Math.trunc(Math.random() * sizeOfRange)
-      randomPositionOnArray = randomPositionOnArray - (randomPositionOnArray % 1)
+    let chosenRow, chosenCol, positionX, positionY, startingSize, initialRow, initialCol, mountedOnMovement
+    const percentageOfRows = 0.10
 
-      const positionX = props.centersOfBricks[randomPositionOnArray].x
-      const positionY = props.centersOfBricks[randomPositionOnArray].y
-      const startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
-
-      return {
-        ...state,
-        positionX: positionX,
-        positionY: positionY,
-        positionOnArray: randomPositionOnArray,
-        initialSize: startingSize
+    if (state.positionOnArray === null && props.centersOfBricks.length > 0) {
+      initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * percentageOfRows)
+      initialCol = chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
+      positionX = props.centersOfBricks[chosenRow][chosenCol].x
+      positionY = props.centersOfBricks[chosenRow][chosenCol].y
+      startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
+      mountedOnMovement = props.movement
+    } else if (state.positionOnArray !== null ) {
+      try {
+        initialRow = state.initialRow
+        initialCol = state.initialCol
+        // 0.5 because each cycle of bricks involves two rows since adjacent rows are not similar in style
+        const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
+        chosenRow = (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
+        chosenCol = state.positionOnArray.col
+        positionX = props.centersOfBricks[chosenRow][chosenCol].x
+        positionY = props.centersOfBricks[chosenRow][chosenCol].y
+        startingSize = state.startingSize
+        mountedOnMovement = state.mountedOnMovement
+      } catch (err) {
+        debugger
       }
     } else {
       return state
     }
+    return {
+      ...state,
+      positionX: positionX,
+      positionY: positionY,
+      initialRow: initialRow,
+      initialCol: initialCol,
+      positionOnArray: {col: chosenCol, row: chosenRow},
+      initialSize: startingSize,
+      mountedOnMovement: mountedOnMovement
+    }
+
   }
 
   howBigShouldIBe = () => {
     return (this.state.positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
   }
 
-  pythagoreanHelper = (a, b) => {
+  static pythagoreanHelper = (a, b) => {
     return Math.sqrt(Math.pow(a,2) + Math.pow(b,2))
-  }
-
-  progressionMagnification = (e) => {
-    if (e.keyCode >= 37 && e.keyCode <= 40) {
-      e.preventDefault()
-      const projectedIndex = this.state.positionOnArray + (Math.trunc(this.props.movement*0.5*this.props.movementPerBrick)*9)
-      const locusRangeFinder = 100
-      const centerOfBricks = this.props.centersOfBricks
-      .filter(brick => Math.abs(brick.x - this.state.positionX) < locusRangeFinder && Math.abs(brick.y - this.state.positionY) < locusRangeFinder)
-      .sort((brick1, brick2) => {
-        const distanceToBrick1 = this.pythagoreanHelper((brick1.x - this.state.positionX), (brick1.y - this.state.positionY))
-        const distanceToBrick2 = this.pythagoreanHelper((brick2.x - this.state.positionX), (brick2.y - this.state.positionY))
-        return distanceToBrick1 - distanceToBrick2
-      })
-      const refinedIndex = this.props.centersOfBricks.indexOf(centerOfBricks[0])
-      const index = projectedIndex !== refinedIndex ? refinedIndex : projectedIndex
-      const nextPosition = this.props.centersOfBricks[index]
-      this.setState({positionX: nextPosition.x, positionY: nextPosition.y})
-    }
   }
 
   checkForCollision = () => {
@@ -93,6 +91,7 @@ const Tourist = class extends Component {
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
+      console.log("BUMP ACTIVATED " + this.props.id)
       // fix DOM manipulation later
       document.querySelector("#bumpSoundEl").play()
       // fix DOM manipulation later
@@ -114,6 +113,8 @@ const Tourist = class extends Component {
   }
 
   componentDidMount() {
+    console.log("TOURIST MOUNTED  " + this.state.positionX + ", " + this.state.positionY)
+
     // fix DOM manipulation later
     const bumpSoundEl = document.createElement("audio")
     bumpSoundEl.setAttribute("id", "bumpSoundEl")
@@ -121,24 +122,34 @@ const Tourist = class extends Component {
     document.head.appendChild(bumpSoundEl)
     // fix DOM manipulation later
 
-    window.addEventListener('keydown', this.progressionMagnification)
     this.refs.touristImg.onload = () => {
       const sizeOfSide = this.state.initialSize
-      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-      this.props.addTouristToRoaster(this)
+      try {
+        this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+        this.props.addTouristToRoaster(this)
+      } catch (err) {
+        console.log("CANVAS ERROR BYPASSED")
+      }
     }
   }
 
-  componentDidUpdate() {
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("TOURIST FIRST UPDATE " + this.state.mountedOnMovement)
+    // console.log(`TOURIST ${this.props.id} MOUNTED at ${this.state.positionX}, ${this.state.positionY}`)
     const sizeOfSide = this.howBigShouldIBe()
-    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+    try {
+      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+    } catch(err) {
+      debugger
+    }
     this.checkForCollision()
     this.checkIfTouristStillInView()
   }
 
   componentWillUnmount() {
+    console.log(`TOURIST ${this.props.id} UNMOUNTED`)
     this.props.removeTouristFromRoaster(this.props.id)
-    window.removeEventListener('keydown', this.progressionMagnification)
   }
 
   render() {
@@ -151,6 +162,7 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     initialPeopleSizes: state.initialPeopleSizes,
     movement: state.movement,
+    distance: state.distance,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
     centersOfBricks: state.centersOfBricks,

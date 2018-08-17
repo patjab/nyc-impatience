@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { signalTimeOut, recordStreak} from '../actions'
+import { signalTimeOut } from '../actions'
 
 import { canvasHeight, canvasWidth } from '../setupData'
 

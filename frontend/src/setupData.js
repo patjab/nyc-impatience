@@ -4,10 +4,11 @@ export const canvasHeight = 1334
 export const horizonLine = 400
 
 export const initialPlayerSize = 150
-export const depthCoefficient = 0.001
+export const depthMultiplier = 0.001
 
-export const walking = 0.40
-export const running = 0.80
+export const numOfBricksInARow = 10
+
+export const walking = 0.20
 
 export const shiftingSpeed = 10
 

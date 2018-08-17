@@ -13,10 +13,11 @@ const initialState = {
   centersOfBricks: [],
   garbageOfTourists: [],
   touristRoaster: [],
-  streak: [], 
+  streak: [],
   signalTimeOut: false,
   lives: 3,
-  startScreenPresent: true
+  startScreenPresent: true,
+  speed: 1
 }
 
 const gameController = (state = initialState, action) => {
@@ -34,8 +35,8 @@ const gameController = (state = initialState, action) => {
             ...state.player,
             xPosition: state.player.xPosition + (action.payload.x)
           },
-          movement: state.movement !== 0 && state.movement - action.payload.y < 0 ? 0 : state.movement + action.payload.y,
-          distance: state.distance + action.payload.y
+          movement: state.movement !== 0 && state.movement + (action.payload.y * state.speed) < 0 ? 0 : state.movement + (action.payload.y * state.speed),
+          distance: state.distance + (action.payload.y * state.speed)
         }
       } else {
         return state
@@ -48,7 +49,7 @@ const gameController = (state = initialState, action) => {
     case "CHANGE_SPEED":
       return {
         ...state,
-        movementPerBrick: action.payload
+        speed: action.payload
       }
     case "ADD_TOURIST_TO_GARBAGE":
       return {
@@ -88,7 +89,6 @@ const gameController = (state = initialState, action) => {
           yPosition: playerStartY
         },
         initialPeopleSizes: 150, // POSSIBLY move this to setupData
-        movement: 0,
         movementPerBrick: walking,
         signalTimeOut: false
       }

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed } from '../actions'
-import { walking, running, shiftingSpeed } from '../setupData'
+import { shiftingSpeed } from '../setupData'
 
 class Player extends Component {
   diagonalMapSimultaneous = []
@@ -31,11 +31,12 @@ class Player extends Component {
       else if (e.keyCode === 38) { this.props.moveUp() }
       else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) { this.props.moveRight() }
       else if (e.keyCode === 40) { this.props.moveDown() }
-      else if (e.key === 's') { this.props.movementPerBrick === walking ? this.props.changeSpeed(running) : this.props.changeSpeed(walking) }
+      else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(2) : this.props.changeSpeed(1) }
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
     }
 
-    upperLeft ? this.props.moveUpLeft() : (upperRight ? this.props.moveUpRight() : null)
+    if (upperLeft) {this.props.moveUpLeft()}
+    if (upperRight) {this.props.moveUpRight()}
   }
 
   syntheticListenerForRelease = () => {
@@ -43,7 +44,7 @@ class Player extends Component {
     this.syntheticInterval = setInterval(() => {
       if (this.goodForMultipleUps && this.diagonalMapSimultaneous[38] ) {
         this.props.moveUp()
-        this.props.touristRoaster.forEach(tourist => tourist.progressionMagnification({keyCode: 38, preventDefault: ()=>null}))
+        // this.props.touristRoaster.forEach(tourist => tourist.progressionMagnification({keyCode: 38, preventDefault: ()=>null}))
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
     }, syntheticConstant)
@@ -98,7 +99,7 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     player: state.player,
     initialPeopleSizes: state.initialPeopleSizes,
-    movementPerBrick: state.movementPerBrick,
+    speed: state.speed,
     touristRoaster: state.touristRoaster
   }
 }
@@ -107,8 +108,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     moveUp: () => dispatch(movePlayer(0, 1)),
     moveDown: () => dispatch(movePlayer(0, -1)),
-    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, -0.5)); dispatch(movePlayer(0, 0.5)); }, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
-    moveRight: () => {dispatch(movePlayer(shiftingSpeed, -0.5)); dispatch(movePlayer(0, 0.5)); },
+    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, 1)); dispatch(movePlayer(0, -1))}, // CHEAP FIX BECAUSE SOMEHOW CHANGING MOVEMENT (X DIRECTION) IS THE ONLY WAY TO RERENDER
+    moveRight: () => {dispatch(movePlayer(shiftingSpeed, 1)); dispatch(movePlayer(0, -1))},
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed))

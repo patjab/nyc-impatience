@@ -3,16 +3,16 @@ import { connect } from 'react-redux'
 import { exitStartScreen } from './actions'
 import { canvasWidth, canvasHeight } from './setupData'
 
-Number.prototype.mod = function(n) {
-    return ((this%n)+n)%n
-}
 
 class StartScreen extends Component {
   state = {
     choice: 0
   }
 
+  modularHelperBecauseTheOneJavaScriptGaveIsNotStandard = (num, modBy) => ((num%modBy)+modBy)%modBy
+
   userInputStartScreen = (e) => {
+    e.preventDefault()
     if ( e.key === 'Enter' ) {
       if ( this.state.choice === 0 ) {
         this.props.exitStartScreen()
@@ -35,9 +35,9 @@ class StartScreen extends Component {
 
     if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
       if ( e.key === 'ArrowUp' ) {
-        this.setState({choice: (this.state.choice-1).mod(3)})
+        this.setState({choice: this.modularHelperBecauseTheOneJavaScriptGaveIsNotStandard(this.state.choice-1, 3)})
       } else if ( e.key === 'ArrowDown' ) {
-        this.setState({choice: (this.state.choice+1).mod(3)})
+        this.setState({choice: this.modularHelperBecauseTheOneJavaScriptGaveIsNotStandard(this.state.choice+1, 3)})
       }
       // fix DOM manipulation
       if (!document.querySelector('#selectAudio')) {

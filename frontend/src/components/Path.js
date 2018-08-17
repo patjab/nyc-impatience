@@ -3,21 +3,17 @@ import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 
-import { depthCoefficient, horizonLine } from '../setupData'
+import { depthMultiplier, horizonLine, numOfBricksInARow } from '../setupData'
+
 
 class Path extends Component {
+  static color = 0
   horizonPosition = horizonLine
   brickSpacingBetweenColAtEnd = 50
   brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
   initialBrickSpacingBetweenRows = 1
-  depthMultiplier = depthCoefficient
-  numOfBricksInARow = 10
 
   cfBricksList = []
-
-  state = {
-    movement: 0
-  }
 
   drawPathBackground = (ctx) => {
     ctx.rect(0, this.horizonPosition, this.props.canvas.width, this.props.canvas.height)
@@ -47,26 +43,44 @@ class Path extends Component {
   drawVerticals = (ctx, previousPoints, currentPoints, shouldAlternateOdd) => {
     const bricksList = []
 
+    let previousY
+
     for ( let i = 0; i < previousPoints.length-1; i++ ) {
-      if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 ) ) {
+      if ( (shouldAlternateOdd && i % 2 === 0) || (!shouldAlternateOdd && i % 2 === 1 )  ) {
         ctx.beginPath()
         ctx.moveTo(previousPoints[i].x, previousPoints[i].y)
         ctx.lineTo(currentPoints[i].x, currentPoints[i].y)
         ctx.stroke()
+      }
 
+      if ( true ) {
         const brickCenterX = ((previousPoints[i+1].x - previousPoints[i].x) / 2) + previousPoints[i].x
         const brickCenterY = ((currentPoints[i+1].y - previousPoints[i+1].y) / 2) + previousPoints[i+1].y
 
-        bricksList.push({x: brickCenterX, y: brickCenterY})
+        if ( previousY === brickCenterY ) {
+          bricksList[bricksList.length-1].push({x: brickCenterX, y: brickCenterY})
+        } else {
+          bricksList.push([{x: brickCenterX, y: brickCenterY}])
+        }
+
+        // var ctx=this.props.canvas.getContext("2d");
+        // ctx.beginPath();
+        // ctx.arc(brickCenterX,brickCenterY,1,0,2*Math.PI);
+        // ctx.fillStyle = ['red', '#CBCBCB', '#CBCBCB'][Path.color]
+        // Path.color = (Path.color+1) % 3
+        // ctx.fill();
+
+        previousY = brickCenterY
       }
+
     }
     return bricksList
   }
 
   recordCurrentPoints = (horizontalPathLength, xStartOfHorizontalLines, row) => {
     let currentPoints = []
-    for ( let brick = 0; brick <= this.numOfBricksInARow; brick++) {
-      const widthOfBrick = horizontalPathLength/this.numOfBricksInARow
+    for ( let brick = 0; brick <= numOfBricksInARow; brick++) {
+      const widthOfBrick = horizontalPathLength/numOfBricksInARow
       currentPoints.push({x: xStartOfHorizontalLines+(brick*widthOfBrick), y: row})
     }
     return currentPoints
@@ -80,7 +94,7 @@ class Path extends Component {
       const absoluteChunkOfBrick = this.brickSpacingBetweenRows * percentageOfBrick
       const rowWithBorderBrick = row + (absoluteChunkOfBrick)
       rowsWithBrickBorders.push(rowWithBorderBrick)
-      this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (this.depthMultiplier*distanceFromHorizon)
+      this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (depthMultiplier*distanceFromHorizon)
     }
     rowsWithBrickBorders.push(this.props.canvas.height)
     rowsWithBrickBorders.sort((a,b)=>a-b)
@@ -111,7 +125,6 @@ class Path extends Component {
 
     // FIX IMPURE
     this.brickSpacingBetweenRows = this.initialBrickSpacingBetweenRows
-
     this.cfBricksList = bricksList
     return bricksList
   }
