@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 
 import { connect } from 'react-redux'
 import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
-import { touristDensity } from '../setupData'
+import { touristDensity, movementsPerStage } from '../setupData'
 
 import Path from './Path'
 import Player from './Player'
@@ -45,12 +45,13 @@ class Canvas extends Component {
 
   renderTourists = (numberOfTourists) => {
     let tourists = []
-
+    console.log("Number of Tourists Allowed", (numberOfTourists+this.props.stage))
     if (this.props.lives > 0) {
-      for ( let i = 0; i < numberOfTourists; i++ ) {
+      for ( let i = 0; i < (numberOfTourists+this.props.stage); i++ ) {
         if ( !this.props.garbageOfTourists.includes(i) ) {
           tourists.push(<Tourist key={i} id={i} />)
-        } else {
+        }
+        else {
           numberOfTourists++
         }
       }
@@ -79,7 +80,8 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     garbageOfTourists: state.garbageOfTourists,
     lives: state.lives,
-    touristRoaster: state.touristRoaster
+    touristRoaster: state.touristRoaster,
+    stage: state.stage
   }
 }
 

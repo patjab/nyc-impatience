@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY, walking } from '../setupData'
+import { playerStartX, playerStartY, walking, movementsPerStage } from '../setupData'
 
 const initialState = {
   canvas: null,
@@ -17,7 +17,8 @@ const initialState = {
   signalTimeOut: false,
   lives: 3,
   startScreenPresent: true,
-  speed: 1
+  speed: 1,
+  stage: 0
 }
 
 const gameController = (state = initialState, action) => {
@@ -28,6 +29,7 @@ const gameController = (state = initialState, action) => {
         canvas: action.payload
       }
     case "MOVE_PLAYER":
+      const allowedMovement = state.movement !== 0 && state.movement + (action.payload.y * state.speed) < 0 ? 0 : state.movement + (action.payload.y * state.speed)
       if (state.lives > 0) {
         return {
           ...state,
@@ -35,8 +37,9 @@ const gameController = (state = initialState, action) => {
             ...state.player,
             xPosition: state.player.xPosition + (action.payload.x)
           },
-          movement: state.movement !== 0 && state.movement + (action.payload.y * state.speed) < 0 ? 0 : state.movement + (action.payload.y * state.speed),
-          distance: state.distance + (action.payload.y * state.speed)
+          movement: allowedMovement,
+          distance: state.distance + (action.payload.y * state.speed),
+          stage: Math.trunc(allowedMovement/movementsPerStage)
         }
       } else {
         return state
