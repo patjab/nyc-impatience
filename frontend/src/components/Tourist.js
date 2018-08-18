@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
-  forceUpdateOfPlayerForAnimation, changeMovementAbility } from '../actions'
+  forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake } from '../actions'
 
 const Tourist = class extends Component {
   state = {
@@ -86,7 +86,7 @@ const Tourist = class extends Component {
     return Math.sqrt(Math.pow(a,2) + Math.pow(b,2))
   }
 
-  bumpAnimation = () => {
+  runningAnimation = () => {
     const currentRow = this.state.positionOnArray.row
     const currentCol = this.state.positionOnArray.col
     let i = 1
@@ -95,7 +95,6 @@ const Tourist = class extends Component {
       if ( this.state.positionOnArray.row <= 0 ) {
         clearInterval(animation)
         this.props.addTouristToGarbage(this.props.id)
-
       } else {
         this.setState({
           positionOnArray: {
@@ -128,15 +127,16 @@ const Tourist = class extends Component {
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
-
-      setTimeout(()=>this.props.changeMovementAbility(false), 3000)
+      this.props.toggleBumpingShake()
+      setTimeout(this.props.toggleBumpingShake, 1000)
+      setTimeout(()=>this.props.changeMovementAbility(false), 1000)
 
       // fix DOM manipulation later
       document.querySelector("#bumpSoundEl").play()
       // fix DOM manipulation later
       // this.props.moveDown() <--- causes stack overflow inifinite
       this.setState({dontCallBumpAgain: true}, () => {
-        this.bumpAnimation()
+        this.runningAnimation()
         this.props.recordStreak(this.props.movement)
         this.props.resetPlayer()
         this.props.decreaseLife()
@@ -199,7 +199,8 @@ const mapStateToProps = (state) => {
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
     lives: state.lives,
-    touristRoaster: state.touristRoaster
+    touristRoaster: state.touristRoaster,
+    playerRef: state.playerRef
   }
 }
 
@@ -213,7 +214,8 @@ const mapDispatchToProps = (dispatch) => {
     recordStreak: (streak) => dispatch(recordStreak(streak)),
     forceUpdateOfPathForAnimation: () => dispatch(forceUpdateOfPathForAnimation()),
     forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation()),
-    changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled))
+    changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),
+    toggleBumpingShake: () => dispatch(toggleBumpingShake())
   }
 }
 

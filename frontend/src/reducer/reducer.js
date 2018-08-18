@@ -6,6 +6,7 @@ const initialState = {
     xPosition: playerStartX,
     yPosition: playerStartY
   },
+  playerRef: null,
   initialPeopleSizes: 150, // POSSIBLY move this to setupData
   movement: 0,
   distance: 0,
@@ -21,7 +22,8 @@ const initialState = {
   stage: 0,
   pathUpdater: 0,
   playerUpdater: 0,
-  disabled: false
+  disabled: false,
+  bumpingShake: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -124,6 +126,16 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         disabled: action.payload
+      }
+    case "SET_PLAYER":
+      return {
+        ...state,
+        playerRef: action.payload
+      }
+    case "TOGGLE_BUMPING_SHAKE":
+      return {
+        ...state,
+        bumpingShake: !state.bumpingShake
       }
     default:
       return state

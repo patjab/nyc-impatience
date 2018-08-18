@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed } from '../actions'
+import { movePlayer, changeSpeed, setPlayer } from '../actions'
 import { shiftingSpeed } from '../setupData'
 
 class Player extends Component {
@@ -72,6 +72,8 @@ class Player extends Component {
         ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
       }
     }
+
+    this.props.setPlayer(this)
   }
 
   componentDidUpdate() {
@@ -113,7 +115,8 @@ const mapDispatchToProps = (dispatch) => {
     moveRight: () => {dispatch(movePlayer(shiftingSpeed, 1)); dispatch(movePlayer(0, -1))},
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
-    changeSpeed: (speed) => dispatch(changeSpeed(speed))
+    changeSpeed: (speed) => dispatch(changeSpeed(speed)),
+    setPlayer: (player) => dispatch(setPlayer(player))
   }
 }
 

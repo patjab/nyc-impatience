@@ -18,6 +18,7 @@ class Canvas extends Component {
 
   somethingDimensions = 483
   componentDidUpdate() {
+    console.log(this.props.bumpingShake)
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
   }
 
@@ -43,7 +44,7 @@ class Canvas extends Component {
       if (loudEnough && !this.state.playerYelled ) {
         this.setState({playerYelled: true}, () => {
           for ( let tourist of this.props.touristRoaster ) {
-            tourist.bumpAnimation()
+            tourist.runningAnimation()
           }
           setTimeout( () => {
             this.setState({playerYelled: false})
@@ -86,7 +87,12 @@ class Canvas extends Component {
     return (
       <Fragment>
         <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
-        <canvas width={canvasWidth} height={canvasHeight} ref='playArea'></canvas>
+        {
+          this.props.bumpingShake ?
+          <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className="bumpingShake"></canvas>
+          :
+          <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea'></canvas>
+        }
         <Timer />
         <Path />
         {this.props.lives !== 0 ? <Player /> : null}
@@ -103,7 +109,8 @@ const mapStateToProps = (state) => {
     garbageOfTourists: state.garbageOfTourists,
     lives: state.lives,
     touristRoaster: state.touristRoaster,
-    stage: state.stage
+    stage: state.stage,
+    bumpingShake: state.bumpingShake
   }
 }
 

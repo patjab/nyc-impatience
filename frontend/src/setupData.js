@@ -21,5 +21,5 @@ export const playerStartY = (canvasHeight)-(initialPlayerSize*2)
 
 export const movementsPerStage = 1000
 
-export const loudnessSpookLevel = 0.4
+export const loudnessSpookLevel = 0.8
 export const loudnessRechargeInSeconds = 10
