@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
+import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook, rendingTouristRowsPercentage } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake } from '../actions'
@@ -36,54 +36,38 @@ const Tourist = class extends Component {
 
   static getDerivedStateFromProps(props, state) {
     let chosenRow, chosenCol, positionX, positionY, startingSize, initialRow, initialCol, mountedOnMovement
-    const percentageOfRows = 0.50
 
     if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
-      initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * percentageOfRows)
+      initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
       initialCol = chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
-      positionX = props.centersOfBricks[chosenRow][chosenCol].x
-      positionY = props.centersOfBricks[chosenRow][chosenCol].y
       startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
-      initialRow = state.initialRow
-      initialCol = state.initialCol
-      // 0.5 because each cycle of bricks involves two rows since adjacent rows are not similar in style
       const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
-      chosenRow = (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
+      // 0.5 because each cycle of bricks involves two rows since adjacent rows are not similar in style
+      chosenRow = state.derivedStateOverride ? state.positionOnArray.row : (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
       chosenCol = state.positionOnArray.col
-
-      if ( state.derivedStateOverride ) {
-        chosenRow = state.positionOnArray.row
-        chosenCol = state.positionOnArray.col
-      }
-
-      positionX = props.centersOfBricks[chosenRow][chosenCol].x
-      positionY = props.centersOfBricks[chosenRow][chosenCol].y
-      startingSize = state.startingSize
-      mountedOnMovement = state.mountedOnMovement
     } else {
       return state
     }
+
+    positionX = props.centersOfBricks[chosenRow][chosenCol].x
+    positionY = props.centersOfBricks[chosenRow][chosenCol].y
     return {
       ...state,
       positionX: positionX,
       positionY: positionY,
-      initialRow: initialRow,
-      initialCol: initialCol,
+      initialRow: initialRow || state.initialRow,
+      initialCol: initialCol || state.initialCol,
       positionOnArray: {col: chosenCol, row: chosenRow},
-      initialSize: startingSize,
-      mountedOnMovement: mountedOnMovement
+      initialSize: startingSize || state.startingSize,
+      mountedOnMovement: mountedOnMovement || state.mountedOnMovement
     }
 
   }
 
   howBigShouldIBe = () => {
     return (this.state.positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
-  }
-
-  static pythagoreanHelper = (a, b) => {
-    return Math.sqrt(Math.pow(a,2) + Math.pow(b,2))
   }
 
   runningAnimation = () => {
