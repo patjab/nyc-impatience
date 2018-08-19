@@ -7,7 +7,6 @@ const initialState = {
     yPosition: playerStartY
   },
   playerRef: null,
-  initialPeopleSizes: 150, // POSSIBLY move this to setupData
   movement: 0,
   distance: 0,
   movementPerBrick: walking,
@@ -42,7 +41,7 @@ const gameController = (state = initialState, action) => {
             ...state.player,
             xPosition: state.disabled ? state.player.xPosition : state.player.xPosition + (action.payload.x)
           },
-          pathUpdater: state.pathUpdater + 1, 
+          pathUpdater: state.pathUpdater + 1,
           movement: state.disabled ? state.movement : allowedMovement,
           distance: state.distance + (action.payload.y * state.speed),
           stage: Math.trunc(allowedMovement/movementsPerStage)
@@ -94,7 +93,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         disabled: true,
-        initialPeopleSizes: 150, // POSSIBLY move this to setupData
         movementPerBrick: walking,
         signalTimeOut: false
       }

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook, rendingTouristRowsPercentage } from '../setupData'
+import { horizonLine, initialPeopleSizes, playerStartY, canvasHeight, nearnessSpook, rendingTouristRowsPercentage } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake } from '../actions'
@@ -40,7 +40,7 @@ const Tourist = class extends Component {
     if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
       initialCol = chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
-      startingSize = (positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
+      startingSize = (positionY - horizonLine) * ((initialPeopleSizes)/(playerStartY - horizonLine))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
       const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
@@ -68,7 +68,7 @@ const Tourist = class extends Component {
   }
 
   howBigShouldIBe = () => {
-    return (this.state.positionY - horizonLine) * ((initialPlayerSize)/(playerStartY - horizonLine))
+    return (this.state.positionY - horizonLine) * ((initialPeopleSizes)/(playerStartY - horizonLine))
   }
 
   runningAnimation = () => {
@@ -106,8 +106,8 @@ const Tourist = class extends Component {
 
     const lowerLeftTourist = {x: this.state.positionX, y: this.state.positionY + sizeOfSide}
     const lowerRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY + sizeOfSide}
-    const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPlayerSize}
-    const lowerRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY + initialPlayerSize}
+    const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPeopleSizes}
+    const lowerRightPlayer = {x: this.props.playerX + initialPeopleSizes, y: this.props.playerY + initialPeopleSizes}
 
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
@@ -129,7 +129,7 @@ const Tourist = class extends Component {
 
   checkIfTouristStillInView = () => {
     if (this.state.positionY) {
-      if (this.state.positionY > (canvasHeight - (initialPlayerSize/2))) {
+      if (this.state.positionY > (canvasHeight - (initialPeopleSizes/2))) {
         this.props.addTouristToGarbage(this.props.id)
       }
     }

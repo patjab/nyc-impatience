@@ -3,7 +3,7 @@ export const canvasHeight = 1334
 
 export const horizonLine = 400
 
-export const initialPlayerSize = 150
+export const initialPeopleSizes = 150
 export const depthMultiplier = 0.001
 
 export const numOfBricksInARow = 10
@@ -16,8 +16,8 @@ export const nearnessSpook = 20
 
 export const touristDensity = 3
 
-export const playerStartX = (canvasWidth/2)-(initialPlayerSize/2)
-export const playerStartY = (canvasHeight)-(initialPlayerSize*2)
+export const playerStartX = (canvasWidth/2)-(initialPeopleSizes/2)
+export const playerStartY = (canvasHeight)-(initialPeopleSizes*2)
 
 export const movementsPerStage = 1000
 

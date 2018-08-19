@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, setPlayer } from '../actions'
-import { shiftingSpeed } from '../setupData'
+import { shiftingSpeed, initialPeopleSizes } from '../setupData'
 
 class Player extends Component {
   diagonalMapSimultaneous = []
@@ -66,11 +66,9 @@ class Player extends Component {
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
 
-    if (this.refs.playerImg && this.props.canvas && this.props.canvas.getContext("2d")) {
-      this.refs.playerImg.onload = () => {
-        const ctx = this.props.canvas.getContext("2d")
-        ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
-      }
+    this.refs.playerImg.onload = () => {
+      const ctx = this.props.canvas.getContext("2d")
+      ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
     }
 
     this.props.setPlayer(this)
@@ -78,7 +76,7 @@ class Player extends Component {
 
   componentDidUpdate() {
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
-    this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, this.props.initialPeopleSizes, this.props.initialPeopleSizes)
+    this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
   }
 
   componentWillUnmount() {
@@ -99,7 +97,6 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     player: state.player,
-    initialPeopleSizes: state.initialPeopleSizes,
     speed: state.speed,
     playerUpdater: state.playerUpdater
   }
