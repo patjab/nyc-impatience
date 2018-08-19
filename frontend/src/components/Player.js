@@ -24,7 +24,7 @@ class Player extends Component {
     const upperLeft = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
     const upperRight = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
 
-    if (!this.props.bumpingShake && ((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's') ) {
+    if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's')) ) {
       e.preventDefault()
       if (e.keyCode === 37 && this.props.player.xPosition > 0) { this.props.moveLeft() }
       else if (e.keyCode === 38) { this.props.moveUp() }
@@ -53,7 +53,7 @@ class Player extends Component {
     this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
 
     this.stillHoldingUp = e.key !== 'ArrowUp'
-    if (!this.props.bumpingShake && (e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp) ) {
+    if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
       this.goodForMultipleUps = true
     } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
       this.goodForMultipleUps = false
