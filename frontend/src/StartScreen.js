@@ -30,6 +30,8 @@ class StartScreen extends Component {
         case 2:
           alert("Information Not Available")
           break
+        default:
+          break
       }
     }
 

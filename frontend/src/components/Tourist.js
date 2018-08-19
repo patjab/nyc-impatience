@@ -40,11 +40,11 @@ const Tourist = class extends Component {
     if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
       initialCol = chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
+
       startingSize = (positionY - horizonLine) * ((initialPeopleSizes)/(playerStartY - horizonLine))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
       const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
-      // 0.5 because each cycle of bricks involves two rows since adjacent rows are not similar in style
       chosenRow = state.derivedStateOverride ? state.positionOnArray.row : (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
       chosenCol = state.positionOnArray.col
     } else {
@@ -116,7 +116,9 @@ const Tourist = class extends Component {
       setTimeout(this.props.toggleBumpingShake, 1000)
       setTimeout(()=>this.props.changeMovementAbility(false), 1000)
 
-      !this.refs.bumpSoundEl.paused ? this.refs.bumpSoundEl.pause() : null
+      if (!this.refs.bumpSoundEl.paused) {
+        this.refs.bumpSoundEl.pause()
+      }
       this.refs.bumpSoundEl.play()
       this.setState({dontCallBumpAgain: true}, () => {
         this.runningAnimation()

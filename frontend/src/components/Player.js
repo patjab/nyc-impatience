@@ -10,7 +10,6 @@ class Player extends Component {
   goodForMultipleUps = false
 
   state = {
-    speed: 4,
     walkingCycle: 0,
     walkingCollection: ['../player/0.png', '../player/0.png', '../player/1.png', '../player/1.png']
   }
@@ -27,9 +26,9 @@ class Player extends Component {
 
     if (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's') ) {
       e.preventDefault()
-      if (e.keyCode === 37 && this.props.player.xPosition - this.state.speed > 0) { this.props.moveLeft() }
+      if (e.keyCode === 37 && this.props.player.xPosition > 0) { this.props.moveLeft() }
       else if (e.keyCode === 38) { this.props.moveUp() }
-      else if (e.keyCode === 39 && this.props.player.xPosition + this.state.speed + 50 < this.props.canvas.width) { this.props.moveRight() }
+      else if (e.keyCode === 39 && this.props.player.xPosition + 50 < this.props.canvas.width) { this.props.moveRight() }
       else if (e.keyCode === 40) { this.props.moveDown() }
       else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(2) : this.props.changeSpeed(1) }
       this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
@@ -66,12 +65,13 @@ class Player extends Component {
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
 
-    this.refs.playerImg.onload = () => {
-      const ctx = this.props.canvas.getContext("2d")
-      ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
+    if (this.props.canvas && this.refs.playerImg) {
+      this.refs.playerImg.onload = () => {
+        const ctx = this.props.canvas.getContext("2d")
+        ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
+      }
+      this.props.setPlayer(this)
     }
-
-    this.props.setPlayer(this)
   }
 
   componentDidUpdate() {
