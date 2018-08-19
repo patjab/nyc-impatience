@@ -20,7 +20,7 @@ class Canvas extends Component {
   skylineHeight = 483
   skylineStartX = -40
   skylineStartY = 0
-  
+
   componentDidUpdate() {
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
   }
@@ -82,12 +82,7 @@ class Canvas extends Component {
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
         <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
-        {
-          this.props.bumpingShake ?
-          <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className="bumpingShake"></canvas>
-          :
-          <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea'></canvas>
-        }
+        <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className={this.props.bumpingShake ? 'bumpingShake' : null}></canvas>
         <Timer />
         <Path />
         {this.renderTourists(touristDensity)}

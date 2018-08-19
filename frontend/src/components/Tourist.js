@@ -160,7 +160,8 @@ const mapStateToProps = (state) => {
     playerY: state.player.yPosition,
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
-    touristRoaster: state.touristRoaster
+    touristRoaster: state.touristRoaster,
+    eventListenerRoaster: state.eventListenerRoaster
   }
 }
 
