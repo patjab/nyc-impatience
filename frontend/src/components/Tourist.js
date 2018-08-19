@@ -46,7 +46,7 @@ const Tourist = class extends Component {
     } else {
       return state
     }
-    
+
     return {
       ...state,
       positionX: props.centersOfBricks[chosenRow][chosenCol].x,
@@ -103,21 +103,26 @@ const Tourist = class extends Component {
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
-      this.props.toggleBumpingShake()
-      setTimeout(this.props.toggleBumpingShake, 1000)
-      setTimeout(()=>this.props.changeMovementAbility(false), 1000)
-
-      if (!this.refs.bumpSoundEl.paused) {
-        this.refs.bumpSoundEl.pause()
-      }
-      this.refs.bumpSoundEl.play()
-      this.setState({dontCallBumpAgain: true}, () => {
-        this.runningAnimation()
-        this.props.recordStreak(this.props.movement)
-        this.props.resetPlayer()
-        this.props.decreaseLife()
-      })
+      this.runBumpAnimations()
     }
+  }
+
+  runBumpAnimations = () => {
+    this.props.toggleBumpingShake()
+    setTimeout(()=>{
+      this.props.toggleBumpingShake()
+      this.props.changeMovementAbility(false)
+    }, 1000)
+    if (!this.refs.bumpSoundEl.paused) {
+      this.refs.bumpSoundEl.pause()
+    }
+    this.refs.bumpSoundEl.play()
+    this.setState({dontCallBumpAgain: true}, () => {
+      this.runningAnimation()
+      this.props.recordStreak(this.props.movement)
+      this.props.resetPlayer()
+      this.props.decreaseLife()
+    })
   }
 
   checkIfTouristStillInView = () => {
