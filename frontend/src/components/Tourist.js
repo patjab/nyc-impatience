@@ -1,10 +1,11 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { horizonLine, initialPeopleSizes, playerStartY, canvasHeight, nearnessSpook, rendingTouristRowsPercentage } from '../setupData'
+import { initialPeopleSizes, canvasHeight, nearnessSpook, rendingTouristRowsPercentage } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake } from '../actions'
+import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
   state = {
@@ -19,17 +20,6 @@ const Tourist = class extends Component {
     mountedOnMovement: null,
     derivedStateOverride: false,
     touristUpdater: 0
-  }
-
-  findAngle = () => {
-    const lengthOfGroundTriangle = this.props.canvas.height - this.horizonPosition
-    const widthOfGroundTriangle = this.props.canvas.width/2
-
-    const sideOfPath = Math.sqrt(Math.pow(lengthOfGroundTriangle, 2) + Math.pow(widthOfGroundTriangle, 2))
-    const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(this.props.canvas.width, 2)
-    const denominator = (2 * Math.pow(sideOfPath, 2))
-
-    return Math.acos(numerator/denominator)
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -56,10 +46,6 @@ const Tourist = class extends Component {
       mountedOnMovement: mountedOnMovement || state.mountedOnMovement
     }
 
-  }
-
-  howBigShouldIBe = () => {
-    return (this.state.positionY - horizonLine) * ((initialPeopleSizes)/(playerStartY - horizonLine))
   }
 
   runningAnimation = () => {
@@ -93,7 +79,7 @@ const Tourist = class extends Component {
   }
 
   checkForCollision = () => {
-    const sizeOfSide = this.howBigShouldIBe()
+    const sizeOfSide = howBigShouldIBe(this.state.positionY)
 
     const lowerLeftTourist = {x: this.state.positionX, y: this.state.positionY + sizeOfSide}
     const lowerRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY + sizeOfSide}
@@ -135,7 +121,7 @@ const Tourist = class extends Component {
 
   componentDidMount() {
     this.refs.touristImg.onload = () => {
-      const sizeOfSide = this.howBigShouldIBe()
+      const sizeOfSide = howBigShouldIBe(this.state.positionY)
       try {
         this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
         this.props.addTouristToRoaster(this)
@@ -147,7 +133,7 @@ const Tourist = class extends Component {
 
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const sizeOfSide = this.howBigShouldIBe()
+    const sizeOfSide = howBigShouldIBe(this.state.positionY)
     this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
     this.checkForCollision()
     this.checkIfTouristStillInView()
