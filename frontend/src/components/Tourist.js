@@ -187,16 +187,12 @@ const Tourist = class extends Component {
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    initialPeopleSizes: state.initialPeopleSizes,
     movement: state.movement,
-    distance: state.distance,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
-    lives: state.lives,
-    touristRoaster: state.touristRoaster,
-    playerRef: state.playerRef
+    touristRoaster: state.touristRoaster
   }
 }
 

@@ -89,8 +89,8 @@ class Canvas extends Component {
         }
         <Timer />
         <Path />
-        {this.props.lives !== 0 ? <Player /> : null}
         {this.renderTourists(touristDensity)}
+        {this.props.lives > 0 ? <Player /> : null}
       </Fragment>
     )
   }
