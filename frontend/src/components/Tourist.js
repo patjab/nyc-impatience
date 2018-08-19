@@ -35,7 +35,7 @@ const Tourist = class extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let chosenRow, chosenCol, positionX, positionY, startingSize, initialRow, initialCol, mountedOnMovement
+    let chosenRow, chosenCol, startingSize, initialRow, initialCol, mountedOnMovement
 
     if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
@@ -51,8 +51,9 @@ const Tourist = class extends Component {
       return state
     }
 
-    positionX = props.centersOfBricks[chosenRow][chosenCol].x
-    positionY = props.centersOfBricks[chosenRow][chosenCol].y
+    const positionX = props.centersOfBricks[chosenRow][chosenCol].x
+    const positionY = props.centersOfBricks[chosenRow][chosenCol].y
+
     return {
       ...state,
       positionX: positionX,
