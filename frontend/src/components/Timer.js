@@ -20,10 +20,6 @@ class Timer extends Component {
     return this.state.willBeDone ? `${("00000" + Math.max.apply(null, this.props.streak)).slice(-6)}` : `${("00000" + this.props.movement).slice(-6)}`
   }
 
-  formatDistance() {
-    return `${("00000" + this.props.distance).slice(-6)}`
-  }
-
   drawStatusBar = () => {
     const statusBarHeight = 90
 
@@ -67,7 +63,7 @@ class Timer extends Component {
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    const speed = Math.trunc(this.props.distance/(this.state.time/100))
+    const speed = Math.trunc(this.props.movement/(this.state.time/100))
     const formattedSpeed = isNaN(speed) ? '---' : speed + ' sps'
     ctx.fillText(`${formattedSpeed}`, 260, 70)
     ctx.textAlign = 'left'
@@ -139,7 +135,6 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
-    distance: state.distance,
     lives: state.lives,
     streak: state.streak
   }

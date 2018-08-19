@@ -101,9 +101,7 @@ const mapStateToProps = (state) => {
     player: state.player,
     initialPeopleSizes: state.initialPeopleSizes,
     speed: state.speed,
-    touristRoaster: state.touristRoaster,
-    playerUpdater: state.playerUpdater,
-    disabled: state.disabled
+    playerUpdater: state.playerUpdater
   }
 }
 
