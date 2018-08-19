@@ -8,13 +8,11 @@ const initialState = {
   },
   playerRef: null,
   movement: 0,
-  distance: 0,
   movementPerBrick: walking,
   centersOfBricks: [],
   garbageOfTourists: [],
   touristRoaster: [],
   streak: [],
-  signalTimeOut: false,
   lives: 3,
   startScreenPresent: true,
   speed: 1,
@@ -43,7 +41,6 @@ const gameController = (state = initialState, action) => {
           },
           pathUpdater: state.pathUpdater + 1,
           movement: state.disabled ? state.movement : allowedMovement,
-          distance: state.distance + (action.payload.y * state.speed),
           stage: Math.trunc(allowedMovement/movementsPerStage)
         }
       } else {
@@ -84,17 +81,11 @@ const gameController = (state = initialState, action) => {
         ...state,
         touristRoaster: state.touristRoaster.filter(tourist => action.payload !== tourist.props.id)
       }
-    case "SIGNAL_TIME_OUT":
-      return {
-        ...state,
-        signalTimeOut: true
-      }
     case "RESET_PLAYER":
       return {
         ...state,
         disabled: true,
-        movementPerBrick: walking,
-        signalTimeOut: false
+        movementPerBrick: walking
       }
     case "DECREASE_LIFE":
       return {
