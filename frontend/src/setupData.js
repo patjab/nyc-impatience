@@ -25,3 +25,9 @@ export const loudnessSpookLevel = 0.8
 export const loudnessRechargeInSeconds = 10
 
 export const rendingTouristRowsPercentage = 0.50
+
+export const touristRunningMilliseconds = 30
+
+export const brickColor = '#CBCBCB'
+export const brickBorderColor = '#000000'
+export const sideAreaColor = '#0CBE00'

@@ -2,9 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
-
-import { depthMultiplier, horizonLine, numOfBricksInARow } from '../setupData'
-
+import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor, sideAreaColor } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
@@ -15,7 +13,7 @@ class Path extends Component {
 
   drawPathBackground = (ctx) => {
     ctx.rect(0, this.horizonPosition, this.props.canvas.width, this.props.canvas.height)
-    ctx.fillStyle = '#CBCBCB'
+    ctx.fillStyle = brickColor
     ctx.fill()
   }
 
@@ -48,7 +46,7 @@ class Path extends Component {
         ctx.beginPath()
         ctx.moveTo(previousPoints[i].x, previousPoints[i].y)
         ctx.lineTo(currentPoints[i].x, currentPoints[i].y)
-        ctx.strokeStyle = '#000000'
+        ctx.strokeStyle = brickBorderColor
         ctx.stroke()
       }
 
@@ -123,7 +121,6 @@ class Path extends Component {
 
   makeSideStructures = (ctx) => {
     const centralX = this.props.canvas.width/2
-    const sideStructuresColor = '#0CBE00'
 
     ctx.beginPath()
     ctx.moveTo(0, this.props.canvas.height)
@@ -132,18 +129,14 @@ class Path extends Component {
     ctx.moveTo(this.props.canvas.width, this.props.canvas.height)
     ctx.lineTo(centralX, this.horizonPosition)
     ctx.lineTo(this.props.canvas.width, this.horizonPosition)
-    ctx.fillStyle = sideStructuresColor
+    ctx.fillStyle = sideAreaColor
     ctx.fill()
     ctx.stroke()
     ctx.closePath()
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.centersOfBricks && this.props.centersOfBricks.length === 0) {
-      this.props.initializeBrickList(this.cfBricksList)
-    }
-
-    if (prevProps.movement !== this.props.movement) {
+    if ((this.props.centersOfBricks && this.props.centersOfBricks.length === 0) || prevProps.movement !== this.props.movement) {
       this.props.initializeBrickList(this.cfBricksList)
     }
   }

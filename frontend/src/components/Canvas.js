@@ -20,6 +20,7 @@ class Canvas extends Component {
   skylineHeight = 483
   skylineStartX = -40
   skylineStartY = 0
+  
   componentDidUpdate() {
     this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
   }

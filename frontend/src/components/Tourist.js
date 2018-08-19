@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { initialPeopleSizes, canvasHeight, nearnessSpook, rendingTouristRowsPercentage } from '../setupData'
+import { initialPeopleSizes, canvasHeight, nearnessSpook, rendingTouristRowsPercentage, touristRunningMilliseconds } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake } from '../actions'
@@ -13,7 +13,6 @@ const Tourist = class extends Component {
     positionY: null,
     initialRow: null,
     positionOnArray: null,
-    walkingCycle: 0,
     image: Math.trunc(Math.random() * 3),
     images: ['../touristA.png', '../tourist2.png', '../tourist3.png'],
     dontCallBumpAgain: false,
@@ -74,7 +73,7 @@ const Tourist = class extends Component {
           i += 1
         })
       }
-    }, 30)
+    }, touristRunningMilliseconds)
 
   }
 
