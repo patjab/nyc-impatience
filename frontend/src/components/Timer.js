@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
-import { signalTimeOut } from '../actions'
-
 import { canvasHeight, canvasWidth } from '../setupData'
 
 class Timer extends Component {
@@ -140,10 +137,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    signalTimeOut: () => dispatch(signalTimeOut())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Timer)
+export default connect(mapStateToProps)(Timer)
