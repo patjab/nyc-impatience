@@ -30,8 +30,17 @@
   padding: 0;
   margin: 0;
 }
+
 canvas {
-  background-color: #6BD7FF;
+  display: block;
+  margin: 0 auto;
+}
+
+#playArea, #startScreen {
+  /* background-color: #6BD7FF; */
+}
+
+.gameOverImage {
   display: block;
   margin: 0 auto;
 }

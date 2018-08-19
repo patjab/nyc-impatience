@@ -28,6 +28,11 @@ export const rendingTouristRowsPercentage = 0.50
 
 export const touristRunningMilliseconds = 30
 
+export const initialLives = 2
+export const backgroundMusicOn = true
+
+export const statusBarHeight = 90
+
 export const brickColor = '#CBCBCB'
 export const brickBorderColor = '#000000'
 export const sideAreaColor = '#0CBE00'

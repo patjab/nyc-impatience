@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY, walking, movementsPerStage } from '../setupData'
+import { playerStartX, playerStartY, walking, movementsPerStage, initialLives } from '../setupData'
 
 const initialState = {
   canvas: null,
@@ -13,7 +13,7 @@ const initialState = {
   garbageOfTourists: [],
   touristRoaster: [],
   streak: [],
-  lives: 3,
+  lives: initialLives,
   startScreenPresent: true,
   speed: 1,
   stage: 0,
@@ -21,7 +21,8 @@ const initialState = {
   playerUpdater: 0,
   disabled: false,
   bumpingShake: false,
-  gameOver: false
+  gameOver: false,
+  gameOverImage: null
 }
 
 const gameController = (state = initialState, action) => {
@@ -132,6 +133,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         gameOver: true
+      }
+    case "SET_GAME_OVER_IMAGE":
+      return {
+        ...state,
+        gameOverImage: action.payload
       }
     default:
       return state

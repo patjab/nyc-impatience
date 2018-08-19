@@ -124,6 +124,13 @@ export const toggleBumpingShake = () => {
 
 export const setGameOver = () => {
   return {
-    type: "SET_GAME_OVERs"
+    type: "SET_GAME_OVER"
+  }
+}
+
+export const setGameOverImage = (imageData) => {
+  return {
+    type: "SET_GAME_OVER_IMAGE",
+    payload: imageData
   }
 }

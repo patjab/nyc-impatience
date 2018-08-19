@@ -88,7 +88,7 @@ class StartScreen extends Component {
   }
 
   render() {
-    return <canvas width={canvasWidth} height={canvasHeight} ref='startScreen'></canvas>
+    return <canvas width={canvasWidth} height={canvasHeight} id='startScreen' ref='startScreen'></canvas>
   }
 }
 

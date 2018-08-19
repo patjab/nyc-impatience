@@ -1,13 +1,14 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
-import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth, canvasHeight  } from '../setupData'
+import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth, canvasHeight, backgroundMusicOn  } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
 
 import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
 import Timer from './Timer'
+import GameOverScreen from '../GameOverScreen'
 
 class Canvas extends Component {
 
@@ -16,18 +17,53 @@ class Canvas extends Component {
     scaredTouristListener: null
   }
 
-  skylineWidth = canvasWidth+70
-  skylineHeight = 483
-  skylineStartX = -40
-  skylineStartY = 0
 
   componentDidUpdate() {
-    this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+    if (this.props.lives <= 0) {
+      this.refs.frozenGameOverScreen.onload = () => {
+        this.refs.playArea.getContext("2d").drawImage(this.refs.frozenGameOverScreen, 0, 0, canvasWidth, canvasHeight)
+
+        setTimeout(() => {
+          console.log("GREY")
+          let context = this.refs.playArea.getContext("2d")
+          let canvas = this.refs.playArea
+          this.grayScale(context, canvas)
+
+          //add the function call in the imageObj.onload
+          this.refs.frozenGameOverScreen.onload = () => {
+              context.drawImage(this.refs.frozenGameOverScreen, 0, 0);
+              this.grayScale(context, canvas);
+          };
+
+
+        }, 2000)
+      }
+    }
   }
+
+  grayScale(context, canvas) {
+    const imgData = context.getImageData(0, 0, canvas.width, canvas.height)
+    const pixels = imgData.data
+    for (let i = 0, n = pixels.length; i < n; i += 4) {
+      const changeRed = .5
+      const changeGreen = .5
+      const changeBlue = .5
+      const grayscale = pixels[i] * changeRed + pixels[i+1] * changeGreen + pixels[i+2] * changeBlue
+      // const grayscale = pixels[i] * .3 + pixels[i+1] * .59 + pixels[i+2] * .11;
+      pixels[i  ] = grayscale        // red
+      pixels[i+1] = grayscale        // green
+      pixels[i+2] = grayscale        // blue
+      //pixels[i+3]              is alpha
+    }
+    context.putImageData(imgData, 0, 0)
+  }
+
 
   backgroundMusicStart = (e) => {
     if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      this.refs.backgroundMusic.play()
+      if ( backgroundMusicOn ) {
+        this.refs.backgroundMusic.play()
+      }
       window.removeEventListener('keydown', this.backgroundMusicStart)
     }
   }
@@ -53,9 +89,6 @@ class Canvas extends Component {
     const scaredTouristListener = this.scaredTouristListener()
     this.setState({scaredTouristListener: scaredTouristListener})
     this.props.setCanvas(this.refs.playArea)
-    this.refs.nySkyline.onload = () => {
-      this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-    }
   }
 
   componentWillUnmount() {
@@ -81,12 +114,17 @@ class Canvas extends Component {
     return (
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
-        <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
-        <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className={this.props.bumpingShake ? 'bumpingShake' : null}></canvas>
         <Timer />
-        <Path />
-        {this.renderTourists(touristDensity)}
-        {this.props.lives > -1 ? <Player /> : null}
+        <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className={this.props.bumpingShake ? 'bumpingShake' : null}></canvas>
+        { this.props.lives > 0 ?
+          <Fragment>
+            <Path />
+            {this.renderTourists(touristDensity)}
+            <Player />
+          </Fragment>
+          :
+          <img src={this.props.gameOverImage} alt='frozenGameOverScreen' ref='frozenGameOverScreen' className='hidden'/>
+        }
       </Fragment>
     )
   }
@@ -100,7 +138,8 @@ const mapStateToProps = (state) => {
     lives: state.lives,
     touristRoaster: state.touristRoaster,
     stage: state.stage,
-    bumpingShake: state.bumpingShake
+    bumpingShake: state.bumpingShake,
+    gameOverImage: state.gameOverImage
   }
 }
 

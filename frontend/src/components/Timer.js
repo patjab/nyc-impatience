@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { canvasHeight, canvasWidth } from '../setupData'
-import { setGameOver } from '../actions'
+import { canvasHeight, canvasWidth, statusBarHeight } from '../setupData'
+import { setGameOver, setGameOverImage } from '../actions'
 
 class Timer extends Component {
   state = {
@@ -19,8 +19,6 @@ class Timer extends Component {
   }
 
   drawStatusBar = () => {
-    const statusBarHeight = 90
-
     const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
     if (ctx) {
       ctx.clearRect(0, 0, canvasWidth, statusBarHeight)
@@ -113,6 +111,9 @@ class Timer extends Component {
     ctx.fillText(`GAME`, canvasWidth/2, canvasHeight/2 - 110)
     ctx.fillText(`OVER`, canvasWidth/2, canvasHeight/2 + 110)
     ctx.textAlign = 'left'
+
+    const gameOverImg = this.props.canvas.toDataURL("image/png")
+    this.props.setGameOverImage(gameOverImg)
   }
 
   componentDidUpdate() {
@@ -141,7 +142,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setGameOver: () => dispatch(setGameOver())
+    setGameOver: () => dispatch(setGameOver()),
+    setGameOverImage: (image) => dispatch(setGameOverImage(image))
   }
 }
 

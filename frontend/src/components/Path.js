@@ -2,7 +2,8 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
-import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor, sideAreaColor } from '../setupData'
+import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor,
+  sideAreaColor, statusBarHeight, canvasWidth, canvasHeight } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
@@ -122,23 +123,57 @@ class Path extends Component {
   makeSideStructures = (ctx) => {
     const centralX = this.props.canvas.width/2
 
+    ctx.fillStyle = sideAreaColor
     ctx.beginPath()
     ctx.moveTo(0, this.props.canvas.height)
     ctx.lineTo(centralX, this.horizonPosition)
     ctx.lineTo(0, this.horizonPosition)
+    ctx.closePath()
+    ctx.stroke()
+    ctx.fill()
+
+    ctx.fillStyle = sideAreaColor
+    ctx.beginPath()
     ctx.moveTo(this.props.canvas.width, this.props.canvas.height)
     ctx.lineTo(centralX, this.horizonPosition)
     ctx.lineTo(this.props.canvas.width, this.horizonPosition)
-    ctx.fillStyle = sideAreaColor
-    ctx.fill()
-    ctx.stroke()
+    ctx.lineTo(this.props.canvas.width, this.props.canvas.height)
     ctx.closePath()
+    ctx.stroke()
+    ctx.fill()
+
+    ctx.fillStyle = sideAreaColor
+    ctx.beginPath()
+
+    ctx.closePath()
+    ctx.stroke()
+    ctx.fill()
+  }
+
+  skylineWidth = canvasWidth+70
+  skylineHeight = 483
+  skylineStartX = -40
+  skylineStartY = 20
+
+  componentDidMount () {
+    this.refs.nySkyline.onload = () => {
+      this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.props.canvas && this.refs.nySkyline) {
+      this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+    }
     if ((this.props.centersOfBricks && this.props.centersOfBricks.length === 0) || prevProps.movement !== this.props.movement) {
       this.props.initializeBrickList(this.cfBricksList)
     }
+  }
+
+  drawSky(ctx) {
+    ctx.rect(0, statusBarHeight, canvasWidth, horizonLine - statusBarHeight)
+    ctx.fillStyle = '#6BD7FF'
+    ctx.fill()
   }
 
   render() {
@@ -147,8 +182,9 @@ class Path extends Component {
       this.drawPathBackground(ctx)
       this.makeBricks(ctx)
       this.makeSideStructures(ctx)
+      this.drawSky(ctx)
     }
-    return <Fragment></Fragment>
+    return <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
   }
 }
 

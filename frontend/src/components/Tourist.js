@@ -104,9 +104,12 @@ const Tourist = class extends Component {
       }, 1000)
 
       if (!this.refs.bumpSoundEl.paused) {
-        this.refs.bumpSoundEl.pause()
+        this.refs.bumpSoundEl.pause().then(() => {
+          this.refs.bumpSoundEl.play()
+        })
+      } else {
+        this.refs.bumpSoundEl.play()
       }
-      this.refs.bumpSoundEl.play()
 
       this.setState({dontCallBumpAgain: true}, () => {
         if (!this.props.gameOver) {
