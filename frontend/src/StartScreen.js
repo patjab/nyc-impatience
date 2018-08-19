@@ -2,63 +2,52 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { exitStartScreen } from './actions'
 import { canvasWidth, canvasHeight } from './setupData'
-
+import { modularWithNegative } from './AuxiliaryMath'
 
 class StartScreen extends Component {
   state = {
     choice: 0
   }
 
-  modularHelperBecauseTheOneJavaScriptGaveIsNotStandard = (num, modBy) => ((num%modBy)+modBy)%modBy
+  playAudio = (src) => {
+    const audioEl = document.createElement('audio')
+    audioEl.setAttribute('id', src)
+    audioEl.src = src
+    audioEl.play()
+  }
 
   userInputStartScreen = (e) => {
     e.preventDefault()
     if ( e.key === 'Enter' ) {
-      if ( this.state.choice === 0 ) {
-        this.props.exitStartScreen()
-        // fix DOM manipulation
-        if (!document.querySelector('#startAudio')) {
-          const audioEl = document.createElement('audio')
-          audioEl.setAttribute('id', 'startAudio')
-          audioEl.src = './start.wav'
-          audioEl.play()
-        } else {
-          document.querySelector('#startAudio').play()
-        }
-        // fix DOM manipulation
-      } else if ( this.state.choice === 1 ) {
-        alert("High Scores Not Available")
-      } else if ( this.state.choice === 2 ) {
-        alert("Information Not Available")
+      switch(this.state.choice) {
+        case 0:
+          this.props.exitStartScreen()
+          this.playAudio('./start.wav')
+          break
+        case 1:
+          alert("High Scores Not Available")
+          break
+        case 2:
+          alert("Information Not Available")
+          break
       }
     }
 
     if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
       if ( e.key === 'ArrowUp' ) {
-        this.setState({choice: this.modularHelperBecauseTheOneJavaScriptGaveIsNotStandard(this.state.choice-1, 3)})
+        this.setState({choice: modularWithNegative(this.state.choice-1, 3)})
       } else if ( e.key === 'ArrowDown' ) {
-        this.setState({choice: this.modularHelperBecauseTheOneJavaScriptGaveIsNotStandard(this.state.choice+1, 3)})
+        this.setState({choice: modularWithNegative(this.state.choice+1, 3)})
       }
-      // fix DOM manipulation
-      if (!document.querySelector('#selectAudio')) {
-        const audioEl = document.createElement('audio')
-        audioEl.setAttribute('id', 'selectAudio')
-        audioEl.src = './select.wav'
-        audioEl.play()
-      } else {
-        document.querySelector('#selectAudio').play()
-      }
-      // fix DOM manipulation
+      this.playAudio('./select.wav')
     }
-
   }
 
   userMenu = (ctx) => {
     ctx.textAlign = 'center'
     ctx.font = "100px Impact"
-    ctx.strokeText("New York", canvasWidth/2, canvasHeight/2 - 300)
     ctx.fillStyle = "black"
-    ctx.fillText("New York", canvasWidth/2, canvasHeight/2 - 300)
+    ctx.fillText("Tourists", canvasWidth/2, canvasHeight/2 - 300)
 
     ctx.textAlign = 'center'
     ctx.font = "40px Geneva"

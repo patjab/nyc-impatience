@@ -16,24 +16,17 @@ class Canvas extends Component {
     scaredTouristListener: null
   }
 
-  somethingDimensions = 483
+  skylineWidth = canvasWidth+70
+  skylineHeight = 483
+  skylineStartX = -40
+  skylineStartY = 0
   componentDidUpdate() {
-    console.log(this.props.bumpingShake)
-    this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
+    this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
   }
 
   backgroundMusicStart = (e) => {
     if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      if (!document.querySelector("#backgroundMusic")) {
-        const backgroundMusicEl = document.createElement("audio")
-        backgroundMusicEl.setAttribute("id", "backgroundMusic")
-        backgroundMusicEl.setAttribute("loop", "true")
-        backgroundMusicEl.src = '../backgroundMusic.mp3'
-        document.head.appendChild(backgroundMusicEl)
-        backgroundMusicEl.play()
-      } else {
-        document.querySelector("backgroundMusic").play()
-      }
+      this.refs.backgroundMusic.play()
       window.removeEventListener('keydown', this.backgroundMusicStart)
     }
   }
@@ -60,7 +53,7 @@ class Canvas extends Component {
     this.setState({scaredTouristListener: scaredTouristListener})
     this.props.setCanvas(this.refs.playArea)
     this.refs.nySkyline.onload = () => {
-      this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, -40, 0, canvasWidth+70, this.somethingDimensions)
+      this.refs.playArea.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
     }
   }
 
@@ -86,6 +79,7 @@ class Canvas extends Component {
   render() {
     return (
       <Fragment>
+        <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
         <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
         {
           this.props.bumpingShake ?

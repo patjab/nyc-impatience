@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { horizonLine, initialPlayerSize, playerStartY, canvasHeight, nearnessSpook } from '../setupData'
@@ -131,10 +131,8 @@ const Tourist = class extends Component {
       setTimeout(this.props.toggleBumpingShake, 1000)
       setTimeout(()=>this.props.changeMovementAbility(false), 1000)
 
-      // fix DOM manipulation later
-      document.querySelector("#bumpSoundEl").play()
-      // fix DOM manipulation later
-      // this.props.moveDown() <--- causes stack overflow inifinite
+      !this.refs.bumpSoundEl.paused ? this.refs.bumpSoundEl.pause() : null
+      this.refs.bumpSoundEl.play()
       this.setState({dontCallBumpAgain: true}, () => {
         this.runningAnimation()
         this.props.recordStreak(this.props.movement)
@@ -153,13 +151,6 @@ const Tourist = class extends Component {
   }
 
   componentDidMount() {
-    // fix DOM manipulation later
-    const bumpSoundEl = document.createElement("audio")
-    bumpSoundEl.setAttribute("id", "bumpSoundEl")
-    bumpSoundEl.src = "../bump.wav"
-    document.head.appendChild(bumpSoundEl)
-    // fix DOM manipulation later
-
     this.refs.touristImg.onload = () => {
       const sizeOfSide = this.state.initialSize
       try {
@@ -184,7 +175,12 @@ const Tourist = class extends Component {
   }
 
   render() {
-    return <img src={`${this.state.images[this.state.image]}`} ref='touristImg' className='hidden' alt='tourist'/>
+    return (
+      <Fragment>
+        <audio src='../bump.wav' ref='bumpSoundEl'/>
+        <img src={`${this.state.images[this.state.image]}`} ref='touristImg' className='hidden' alt='tourist'/>
+      </Fragment>
+    )
   }
 }
 
