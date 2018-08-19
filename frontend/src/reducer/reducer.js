@@ -20,7 +20,8 @@ const initialState = {
   pathUpdater: 0,
   playerUpdater: 0,
   disabled: false,
-  bumpingShake: false
+  bumpingShake: false,
+  gameOver: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -126,6 +127,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         bumpingShake: !state.bumpingShake
+      }
+    case "SET_GAME_OVER":
+      return {
+        ...state,
+        gameOver: true
       }
     default:
       return state

@@ -52,9 +52,9 @@ const Tourist = class extends Component {
     const currentCol = this.state.positionOnArray.col
     let i = 1
 
-    let animation = setInterval(() => {
+    this.animationInterval = setInterval(() => {
       if ( this.state.positionOnArray.row <= 0 ) {
-        clearInterval(animation)
+        clearInterval(this.animationInterval)
         this.props.addTouristToGarbage(this.props.id)
       } else {
         this.setState({
@@ -93,21 +93,30 @@ const Tourist = class extends Component {
   }
 
   runBumpAnimations = () => {
-    this.props.toggleBumpingShake()
-    setTimeout(()=>{
+    if (!this.props.gameOver) {
       this.props.toggleBumpingShake()
-      this.props.changeMovementAbility(false)
-    }, 1000)
-    if (!this.refs.bumpSoundEl.paused) {
-      this.refs.bumpSoundEl.pause()
+
+      setTimeout(()=>{
+        if (!this.props.gameOver) {
+          this.props.toggleBumpingShake()
+          this.props.changeMovementAbility(false)
+        }
+      }, 1000)
+
+      if (!this.refs.bumpSoundEl.paused) {
+        this.refs.bumpSoundEl.pause()
+      }
+      this.refs.bumpSoundEl.play()
+
+      this.setState({dontCallBumpAgain: true}, () => {
+        if (!this.props.gameOver) {
+          this.runningAnimation()
+          this.props.recordStreak(this.props.movement)
+          this.props.resetPlayer()
+          this.props.decreaseLife()
+        }
+      })
     }
-    this.refs.bumpSoundEl.play()
-    this.setState({dontCallBumpAgain: true}, () => {
-      this.runningAnimation()
-      this.props.recordStreak(this.props.movement)
-      this.props.resetPlayer()
-      this.props.decreaseLife()
-    })
   }
 
   checkIfTouristStillInView = () => {
@@ -140,6 +149,7 @@ const Tourist = class extends Component {
 
   componentWillUnmount() {
     this.props.removeTouristFromRoaster(this.props.id)
+    clearInterval(this.animationInterval)
   }
 
   render() {
@@ -161,7 +171,7 @@ const mapStateToProps = (state) => {
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
     touristRoaster: state.touristRoaster,
-    eventListenerRoaster: state.eventListenerRoaster
+    gameOver: state.gameOver
   }
 }
 

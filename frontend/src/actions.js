@@ -121,3 +121,9 @@ export const toggleBumpingShake = () => {
     type: "TOGGLE_BUMPING_SHAKE"
   }
 }
+
+export const setGameOver = () => {
+  return {
+    type: "SET_GAME_OVERs"
+  }
+}

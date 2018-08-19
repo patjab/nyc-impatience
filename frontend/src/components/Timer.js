@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasHeight, canvasWidth } from '../setupData'
+import { setGameOver } from '../actions'
 
 class Timer extends Component {
   state = {
@@ -116,6 +117,7 @@ class Timer extends Component {
 
   componentDidUpdate() {
     if (this.props.lives === 0) {
+
       window.addEventListener('keydown', (e) => e.stopPropagation(), true)
       window.addEventListener('keyup', (e) => e.stopPropagation(), true)
       this.showGameOverScreen()
@@ -137,4 +139,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Timer)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setGameOver: () => dispatch(setGameOver())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Timer)
