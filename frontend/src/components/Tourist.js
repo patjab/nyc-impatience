@@ -11,10 +11,8 @@ const Tourist = class extends Component {
     positionX: null,
     positionY: null,
     initialRow: null,
-    initialCol: null,
     positionOnArray: null,
     walkingCycle: 0,
-    initialSize: null,
     image: Math.trunc(Math.random() * 3),
     images: ['../touristA.png', '../tourist2.png', '../tourist3.png'],
     dontCallBumpAgain: false,
@@ -35,13 +33,11 @@ const Tourist = class extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let chosenRow, chosenCol, startingSize, initialRow, initialCol, mountedOnMovement
+    let chosenRow, chosenCol, initialRow, mountedOnMovement
 
     if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
-      initialCol = chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
-
-      startingSize = (positionY - horizonLine) * ((initialPeopleSizes)/(playerStartY - horizonLine))
+      chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
       const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
@@ -50,18 +46,13 @@ const Tourist = class extends Component {
     } else {
       return state
     }
-
-    const positionX = props.centersOfBricks[chosenRow][chosenCol].x
-    const positionY = props.centersOfBricks[chosenRow][chosenCol].y
-
+    
     return {
       ...state,
-      positionX: positionX,
-      positionY: positionY,
+      positionX: props.centersOfBricks[chosenRow][chosenCol].x,
+      positionY: props.centersOfBricks[chosenRow][chosenCol].y,
       initialRow: initialRow || state.initialRow,
-      initialCol: initialCol || state.initialCol,
       positionOnArray: {col: chosenCol, row: chosenRow},
-      initialSize: startingSize || state.startingSize,
       mountedOnMovement: mountedOnMovement || state.mountedOnMovement
     }
 
@@ -139,7 +130,7 @@ const Tourist = class extends Component {
 
   componentDidMount() {
     this.refs.touristImg.onload = () => {
-      const sizeOfSide = this.state.initialSize
+      const sizeOfSide = this.howBigShouldIBe()
       try {
         this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
         this.props.addTouristToRoaster(this)

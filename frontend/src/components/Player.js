@@ -65,13 +65,14 @@ class Player extends Component {
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
 
-    if (this.props.canvas && this.refs.playerImg) {
-      this.refs.playerImg.onload = () => {
-        const ctx = this.props.canvas.getContext("2d")
+    this.refs.playerImg.onload = () => {
+      const ctx = this.props.canvas.getContext("2d")
+
+      if (this.refs.playerImg && ctx) {
         ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
       }
-      this.props.setPlayer(this)
     }
+    this.props.setPlayer(this)
   }
 
   componentDidUpdate() {
