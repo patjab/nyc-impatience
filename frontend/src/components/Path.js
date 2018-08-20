@@ -150,9 +150,9 @@ class Path extends Component {
     ctx.fill()
   }
 
-  skylineWidth = canvasWidth+70
+  skylineWidth = canvasWidth+80
   skylineHeight = 483
-  skylineStartX = -40
+  skylineStartX = -55
   skylineStartY = 20
 
   componentDidMount () {

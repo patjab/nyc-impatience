@@ -104,13 +104,13 @@ class Timer extends Component {
   }
 
   showGameOverScreen = () => {
-    const ctx = this.props.canvas.getContext("2d")
-    ctx.font = "200px Geneva"
-    ctx.fillStyle = "red"
-    ctx.textAlign = 'center'
-    ctx.fillText(`GAME`, canvasWidth/2, canvasHeight/2 - 110)
-    ctx.fillText(`OVER`, canvasWidth/2, canvasHeight/2 + 110)
-    ctx.textAlign = 'left'
+    // const ctx = this.props.canvas.getContext("2d")
+    // ctx.font = "200px Geneva"
+    // ctx.fillStyle = "red"
+    // ctx.textAlign = 'center'
+    // ctx.fillText(`GAME`, canvasWidth/2, canvasHeight/2 - 110)
+    // ctx.fillText(`OVER`, canvasWidth/2, canvasHeight/2 + 110)
+    // ctx.textAlign = 'left'
 
     const gameOverImg = this.props.canvas.toDataURL("image/png")
     this.props.setGameOverImage(gameOverImg)

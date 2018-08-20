@@ -14,29 +14,36 @@ class Canvas extends Component {
 
   state = {
     playerYelled: false,
-    scaredTouristListener: null
+    scaredTouristListener: null,
+    hasPlayedYell: false
   }
 
 
   componentDidUpdate() {
     if (this.props.lives <= 0) {
+      this.refs.backgroundMusic.pause()
+
+      if ( !this.state.hasPlayedYell ) {
+        this.refs.losingScream.play()
+        this.setState({hasPlayedYell: true})
+      }
+
+      this.refs.gameOverMusic.play()
       this.refs.frozenGameOverScreen.onload = () => {
         this.refs.playArea.getContext("2d").drawImage(this.refs.frozenGameOverScreen, 0, 0, canvasWidth, canvasHeight)
+        // this.refs.playArea.getContext("2d").clearRect(0, 0, canvasWidth, canvasHeight)
 
-        setTimeout(() => {
-          console.log("GREY")
-          let context = this.refs.playArea.getContext("2d")
-          let canvas = this.refs.playArea
-          this.grayScale(context, canvas)
+        console.log("GREY")
+        let context = this.refs.playArea.getContext("2d")
+        let canvas = this.refs.playArea
+        this.grayScale(context, canvas)
 
-          //add the function call in the imageObj.onload
-          this.refs.frozenGameOverScreen.onload = () => {
-              context.drawImage(this.refs.frozenGameOverScreen, 0, 0);
-              this.grayScale(context, canvas);
-          };
+        //add the function call in the imageObj.onload
+        this.refs.frozenGameOverScreen.onload = () => {
+            context.drawImage(this.refs.frozenGameOverScreen, 0, 0);
+            this.grayScale(context, canvas);
+        }
 
-
-        }, 2000)
       }
     }
   }
@@ -44,18 +51,27 @@ class Canvas extends Component {
   grayScale(context, canvas) {
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height)
     const pixels = imgData.data
-    for (let i = 0, n = pixels.length; i < n; i += 4) {
-      const changeRed = .5
-      const changeGreen = .5
-      const changeBlue = .5
-      const grayscale = pixels[i] * changeRed + pixels[i+1] * changeGreen + pixels[i+2] * changeBlue
-      // const grayscale = pixels[i] * .3 + pixels[i+1] * .59 + pixels[i+2] * .11;
-      pixels[i  ] = grayscale        // red
-      pixels[i+1] = grayscale        // green
-      pixels[i+2] = grayscale        // blue
-      //pixels[i+3]              is alpha
-    }
-    context.putImageData(imgData, 0, 0)
+
+    let i = 0
+    const pixelInterval = setInterval(() => {
+
+        if ( i >= pixels.length ) {
+          clearInterval(pixelInterval)
+        } else {
+          for ( let n = 0; n < 750*4; n+= 4 ) {
+            const changeRed = 0.30
+            const changeGreen = 0.60
+            const changeBlue = 0.10
+            const grayscale = (pixels[i] * changeRed) + (pixels[i+1] * changeGreen) + (pixels[i+2] * changeBlue)
+            pixels[i] = grayscale        // red
+            pixels[i+1] = grayscale        // green
+            pixels[i+2] = grayscale        // blue
+            i+= 4
+          }
+          context.putImageData(imgData, 0, 0)
+        }
+
+    }, 1)
   }
 
 
@@ -114,6 +130,8 @@ class Canvas extends Component {
     return (
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
+        <audio src='../gameOver.mp3' loop='true' ref='gameOverMusic'/ >
+        <audio src='../losingScream.wav' ref='losingScream'/ >
         <Timer />
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className={this.props.bumpingShake ? 'bumpingShake' : null}></canvas>
         { this.props.lives > 0 ?
