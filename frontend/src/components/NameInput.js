@@ -77,8 +77,18 @@ class NameInput extends Component {
     ctx.closePath()
   }
 
-  componentDidUpdate() {
-    console.log(this.state.nameInput)
+  displayCursor = (ctx) => {
+    if ( this.state.nameInput.length === 0 ) {
+      setInterval(() => {
+        console.log("INSIDE INTERVAL")
+        ctx.textAlign = 'center'
+        ctx.fillStyle = 'red'
+        ctx.font = '40px Geneva'
+        ctx.fillText("|", canvasWidth/2, 990)
+
+        setTimeout(this.clearInputArea, 1000)
+      }, 1500)
+    }
   }
 
   showNameOnScreen = () => {

@@ -39,12 +39,12 @@ class HighScores extends Component {
       ctx.textAlign = 'left'
 
       ctx.font = '20px Geneva'
-      ctx.fillText(`Total`, 350, yCursor)
+      ctx.fillText(`Total`, 320, yCursor)
       ctx.fillText(`Distance`, 450, yCursor)
       ctx.fillText(`Minutes`, 550, yCursor)
       ctx.fillText(`Key`, 650, yCursor)
       yCursor += 24
-      ctx.fillText(`Distance`, 350, yCursor)
+      ctx.fillText(`Distance`, 320, yCursor)
       ctx.fillText(`Streak`, 450, yCursor)
       ctx.fillText(`Lasted`, 550, yCursor)
       ctx.fillText(`Changes`, 650, yCursor)
@@ -54,7 +54,7 @@ class HighScores extends Component {
       let i = 1
       for ( let scoreData of this.state.topScores ) {
         ctx.fillText(`${i}. ${scoreData.name}`, 40, yCursor)
-        ctx.fillText(`${scoreData.distance}`, 350, yCursor)
+        ctx.fillText(`${scoreData.distance}`, 320, yCursor)
         ctx.fillText(`${scoreData.longest_streak}`, 450, yCursor)
         ctx.fillText(`${Math.round(((scoreData.time_lasted/100)/60)*100)/100}`, 550, yCursor)
         ctx.fillText(`${scoreData.direction_changes}`, 650, yCursor)

@@ -136,6 +136,7 @@ class Canvas extends Component {
           direction_changes_per_second: unformatted["Dir Changes per Sec"]
         }
       }
+      console.log("TO BE RECORDED", formatted)
       recordHighScore(formatted)
     }
 
@@ -260,6 +261,7 @@ class Canvas extends Component {
   }
 
   componentWillUnmount() {
+    console.log("UNMOUNTING")
     clearInterval(this.state.scaredTouristListener)
     window.removeEventListener('keydown', this.switchToHighScores)
   }
