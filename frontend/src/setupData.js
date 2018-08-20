@@ -32,6 +32,7 @@ export const initialLives = 3
 export const backgroundMusicOn = true
 
 export const statusBarHeight = 90
+export const numberOfHighScoresToDisplay = 15
 
 // AFTER GAME
 export const marginAroundStats = 100

@@ -35,7 +35,8 @@ const initialState = {
     "Shortest Streak": null,
     "Direction Changes": null,
     "Dir Changes per Sec": null
-  }
+  },
+  currentScreen: "start"
 }
 
 const gameController = (state = initialState, action) => {
@@ -182,6 +183,15 @@ const gameController = (state = initialState, action) => {
           ...state.dataToBeRecorded,
           ...action.payload
         }
+      }
+    case "CHANGE_CURRENT_SCREEN":
+      return {
+        ...state,
+        currentScreen: action.payload
+      }
+    case "RESET_ALL_STATE":
+      return {
+        ...initialState
       }
     default:
       return state

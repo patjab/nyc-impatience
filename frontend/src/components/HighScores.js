@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getHighScores } from '../adapter/adapter'
-import { canvasHeight, canvasWidth } from '../setupData'
+import { canvasHeight, canvasWidth, numberOfHighScoresToDisplay } from '../setupData'
+import { changeCurrentScreen, resetAllState } from '../actions'
 
 class HighScores extends Component {
   state = {
@@ -11,7 +12,7 @@ class HighScores extends Component {
   componentDidMount() {
     getHighScores()
     .then(allScores => allScores.sort((score1, score2) => score2.distance - score1.distance))
-    .then(sortedScores => sortedScores.slice(0, 10))
+    .then(sortedScores => sortedScores.slice(0, numberOfHighScoresToDisplay))
     .then(topScores => this.setState({topScores}))
   }
 
@@ -60,7 +61,25 @@ class HighScores extends Component {
         yCursor += 12 + 36
         i++
       }
+
+      ctx.font = "24px Geneva"
+      ctx.fillStyle = "white"
+      ctx.textAlign = 'right'
+      ctx.fillText("[ESC] for Main Screen", canvasWidth-100, canvasHeight-100)
+
+      window.addEventListener('keydown', this.switchToMainScreen)
     }
+  }
+
+  switchToMainScreen = (e) => {
+    if (e.keyCode === 27) {
+      this.props.changeCurrentScreen("start")
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.resetAllState()
+    window.removeEventListener('keydown', this.switchToMainScreen)
   }
 
   render() {
@@ -68,4 +87,11 @@ class HighScores extends Component {
   }
 }
 
-export default connect()(HighScores)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen)),
+    resetAllState: () => dispatch(resetAllState())
+  }
+}
+
+export default connect(null, mapDispatchToProps)(HighScores)

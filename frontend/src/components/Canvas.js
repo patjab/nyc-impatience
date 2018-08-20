@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { setThisCanvas, emptyGarbageOfTourists, recordGameStatistics } from '../actions'
+import { setThisCanvas, emptyGarbageOfTourists, recordGameStatistics, changeCurrentScreen } from '../actions'
 import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth,
   canvasHeight, backgroundMusicOn, marginAroundStats, paddingAroundStats } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
@@ -110,7 +110,16 @@ class Canvas extends Component {
     ctx.fillStyle = "white"
     ctx.textAlign = 'right'
     ctx.fillText("[ESC] for High Scores", canvasWidth-100, canvasHeight-100)
+
+    window.addEventListener('keydown', this.switchToHighScores)
   }
+
+  switchToHighScores = (e) => {
+    if (e.keyCode === 27) {
+      this.props.changeCurrentScreen("highScores")
+    }
+  }
+
   cfOnlyOnceTemp = true
   componentDidUpdate() {
     if ( this.props.dataToBeRecorded["Name"] ) {
@@ -252,6 +261,7 @@ class Canvas extends Component {
 
   componentWillUnmount() {
     clearInterval(this.state.scaredTouristListener)
+    window.removeEventListener('keydown', this.switchToHighScores)
   }
 
   renderTourists = (numberOfTourists) => {
@@ -316,7 +326,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setCanvas: (canvas) => dispatch(setThisCanvas(canvas)),
     emptyGarbageOfTourists: () => dispatch(emptyGarbageOfTourists()),
-    recordGameStatistics: (statistics) => dispatch(recordGameStatistics(statistics))
+    recordGameStatistics: (statistics) => dispatch(recordGameStatistics(statistics)),
+    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen))
   }
 }
 

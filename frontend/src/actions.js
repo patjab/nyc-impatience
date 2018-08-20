@@ -169,3 +169,16 @@ export const recordGameStatistics = (statistics) => {
     payload: statistics
   }
 }
+
+export const changeCurrentScreen = (screen) => {
+  return {
+    type: "CHANGE_CURRENT_SCREEN",
+    payload: screen
+  }
+}
+
+export const resetAllState = () => {
+  return {
+    type: "RESET_ALL_STATE"
+  }
+}

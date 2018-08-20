@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { exitStartScreen } from './actions'
+import { changeCurrentScreen } from './actions'
 import { canvasWidth, canvasHeight } from './setupData'
 import { modularWithNegative } from './AuxiliaryMath'
 
@@ -21,11 +21,11 @@ class StartScreen extends Component {
     if ( e.key === 'Enter' ) {
       switch(this.state.choice) {
         case 0:
-          this.props.exitStartScreen()
+          this.props.changeCurrentScreen("gamePlay")
           this.playAudio('./start.wav')
           break
         case 1:
-          alert("High Scores Not Available")
+          this.props.changeCurrentScreen("highScores")
           break
         case 2:
           alert("Information Not Available")
@@ -107,7 +107,7 @@ class StartScreen extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    exitStartScreen: () => dispatch(exitStartScreen())
+    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen))
   }
 }
 
