@@ -120,83 +120,91 @@ class Canvas extends Component {
     }
   }
 
+
+  formatAndSaveGameStatistics = () => {
+    const unformatted = this.props.dataToBeRecorded
+    const formatted = {
+      high_score: {
+        name: unformatted["Name"],
+        distance: unformatted["Distance"],
+        average_speed: unformatted["Average Speed"],
+        time_lasted: unformatted["Time Lasted"],
+        longest_streak: unformatted["Longest Streak"],
+        shortest_streak: unformatted["Shortest Streak"],
+        direction_changes: unformatted["Direction Changes"],
+        direction_changes_per_second: unformatted["Dir Changes per Sec"]
+      }
+    }
+    console.log("TO BE RECORDED", formatted)
+    recordHighScore(formatted)
+  }
+
   cfOnlyOnceTemp = true
-  componentDidUpdate() {
-    if ( this.props.dataToBeRecorded["Name"] ) {
-      const unformatted = this.props.dataToBeRecorded
-      const formatted = {
-        high_score: {
-          name: unformatted["Name"],
-          distance: unformatted["Distance"],
-          average_speed: unformatted["Average Speed"],
-          time_lasted: unformatted["Time Lasted"],
-          longest_streak: unformatted["Longest Streak"],
-          shortest_streak: unformatted["Shortest Streak"],
-          direction_changes: unformatted["Direction Changes"],
-          direction_changes_per_second: unformatted["Dir Changes per Sec"]
-        }
+  displayGameStatsSquare = () => {
+    this.cfOnlyOnceTemp = false
+    let ctx = this.refs.playArea.getContext("2d")
+
+    let i = 0
+    let squareWidth, squareHeight
+    const maximumWidth = canvasWidth - marginAroundStats
+    const maximumHeight = canvasHeight - marginAroundStats
+    const startingDimension = 5
+    const gameOverSquareAnimation = setInterval(() => {
+      if ( squareHeight > maximumHeight ) {
+        clearInterval(gameOverSquareAnimation)
+        this.setState({nameInputReady: true}, ()=> {
+          this.displayStats()
+        })
+      } else {
+        squareWidth = squareWidth < maximumWidth ? startingDimension + i : maximumWidth
+        squareHeight = startingDimension + i
+
+        const xPosition = (canvasWidth/2) - (squareWidth/2)
+        const yPosition = (canvasHeight/2) - (squareHeight/2)
+
+        ctx.beginPath()
+        ctx.rect(xPosition, yPosition, squareWidth, squareHeight)
+        ctx.fillStyle = "#000000"
+        ctx.fill()
+        ctx.closePath()
+
+        i += 5
       }
-      console.log("TO BE RECORDED", formatted)
-      recordHighScore(formatted)
+    }, 1)
+  }
+
+  fadeToGrey = () => {
+    this.refs.backgroundMusic.pause()
+
+    if ( !this.state.hasPlayedYell ) {
+      this.refs.losingScream.play()
+      this.setState({hasPlayedYell: true})
     }
 
-    if (this.props.lives <= 0 && this.state.doneGreyscale && this.cfOnlyOnceTemp) {
-      this.cfOnlyOnceTemp = false
-      let ctx = this.refs.playArea.getContext("2d")
+    this.refs.gameOverMusic.play()
+    this.refs.frozenGameOverScreen.onload = () => {
+      this.refs.playArea.getContext("2d").drawImage(this.refs.frozenGameOverScreen, 0, 0, canvasWidth, canvasHeight)
 
-      let i = 0
-      let squareWidth, squareHeight
-      const maximumWidth = canvasWidth - marginAroundStats
-      const maximumHeight = canvasHeight - marginAroundStats
-      const startingDimension = 5
-      const gameOverSquareAnimation = setInterval(() => {
-        if ( squareHeight > maximumHeight ) {
-          clearInterval(gameOverSquareAnimation)
-          this.setState({nameInputReady: true}, ()=> {
-            this.displayStats()
-          })
-        } else {
-          squareWidth = squareWidth < maximumWidth ? startingDimension + i : maximumWidth
-          squareHeight = startingDimension + i
+      let context = this.refs.playArea.getContext("2d")
+      let canvas = this.refs.playArea
+      this.grayScale(context, canvas)
 
-          const xPosition = (canvasWidth/2) - (squareWidth/2)
-          const yPosition = (canvasHeight/2) - (squareHeight/2)
-
-          ctx.beginPath()
-          ctx.rect(xPosition, yPosition, squareWidth, squareHeight)
-          ctx.fillStyle = "#000000"
-          ctx.fill()
-          ctx.closePath()
-
-          i += 5
-        }
-      }, 1)
-    }
-
-    if (this.props.lives <= 0 && !this.state.doneGreyscale) {
-      this.refs.backgroundMusic.pause()
-
-      if ( !this.state.hasPlayedYell ) {
-        this.refs.losingScream.play()
-        this.setState({hasPlayedYell: true})
-      }
-
-      this.refs.gameOverMusic.play()
       this.refs.frozenGameOverScreen.onload = () => {
-        this.refs.playArea.getContext("2d").drawImage(this.refs.frozenGameOverScreen, 0, 0, canvasWidth, canvasHeight)
-        // this.refs.playArea.getContext("2d").clearRect(0, 0, canvasWidth, canvasHeight)
-
-        let context = this.refs.playArea.getContext("2d")
-        let canvas = this.refs.playArea
-        this.grayScale(context, canvas)
-
-        //add the function call in the imageObj.onload
-        this.refs.frozenGameOverScreen.onload = () => {
-            context.drawImage(this.refs.frozenGameOverScreen, 0, 0);
-            this.grayScale(context, canvas);
-        }
-
+          context.drawImage(this.refs.frozenGameOverScreen, 0, 0);
+          this.grayScale(context, canvas);
       }
+
+    }
+  }
+
+
+  componentDidUpdate() {
+    if (this.props.lives <= 0 && !this.state.doneGreyscale) {
+      this.fadeToGrey()
+    } else if (this.props.lives <= 0 && this.state.doneGreyscale && this.cfOnlyOnceTemp) {
+      this.displayGameStatsSquare()
+    } else if ( this.props.dataToBeRecorded["Name"] ) {
+      this.formatAndSaveGameStatistics()
     }
   }
 
