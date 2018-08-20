@@ -36,8 +36,8 @@ canvas {
   margin: 0 auto;
 }
 
-#playArea, #startScreen {
-  /* background-color: #6BD7FF; */
+#startScreen {
+  background-color: #000000;
 }
 
 .gameOverImage {

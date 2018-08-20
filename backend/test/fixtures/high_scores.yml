@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  distance: 1
+  average_speed: 1.5
+  time_lasted: 1.5
+  longest_streak: 1
+  shortest_streak: 1
+  direction_changes: 1
+  direction_changes_per_second: 1
+
+two:
+  distance: 1
+  average_speed: 1.5
+  time_lasted: 1.5
+  longest_streak: 1
+  shortest_streak: 1
+  direction_changes: 1
+  direction_changes_per_second: 1

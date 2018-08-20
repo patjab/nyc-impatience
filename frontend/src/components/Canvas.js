@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { setThisCanvas, emptyGarbageOfTourists, recordGameStatistics } from '../actions'
 import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth,
   canvasHeight, backgroundMusicOn, marginAroundStats, paddingAroundStats } from '../setupData'
-import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
+import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
+import { recordHighScore } from '../adapter/adapter'
 
 import Path from './Path'
 import Player from './Player'
@@ -110,11 +111,23 @@ class Canvas extends Component {
     ctx.textAlign = 'right'
     ctx.fillText("[ESC] for High Scores", canvasWidth-100, canvasHeight-100)
   }
-
   cfOnlyOnceTemp = true
   componentDidUpdate() {
     if ( this.props.dataToBeRecorded["Name"] ) {
-      console.log("SEND THIS INFORMATION TO THE DATABASE:", this.props.dataToBeRecorded)
+      const unformatted = this.props.dataToBeRecorded
+      const formatted = {
+        high_score: {
+          name: unformatted["Name"],
+          distance: unformatted["Distance"],
+          average_speed: unformatted["Average Speed"],
+          time_lasted: unformatted["Time Lasted"],
+          longest_streak: unformatted["Longest Streak"],
+          shortest_streak: unformatted["Shortest Streak"],
+          direction_changes: unformatted["Direction Changes"],
+          direction_changes_per_second: unformatted["Dir Changes per Sec"]
+        }
+      }
+      recordHighScore(formatted)
     }
 
     if (this.props.lives <= 0 && this.state.doneGreyscale && this.cfOnlyOnceTemp) {

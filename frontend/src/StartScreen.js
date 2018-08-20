@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { exitStartScreen } from './actions'
 import { canvasWidth, canvasHeight } from './setupData'
@@ -48,40 +48,47 @@ class StartScreen extends Component {
   userMenu = (ctx) => {
     ctx.textAlign = 'center'
     ctx.font = "100px Impact"
-    ctx.fillStyle = "black"
-    ctx.fillText("Tourists", canvasWidth/2, canvasHeight/2 - 300)
+    ctx.fillStyle = "white"
+    ctx.fillText("      Tourists", canvasWidth/2, canvasHeight/2 - 300)
 
     ctx.textAlign = 'center'
     ctx.font = "40px Geneva"
+    ctx.fillStyle = this.state.choice === 0 ? "red" : "white"
     ctx.fillText("Play Game", canvasWidth/2, canvasHeight/2 - 100)
 
     ctx.textAlign = 'center'
     ctx.font = "40px Geneva"
+    ctx.fillStyle = this.state.choice === 1 ? "red" : "white"
     ctx.fillText("High Scores", canvasWidth/2, canvasHeight/2)
 
     ctx.textAlign = 'center'
     ctx.font = "40px Geneva"
+    ctx.fillStyle = this.state.choice === 2 ? "red" : "white"
     ctx.fillText("Information", canvasWidth/2, canvasHeight/2 + 100)
   }
 
-  choices = (ctx) => {
-    ctx.clearRect(canvasWidth/2 - 180 - 30, canvasHeight/2 - 150, 45, 300)
-    ctx.textAlign = 'center'
-    ctx.strokeText(">", canvasWidth/2 - 180, (canvasHeight/2 - 100) + (this.state.choice * 100))
-    ctx.fillStyle = "black"
-  }
+  sizeOfSide = 150
+  xPosition = 95
+  yPosition = 255
 
   componentDidMount() {
+    window.addEventListener('keydown', this.userInputStartScreen)
     const ctx = this.refs.startScreen.getContext("2d")
     this.userMenu(ctx)
-    this.choices(ctx)
+    const fTrainSymbol = this.refs.fTrainSymbol
 
-    window.addEventListener('keydown', this.userInputStartScreen)
+    fTrainSymbol.onload = () => {
+      ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
+    }
+
   }
 
   componentDidUpdate() {
     const ctx = this.refs.startScreen.getContext("2d")
-    this.choices(ctx)
+    this.userMenu(ctx)
+    const fTrainSymbol = this.refs.fTrainSymbol
+
+    ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
   }
 
   componentWillUnmount() {
@@ -89,7 +96,12 @@ class StartScreen extends Component {
   }
 
   render() {
-    return <canvas width={canvasWidth} height={canvasHeight} id='startScreen' ref='startScreen'></canvas>
+    return (
+      <Fragment>
+        <canvas width={canvasWidth} height={canvasHeight} id='startScreen' ref='startScreen'></canvas>
+        <img src='../fTrainSymbol.png' className='hidden' ref='fTrainSymbol' alt='fTrainSymbol'/>
+      </Fragment>
+    )
   }
 }
 
