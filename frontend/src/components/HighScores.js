@@ -41,12 +41,12 @@ class HighScores extends Component {
       ctx.font = '20px Geneva'
       ctx.fillText(`Total`, 350, yCursor)
       ctx.fillText(`Distance`, 450, yCursor)
-      ctx.fillText(`Longest`, 550, yCursor)
+      ctx.fillText(`Minutes`, 550, yCursor)
       ctx.fillText(`Key`, 650, yCursor)
       yCursor += 24
       ctx.fillText(`Distance`, 350, yCursor)
       ctx.fillText(`Streak`, 450, yCursor)
-      ctx.fillText(`Time`, 550, yCursor)
+      ctx.fillText(`Lasted`, 550, yCursor)
       ctx.fillText(`Changes`, 650, yCursor)
       yCursor += 12 + 36
 
@@ -56,7 +56,7 @@ class HighScores extends Component {
         ctx.fillText(`${i}. ${scoreData.name}`, 40, yCursor)
         ctx.fillText(`${scoreData.distance}`, 350, yCursor)
         ctx.fillText(`${scoreData.longest_streak}`, 450, yCursor)
-        ctx.fillText(`${scoreData.time_lasted}`, 550, yCursor)
+        ctx.fillText(`${Math.round(((scoreData.time_lasted/100)/60)*100)/100}`, 550, yCursor)
         ctx.fillText(`${scoreData.direction_changes}`, 650, yCursor)
         yCursor += 12 + 36
         i++

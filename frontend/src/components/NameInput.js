@@ -22,8 +22,47 @@ class NameInput extends Component {
     }
 
     if ( e.keyCode === 13 ) {
+      window.removeEventListener('keydown', this.handleNameInput)
+      const ctx = this.props.canvas.getContext("2d")
+
       this.props.setName(this.state.nameInput)
+
+      ctx.beginPath()
+      ctx.rect(100, 990, canvasWidth - (100*2), 70)
+      ctx.fillStyle = "#000000"
+      ctx.fill()
+      ctx.closePath()
+
+      ctx.textAlign = 'center'
+      ctx.fillStyle = '#00ff00'
+      ctx.font = '50px Geneva'
+      ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
+
+      setTimeout(() => {
+        ctx.beginPath()
+        ctx.rect(100, 920, canvasWidth - (100*2), 70)
+        ctx.fillStyle = "#000000"
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.beginPath()
+        ctx.rect(100, 990, canvasWidth - (100*2), 70)
+        ctx.fillStyle = "#000000"
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.textAlign = 'center'
+        ctx.fillStyle = '#00ff00'
+        ctx.font = '40px Geneva'
+        ctx.fillText("Your score", canvasWidth/2, 945)
+        ctx.fillText("has been recorded", canvasWidth/2, 945 + 45)
+      }, 1000)
+
     }
+  }
+
+  componentDidUpdate() {
+    console.log(this.state.nameInput)
   }
 
   showNameOnScreen = () => {
@@ -33,13 +72,10 @@ class NameInput extends Component {
     ctx.rect(100, 990, canvasWidth - (100*2), 70)
     ctx.fillStyle = "#000000"
     ctx.fill()
-    // ctx.strokeStyle = '#FFFFFF'
-    // ctx.lineWidth=3
-    // ctx.stroke()
     ctx.closePath()
 
     ctx.textAlign = 'center'
-    ctx.fillStyle = '#3390FF'
+    ctx.fillStyle = '#ff0000'
     ctx.font = '50px Geneva'
     ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
   }
