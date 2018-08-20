@@ -85,7 +85,6 @@ class Player extends Component {
   }
 
   componentDidUpdate() {
-    console.log("PLAYER DID UPDATE")
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
     this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
   }

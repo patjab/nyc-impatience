@@ -1,9 +1,9 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor,
-  sideAreaColor, statusBarHeight, canvasWidth, canvasHeight } from '../setupData'
+  sideAreaColor, statusBarHeight, canvasWidth } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine

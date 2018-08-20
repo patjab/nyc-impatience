@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { canvasHeight, canvasWidth, statusBarHeight } from '../setupData'
+import { canvasWidth, statusBarHeight } from '../setupData'
 import { setGameOver, setGameOverImage, recordTimeFinished } from '../actions'
 
 class Timer extends Component {
@@ -97,7 +97,6 @@ class Timer extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (this.state.willBeDone) { return false }
     if (nextProps.lives <= 0) {
-      console.log("STREAKS: ", this.props.streak)
       this.setState({willBeDone: true})
     }
     return true
@@ -111,8 +110,8 @@ class Timer extends Component {
   componentDidUpdate() {
     if (this.props.lives === 0) {
       this.props.recordTimeFinished(this.state.time)
-      window.addEventListener('keydown', (e) => e.stopPropagation(), true)
-      window.addEventListener('keyup', (e) => e.stopPropagation(), true)
+      // window.addEventListener('keydown', (e) => e.stopPropagation(), true)
+      // window.addEventListener('keyup', (e) => e.stopPropagation(), true)
       this.showGameOverScreen()
     }
   }
@@ -128,7 +127,7 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     movement: state.movement,
     lives: state.lives,
-    streak: state.streak
+    streak: state.streak,
   }
 }
 

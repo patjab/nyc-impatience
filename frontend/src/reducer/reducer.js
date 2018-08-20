@@ -25,7 +25,17 @@ const initialState = {
   gameOverImage: null,
   bumpedImages: [],
   timeFinished: null,
-  changeInDirectionCounter: null
+  changeInDirectionCounter: null,
+  dataToBeRecorded: {
+    "Name": null,
+    "Distance": null,
+    "Average Speed": null,
+    "Time Lasted": null,
+    "Longest Streak": null,
+    "Shortest Streak": null,
+    "Direction Changes": null,
+    "Dir Changes/sec": null
+  }
 }
 
 const gameController = (state = initialState, action) => {
@@ -156,6 +166,22 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         changeInDirectionCounter: action.payload
+      }
+    case "SET_NAME":
+      return {
+        ...state,
+        dataToBeRecorded: {
+          ...state.dataToBeRecorded,
+          "Name": action.payload
+        }
+      }
+    case "RECORD_GAME_STATISTICS":
+      return {
+        ...state,
+        dataToBeRecorded: {
+          ...state.dataToBeRecorded,
+          ...action.payload
+        }
       }
     default:
       return state

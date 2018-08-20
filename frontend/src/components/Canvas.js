@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
+import { setThisCanvas, emptyGarbageOfTourists, recordGameStatistics } from '../actions'
 import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth,
   canvasHeight, backgroundMusicOn, marginAroundStats, paddingAroundStats } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
@@ -9,6 +9,7 @@ import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
 import Timer from './Timer'
+import NameInput from './NameInput'
 
 class Canvas extends Component {
 
@@ -16,7 +17,8 @@ class Canvas extends Component {
     playerYelled: false,
     scaredTouristListener: null,
     hasPlayedYell: false,
-    doneGreyscale: false
+    doneGreyscale: false,
+    nameInputReady: false
   }
 
   displayStats = () => {
@@ -40,17 +42,13 @@ class Canvas extends Component {
     const imageHeight = proportionalSizeImage * canvasHeight
 
     let imageCursorX = marginAroundStats + paddingAroundStats
-    console.log("B: ", yCursor)
     let imageCursorY = yCursor + sectionPadding // separate due to ASYNC behavior
     yCursor += sectionPadding
-    console.log("A: ", yCursor)
 
-    const imageArray = []
     for (let img64 of this.props.bumpedImages) {
       const image = new Image()
       image.src = img64
-      image.onload = function() {
-        console.log(yCursor)
+      image.onload = () => {
         ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
         imageCursorX += imageWidth + marginAroundPictures
       }
@@ -79,75 +77,48 @@ class Canvas extends Component {
     }
 
     const recordData = {
-      distance: indivStreaks.reduce((a,b) => a+b),
-      averageSpeed: indivStreaks.reduce((a,b) => a+b) / (this.props.timeFinished/100),
-      timeLasted: this.props.timeFinished,
-      longestStreak: Math.max(...indivStreaks),
-      shortestStreak: Math.min(...indivStreaks),
-      directionChanges: this.props.changeInDirectionCounter,
-      directionChangesPerSec: this.props.changeInDirectionCounter / (this.props.timeFinished/100)
+      "Distance": indivStreaks.reduce((a,b) => a+b),
+      "Average Speed": indivStreaks.reduce((a,b) => a+b) / (this.props.timeFinished/100),
+      "Time Lasted": this.props.timeFinished,
+      "Longest Streak": Math.max(...indivStreaks),
+      "Shortest Streak": Math.min(...indivStreaks),
+      "Direction Changes": this.props.changeInDirectionCounter,
+      "Dir Changes/sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
     }
 
-    ctx.textAlign = 'right'
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Distance`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${recordData.distance} steps`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
+    this.props.recordGameStatistics(recordData)
 
-    ctx.textAlign = 'right'
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Average Speed`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${Math.round(recordData.averageSpeed * 100) / 100} steps/s`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
+    yCursor += sectionPadding
 
-    ctx.textAlign = 'right'
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Time Lasted`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${Math.round(recordData.timeLasted) / 100} seconds`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
+    for ( let attr in recordData ) {
+      ctx.textAlign = 'right'
+      ctx.fillStyle = 'white'
+      ctx.fillText(attr, canvasWidth/2 + (3*afterColon), yCursor)
+      ctx.textAlign = 'left'
+      ctx.fillStyle = colorOfData
+      ctx.fillText(`${Math.round(recordData[attr] * 100) / 100}`, canvasWidth/2 + (5*afterColon), yCursor)
+      yCursor += spacing
+    }
 
-    ctx.textAlign = 'right'
+    yCursor += (2*sectionPadding)
+    ctx.textAlign = 'center'
     ctx.fillStyle = 'white'
-    ctx.fillText(`Longest Streak`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${recordData.longestStreak} steps`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
+    ctx.fillText("Enter your name", canvasWidth/2, yCursor)
 
+    ctx.font = "24px Geneva"
+    ctx.fillStyle = "white"
     ctx.textAlign = 'right'
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Shortest Streak`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${recordData.shortestStreak} steps`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
-
-    ctx.textAlign = 'right'
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Direction Δs`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${recordData.directionChanges}`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
-
-    ctx.textAlign = 'right'
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Δs/second`, canvasWidth/2 - afterColon, yCursor)
-    ctx.textAlign = 'left'
-    ctx.fillStyle = colorOfData
-    ctx.fillText(`${Math.round(recordData.directionChangesPerSec * 100) / 100}`, canvasWidth/2 + afterColon, yCursor)
-    yCursor += spacing
-
+    ctx.fillText("[ESC] for High Scores", canvasWidth-100, canvasHeight-100)
   }
 
+  cfOnlyOnceTemp = true
   componentDidUpdate() {
-    if (this.props.lives <= 0 && this.state.doneGreyscale) {
+    if ( this.props.dataToBeRecorded["Name"] ) {
+      console.log("SEND THIS INFORMATION TO THE DATABASE:", this.props.dataToBeRecorded)
+    }
+
+    if (this.props.lives <= 0 && this.state.doneGreyscale && this.cfOnlyOnceTemp) {
+      this.cfOnlyOnceTemp = false
       let ctx = this.refs.playArea.getContext("2d")
 
       let i = 0
@@ -158,7 +129,9 @@ class Canvas extends Component {
       const gameOverSquareAnimation = setInterval(() => {
         if ( squareHeight > maximumHeight ) {
           clearInterval(gameOverSquareAnimation)
-          this.displayStats()
+          this.setState({nameInputReady: true}, ()=> {
+            this.displayStats()
+          })
         } else {
           squareWidth = squareWidth < maximumWidth ? startingDimension + i : maximumWidth
           squareHeight = startingDimension + i
@@ -300,6 +273,9 @@ class Canvas extends Component {
           :
           <img src={this.props.gameOverImage} alt='frozenGameOverScreen' ref='frozenGameOverScreen' className='hidden'/>
         }
+        {
+          this.state.nameInputReady ? <NameInput/> : null
+        }
       </Fragment>
     )
   }
@@ -318,14 +294,16 @@ const mapStateToProps = (state) => {
     bumpedImages: state.bumpedImages,
     streak: state.streak,
     timeFinished: state.timeFinished,
-    changeInDirectionCounter: state.changeInDirectionCounter
+    changeInDirectionCounter: state.changeInDirectionCounter,
+    dataToBeRecorded: state.dataToBeRecorded
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     setCanvas: (canvas) => dispatch(setThisCanvas(canvas)),
-    emptyGarbageOfTourists: () => dispatch(emptyGarbageOfTourists())
+    emptyGarbageOfTourists: () => dispatch(emptyGarbageOfTourists()),
+    recordGameStatistics: (statistics) => dispatch(recordGameStatistics(statistics))
   }
 }
 

@@ -155,3 +155,17 @@ export const setChangeInDirection = (count) => {
     payload: count
   }
 }
+
+export const setName = (name) => {
+  return {
+    type: "SET_NAME",
+    payload: name
+  }
+}
+
+export const recordGameStatistics = (statistics) => {
+  return {
+    type: "RECORD_GAME_STATISTICS",
+    payload: statistics
+  }
+}
