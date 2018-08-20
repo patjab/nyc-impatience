@@ -27,11 +27,7 @@ class NameInput extends Component {
 
       this.props.setName(this.state.nameInput)
 
-      ctx.beginPath()
-      ctx.rect(100, 990, canvasWidth - (100*2), 70)
-      ctx.fillStyle = "#000000"
-      ctx.fill()
-      ctx.closePath()
+      this.clearInputArea(ctx)
 
       ctx.textAlign = 'center'
       ctx.fillStyle = '#00ff00'
@@ -45,20 +41,40 @@ class NameInput extends Component {
         ctx.fill()
         ctx.closePath()
 
-        ctx.beginPath()
-        ctx.rect(100, 990, canvasWidth - (100*2), 70)
-        ctx.fillStyle = "#000000"
-        ctx.fill()
-        ctx.closePath()
+        this.clearInputArea(ctx)
 
         ctx.textAlign = 'center'
         ctx.fillStyle = '#00ff00'
         ctx.font = '40px Geneva'
         ctx.fillText("Your score", canvasWidth/2, 945)
         ctx.fillText("has been recorded", canvasWidth/2, 945 + 45)
+
+        setInterval(() => {
+          ctx.textAlign = 'center'
+          ctx.fillStyle = 'red'
+          ctx.font = '40px Geneva'
+          ctx.fillText("Press [ESC] to continue", canvasWidth/2, 1100)
+
+          setTimeout(() => {
+            ctx.beginPath()
+            ctx.rect(100, 1100 - 40, canvasWidth - 200, 80)
+            ctx.fillStyle = "#000000"
+            ctx.fill()
+            ctx.closePath()
+          }, 1000)
+        }, 1500)
+
       }, 1000)
 
     }
+  }
+
+  clearInputArea = (ctx) => {
+    ctx.beginPath()
+    ctx.rect(100, 990, canvasWidth - (100*2), 70)
+    ctx.fillStyle = "#000000"
+    ctx.fill()
+    ctx.closePath()
   }
 
   componentDidUpdate() {
