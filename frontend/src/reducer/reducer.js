@@ -34,7 +34,7 @@ const initialState = {
     "Longest Streak": null,
     "Shortest Streak": null,
     "Direction Changes": null,
-    "Dir Changes/sec": null
+    "Dir Changes per Sec": null
   }
 }
 

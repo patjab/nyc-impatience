@@ -29,16 +29,19 @@ class NameInput extends Component {
   showNameOnScreen = () => {
     const ctx = this.props.canvas.getContext("2d")
 
-    ctx.beginPath();
-    ctx.rect(100, 990, canvasWidth - (85*2), 70);
-    ctx.fillStyle = "#000000";
-    ctx.fill();
-    ctx.closePath();
+    ctx.beginPath()
+    ctx.rect(100, 990, canvasWidth - (100*2), 70)
+    ctx.fillStyle = "#000000"
+    ctx.fill()
+    // ctx.strokeStyle = '#FFFFFF'
+    // ctx.lineWidth=3
+    // ctx.stroke()
+    ctx.closePath()
 
     ctx.textAlign = 'center'
     ctx.fillStyle = '#3390FF'
     ctx.font = '50px Geneva'
-    ctx.fillText(this.state.nameInput, canvasWidth/2, 1030)
+    ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
   }
 
   render() {

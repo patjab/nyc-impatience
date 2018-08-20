@@ -72,10 +72,11 @@ class StartScreen extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('keydown', this.userInputStartScreen)
     const ctx = this.refs.startScreen.getContext("2d")
     this.userMenu(ctx)
     this.choices(ctx)
+
+    window.addEventListener('keydown', this.userInputStartScreen)
   }
 
   componentDidUpdate() {

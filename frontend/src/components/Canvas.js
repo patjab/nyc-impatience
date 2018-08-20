@@ -83,7 +83,7 @@ class Canvas extends Component {
       "Longest Streak": Math.max(...indivStreaks),
       "Shortest Streak": Math.min(...indivStreaks),
       "Direction Changes": this.props.changeInDirectionCounter,
-      "Dir Changes/sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
+      "Dir Changes per Sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
     }
 
     this.props.recordGameStatistics(recordData)
@@ -93,10 +93,10 @@ class Canvas extends Component {
     for ( let attr in recordData ) {
       ctx.textAlign = 'right'
       ctx.fillStyle = 'white'
-      ctx.fillText(attr, canvasWidth/2 + (3*afterColon), yCursor)
+      ctx.fillText(attr, canvasWidth/2 + (10*afterColon), yCursor)
       ctx.textAlign = 'left'
       ctx.fillStyle = colorOfData
-      ctx.fillText(`${Math.round(recordData[attr] * 100) / 100}`, canvasWidth/2 + (5*afterColon), yCursor)
+      ctx.fillText(`${Math.round(recordData[attr] * 100) / 100}`, canvasWidth/2 + (12*afterColon), yCursor)
       yCursor += spacing
     }
 
