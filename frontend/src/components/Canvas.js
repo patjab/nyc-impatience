@@ -1,26 +1,183 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { setThisCanvas, emptyGarbageOfTourists } from '../actions'
-import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth, canvasHeight, backgroundMusicOn  } from '../setupData'
+import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth,
+  canvasHeight, backgroundMusicOn, marginAroundStats, paddingAroundStats } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper.js'
 
 import Path from './Path'
 import Player from './Player'
 import Tourist from './Tourist'
 import Timer from './Timer'
-import GameOverScreen from '../GameOverScreen'
 
 class Canvas extends Component {
 
   state = {
     playerYelled: false,
     scaredTouristListener: null,
-    hasPlayedYell: false
+    hasPlayedYell: false,
+    doneGreyscale: false
   }
 
+  displayStats = () => {
+    let yCursor = 130
+
+    const ctx = this.refs.playArea.getContext("2d")
+    ctx.textAlign = 'center'
+    ctx.font = "50px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText(`GAME OVER`, canvasWidth/2, yCursor)
+
+    let sectionPadding = 20
+    const availableSpaceOuterLength = canvasWidth - (marginAroundStats*2)
+    const availableSpaceInnerLength = availableSpaceOuterLength - (paddingAroundStats*2)
+
+    const marginAroundPictures = 10
+    const numberOfMargins = this.props.bumpedImages.length-1
+    const spaceAvailableToAllImages = availableSpaceInnerLength - (numberOfMargins*marginAroundPictures)
+    const imageWidth = spaceAvailableToAllImages/this.props.bumpedImages.length
+    const proportionalSizeImage = imageWidth/canvasWidth
+    const imageHeight = proportionalSizeImage * canvasHeight
+
+    let imageCursorX = marginAroundStats + paddingAroundStats
+    console.log("B: ", yCursor)
+    let imageCursorY = yCursor + sectionPadding // separate due to ASYNC behavior
+    yCursor += sectionPadding
+    console.log("A: ", yCursor)
+
+    const imageArray = []
+    for (let img64 of this.props.bumpedImages) {
+      const image = new Image()
+      image.src = img64
+      image.onload = function() {
+        console.log(yCursor)
+        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
+        imageCursorX += imageWidth + marginAroundPictures
+      }
+    }
+
+    yCursor += imageHeight + sectionPadding
+    ctx.font = "20px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText(`You bumped into these tourists`, canvasWidth/2, yCursor)
+    yCursor += sectionPadding
+    sectionPadding = 50
+
+    ctx.font = "35px Geneva"
+    yCursor += sectionPadding
+    const afterColon = 10
+    const spacing = 40
+    const colorOfData = 'red'
+
+    const indivStreaks = []
+    for (let i = 0; i < this.props.streak.length; i++) {
+      if ( i === 0 ) {
+        indivStreaks.push(this.props.streak[0])
+      } else {
+        indivStreaks.push(this.props.streak[i] - this.props.streak[i-1])
+      }
+    }
+
+    const recordData = {
+      distance: indivStreaks.reduce((a,b) => a+b),
+      averageSpeed: indivStreaks.reduce((a,b) => a+b) / (this.props.timeFinished/100),
+      timeLasted: this.props.timeFinished,
+      longestStreak: Math.max(...indivStreaks),
+      shortestStreak: Math.min(...indivStreaks),
+      directionChanges: this.props.changeInDirectionCounter,
+      directionChangesPerSec: this.props.changeInDirectionCounter / (this.props.timeFinished/100)
+    }
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Distance`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${recordData.distance} steps`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Average Speed`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${Math.round(recordData.averageSpeed * 100) / 100} steps/s`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Time Lasted`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${Math.round(recordData.timeLasted) / 100} seconds`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Longest Streak`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${recordData.longestStreak} steps`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Shortest Streak`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${recordData.shortestStreak} steps`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Direction Δs`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${recordData.directionChanges}`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+    ctx.textAlign = 'right'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Δs/second`, canvasWidth/2 - afterColon, yCursor)
+    ctx.textAlign = 'left'
+    ctx.fillStyle = colorOfData
+    ctx.fillText(`${Math.round(recordData.directionChangesPerSec * 100) / 100}`, canvasWidth/2 + afterColon, yCursor)
+    yCursor += spacing
+
+  }
 
   componentDidUpdate() {
-    if (this.props.lives <= 0) {
+    if (this.props.lives <= 0 && this.state.doneGreyscale) {
+      let ctx = this.refs.playArea.getContext("2d")
+
+      let i = 0
+      let squareWidth, squareHeight
+      const maximumWidth = canvasWidth - marginAroundStats
+      const maximumHeight = canvasHeight - marginAroundStats
+      const startingDimension = 5
+      const gameOverSquareAnimation = setInterval(() => {
+        if ( squareHeight > maximumHeight ) {
+          clearInterval(gameOverSquareAnimation)
+          this.displayStats()
+        } else {
+          squareWidth = squareWidth < maximumWidth ? startingDimension + i : maximumWidth
+          squareHeight = startingDimension + i
+
+          const xPosition = (canvasWidth/2) - (squareWidth/2)
+          const yPosition = (canvasHeight/2) - (squareHeight/2)
+
+          ctx.beginPath()
+          ctx.rect(xPosition, yPosition, squareWidth, squareHeight)
+          ctx.fillStyle = "#000000"
+          ctx.fill()
+          ctx.closePath()
+
+          i += 5
+        }
+      }, 1)
+    }
+
+    if (this.props.lives <= 0 && !this.state.doneGreyscale) {
       this.refs.backgroundMusic.pause()
 
       if ( !this.state.hasPlayedYell ) {
@@ -33,7 +190,6 @@ class Canvas extends Component {
         this.refs.playArea.getContext("2d").drawImage(this.refs.frozenGameOverScreen, 0, 0, canvasWidth, canvasHeight)
         // this.refs.playArea.getContext("2d").clearRect(0, 0, canvasWidth, canvasHeight)
 
-        console.log("GREY")
         let context = this.refs.playArea.getContext("2d")
         let canvas = this.refs.playArea
         this.grayScale(context, canvas)
@@ -57,8 +213,9 @@ class Canvas extends Component {
 
         if ( i >= pixels.length ) {
           clearInterval(pixelInterval)
+          this.setState({doneGreyscale: true})
         } else {
-          for ( let n = 0; n < 750*4; n+= 4 ) {
+          for ( let n = 0; n < (canvasWidth*4)*2; n+= 4 ) {
             const changeRed = 0.30
             const changeGreen = 0.60
             const changeBlue = 0.10
@@ -157,7 +314,11 @@ const mapStateToProps = (state) => {
     touristRoaster: state.touristRoaster,
     stage: state.stage,
     bumpingShake: state.bumpingShake,
-    gameOverImage: state.gameOverImage
+    gameOverImage: state.gameOverImage,
+    bumpedImages: state.bumpedImages,
+    streak: state.streak,
+    timeFinished: state.timeFinished,
+    changeInDirectionCounter: state.changeInDirectionCounter
   }
 }
 

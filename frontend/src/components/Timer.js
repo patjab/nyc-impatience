@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasHeight, canvasWidth, statusBarHeight } from '../setupData'
-import { setGameOver, setGameOverImage } from '../actions'
+import { setGameOver, setGameOverImage, recordTimeFinished } from '../actions'
 
 class Timer extends Component {
   state = {
@@ -47,7 +47,7 @@ class Timer extends Component {
     ctx.textAlign = 'center'
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    this.state.willBeDone ? ctx.fillText(`Game Streak`, 90, 30) : ctx.fillText(`Current Streak`, 90, 30)
+    this.state.willBeDone ? ctx.fillText(`Distance`, 90, 30) : ctx.fillText(`Distance`, 90, 30)
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
@@ -104,21 +104,13 @@ class Timer extends Component {
   }
 
   showGameOverScreen = () => {
-    // const ctx = this.props.canvas.getContext("2d")
-    // ctx.font = "200px Geneva"
-    // ctx.fillStyle = "red"
-    // ctx.textAlign = 'center'
-    // ctx.fillText(`GAME`, canvasWidth/2, canvasHeight/2 - 110)
-    // ctx.fillText(`OVER`, canvasWidth/2, canvasHeight/2 + 110)
-    // ctx.textAlign = 'left'
-
     const gameOverImg = this.props.canvas.toDataURL("image/png")
     this.props.setGameOverImage(gameOverImg)
   }
 
   componentDidUpdate() {
     if (this.props.lives === 0) {
-
+      this.props.recordTimeFinished(this.state.time)
       window.addEventListener('keydown', (e) => e.stopPropagation(), true)
       window.addEventListener('keyup', (e) => e.stopPropagation(), true)
       this.showGameOverScreen()
@@ -143,7 +135,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setGameOver: () => dispatch(setGameOver()),
-    setGameOverImage: (image) => dispatch(setGameOverImage(image))
+    setGameOverImage: (image) => dispatch(setGameOverImage(image)),
+    recordTimeFinished: (time) => dispatch(recordTimeFinished(time))
   }
 }
 

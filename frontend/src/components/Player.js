@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer } from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection} from '../actions'
 import { shiftingSpeed, initialPeopleSizes } from '../setupData'
 
 class Player extends Component {
@@ -11,7 +11,8 @@ class Player extends Component {
 
   state = {
     walkingCycle: 0,
-    walkingCollection: ['../player/0.png', '../player/0.png', '../player/1.png', '../player/1.png']
+    walkingCollection: ['../player/0.png', '../player/0.png', '../player/1.png', '../player/1.png'],
+    changeInDirectionCounter: 0
   }
 
   handleWalking = (e) => {
@@ -53,17 +54,19 @@ class Player extends Component {
   }
 
   releaseCriteria = (e) => {
-    if (!this.props.gameOver) {
-      this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
-      this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
-      this.stillHoldingUp = e.key !== 'ArrowUp'
+    this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
+      if (!this.props.gameOver) {
+        this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
+        this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+        this.stillHoldingUp = e.key !== 'ArrowUp'
 
-      if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
-        this.goodForMultipleUps = true
-      } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
-        this.goodForMultipleUps = false
+        if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
+          this.goodForMultipleUps = true
+        } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
+          this.goodForMultipleUps = false
+        }
       }
-    }
+    })
   }
 
   componentDidMount() {
@@ -82,11 +85,13 @@ class Player extends Component {
   }
 
   componentDidUpdate() {
+    console.log("PLAYER DID UPDATE")
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
     this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
   }
 
   componentWillUnmount() {
+    this.props.setChangeInDirection(this.state.changeInDirectionCounter)
     window.removeEventListener('keydown', this.handleWalking)
     window.removeEventListener('keyup', this.releaseCriteria)
     clearInterval(this.syntheticInterval)
@@ -120,7 +125,8 @@ const mapDispatchToProps = (dispatch) => {
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed)),
-    setPlayer: (player) => dispatch(setPlayer(player))
+    setPlayer: (player) => dispatch(setPlayer(player)),
+    setChangeInDirection: (count) => dispatch(setChangeInDirection(count))
   }
 }
 

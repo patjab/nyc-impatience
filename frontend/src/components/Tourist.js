@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import { initialPeopleSizes, canvasHeight, nearnessSpook, rendingTouristRowsPercentage, touristRunningMilliseconds } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
-  forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake } from '../actions'
+  forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake,
+  addToBumpedImages } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -99,6 +100,9 @@ const Tourist = class extends Component {
       setTimeout(()=>{
         if (!this.props.gameOver) {
           this.props.toggleBumpingShake()
+          const quality = 1
+          const snapshot = this.props.canvas.toDataURL("image/jpeg", quality)
+          this.props.addToBumpedImages(snapshot)
           this.props.changeMovementAbility(false)
         }
       }, 1000)
@@ -189,7 +193,8 @@ const mapDispatchToProps = (dispatch) => {
     forceUpdateOfPathForAnimation: () => dispatch(forceUpdateOfPathForAnimation()),
     forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation()),
     changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),
-    toggleBumpingShake: () => dispatch(toggleBumpingShake())
+    toggleBumpingShake: () => dispatch(toggleBumpingShake()),
+    addToBumpedImages: (image) => dispatch(addToBumpedImages(image))
   }
 }
 

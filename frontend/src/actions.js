@@ -134,3 +134,24 @@ export const setGameOverImage = (imageData) => {
     payload: imageData
   }
 }
+
+export const addToBumpedImages = (image) => {
+  return {
+    type: "ADD_TO_BUMPED_IMAGES",
+    payload: image
+  }
+}
+
+export const recordTimeFinished = (time) => {
+  return {
+    type: "RECORD_TIME_FINISHED",
+    payload: time
+  }
+}
+
+export const setChangeInDirection = (count) => {
+  return {
+    type: "SET_CHANGE_IN_DIRECTION_COUNTER",
+    payload: count
+  }
+}

@@ -22,7 +22,10 @@ const initialState = {
   disabled: false,
   bumpingShake: false,
   gameOver: false,
-  gameOverImage: null
+  gameOverImage: null,
+  bumpedImages: [],
+  timeFinished: null,
+  changeInDirectionCounter: null
 }
 
 const gameController = (state = initialState, action) => {
@@ -138,6 +141,21 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         gameOverImage: action.payload
+      }
+    case "ADD_TO_BUMPED_IMAGES":
+      return {
+        ...state,
+        bumpedImages: [...state.bumpedImages, action.payload]
+      }
+    case "RECORD_TIME_FINISHED":
+      return {
+        ...state,
+        timeFinished: action.payload
+      }
+    case "SET_CHANGE_IN_DIRECTION_COUNTER":
+      return {
+        ...state,
+        changeInDirectionCounter: action.payload
       }
     default:
       return state
