@@ -65,7 +65,8 @@ class GamePlayContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    timeFinished: state.timeFinished
+    timeFinished: state.timeFinished,
+    touristRoaster: state.touristRoaster
   }
 }
 
