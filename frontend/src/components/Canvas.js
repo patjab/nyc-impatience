@@ -53,7 +53,6 @@ class Canvas extends Component {
 
   componentWillUnmount() {
     clearInterval(this.state.scaredTouristListener)
-    window.removeEventListener('keydown', this.switchToHighScores)
   }
 
   componentDidUpdate() {

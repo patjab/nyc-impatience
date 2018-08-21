@@ -211,6 +211,10 @@ class GameStatistics extends Component {
     this.fadeToGrey()
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.switchToHighScores)
+  }
+
   render() {
     return (
       <Fragment>
