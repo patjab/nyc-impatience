@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth } from '../setupData'
 import { setName } from '../actions'
@@ -14,7 +14,7 @@ class NameInput extends Component {
   }
 
   handleNameInput = (e) => {
-    if ( e.keyCode >= 65 && e.keyCode <= 90 && this.state.nameInput.length < 16 ) {
+    if ( e.keyCode >= 65 && e.keyCode <= 90 && this.state.nameInput.length < 14 ) {
       this.setState({nameInput: this.state.nameInput + e.key}, this.showNameOnScreen)
     }
     if ( e.keyCode === 8 ) {
@@ -34,6 +34,7 @@ class NameInput extends Component {
       ctx.font = '50px Geneva'
       ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
 
+      this.refs.saveSound.play()
       setTimeout(() => {
         ctx.beginPath()
         ctx.rect(100, 920, canvasWidth - (100*2), 70)
@@ -48,6 +49,7 @@ class NameInput extends Component {
         ctx.font = '40px Geneva'
         ctx.fillText("Your score", canvasWidth/2, 945)
         ctx.fillText("has been recorded", canvasWidth/2, 945 + 45)
+
 
         setInterval(() => {
           ctx.textAlign = 'center'
@@ -80,7 +82,6 @@ class NameInput extends Component {
   displayCursor = (ctx) => {
     if ( this.state.nameInput.length === 0 ) {
       setInterval(() => {
-        console.log("INSIDE INTERVAL")
         ctx.textAlign = 'center'
         ctx.fillStyle = 'red'
         ctx.font = '40px Geneva'
@@ -100,14 +101,16 @@ class NameInput extends Component {
     ctx.fill()
     ctx.closePath()
 
-    ctx.textAlign = 'center'
-    ctx.fillStyle = '#ff0000'
-    ctx.font = '50px Geneva'
-    ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
+    if ( this.state.nameInput.length > 0 ) {
+      ctx.textAlign = 'center'
+      ctx.fillStyle = '#ff0000'
+      ctx.font = '50px Geneva'
+      ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
+    }
   }
 
   render() {
-    return <Fragment></Fragment>
+    return <audio src='../save.wav' ref='saveSound'/ >
   }
 }
 

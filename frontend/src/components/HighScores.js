@@ -10,6 +10,21 @@ class HighScores extends Component {
   }
 
   componentDidMount() {
+    const canvas = this.refs.highScores
+    const ctx = canvas.getContext("2d")
+
+    ctx.beginPath()
+    ctx.rect(0, 0, canvasWidth, canvasHeight)
+    ctx.fillStyle = '#000000'
+    ctx.fill()
+    ctx.closePath()
+
+    const loadingImg = new Image()
+    loadingImg.src = '../loading.png'
+    loadingImg.onload = () => {
+      ctx.drawImage(loadingImg, (canvasWidth/2) - (680/2), canvasHeight/2 - 170, 680, 170)
+    }
+
     getHighScores()
     .then(allScores => allScores.sort((score1, score2) => score2.distance - score1.distance))
     .then(sortedScores => sortedScores.slice(0, numberOfHighScoresToDisplay))

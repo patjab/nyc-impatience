@@ -19,7 +19,8 @@ const Tourist = class extends Component {
     dontCallBumpAgain: false,
     mountedOnMovement: null,
     derivedStateOverride: false,
-    touristUpdater: 0
+    touristUpdater: 0,
+    awaitingGarbage: false
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -30,7 +31,7 @@ const Tourist = class extends Component {
       chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
-      const brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
+      let brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
       chosenRow = state.derivedStateOverride ? state.positionOnArray.row : (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
       chosenCol = state.positionOnArray.col
     } else {
@@ -39,8 +40,9 @@ const Tourist = class extends Component {
 
     return {
       ...state,
-      positionX: props.centersOfBricks[chosenRow][chosenCol].x,
-      positionY: props.centersOfBricks[chosenRow][chosenCol].y,
+      awaitingGarbage: chosenRow < 0,
+      positionX: chosenRow < 0 ? 0 : props.centersOfBricks[chosenRow][chosenCol].x,
+      positionY: chosenRow < 0 ? 0 : props.centersOfBricks[chosenRow][chosenCol].y,
       initialRow: initialRow || state.initialRow,
       positionOnArray: {col: chosenCol, row: chosenRow},
       mountedOnMovement: mountedOnMovement || state.mountedOnMovement
@@ -148,10 +150,14 @@ const Tourist = class extends Component {
 
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const sizeOfSide = howBigShouldIBe(this.state.positionY)
-    this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-    this.checkForCollision()
-    this.checkIfTouristStillInView()
+    if (this.state.awaitingGarbage) {
+      this.props.addTouristToGarbage(this.props.id)
+    } else {
+      const sizeOfSide = howBigShouldIBe(this.state.positionY)
+      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+      this.checkForCollision()
+      this.checkIfTouristStillInView()
+    }
   }
 
   componentWillUnmount() {

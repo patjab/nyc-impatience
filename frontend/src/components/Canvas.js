@@ -80,8 +80,8 @@ class Canvas extends Component {
     return (
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
-        <Timer />
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className={this.props.bumpingShake ? 'bumpingShake' : null}></canvas>
+        <Timer />
         { this.props.lives > 0 ?
           <Fragment>
             <Path />

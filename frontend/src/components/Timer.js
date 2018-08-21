@@ -6,7 +6,6 @@ import { setGameOver, setGameOverImage, recordTimeFinished } from '../actions'
 class Timer extends Component {
   state = {
     time: 0,
-    level: 1,
     willBeDone: false
   }
 
@@ -110,8 +109,6 @@ class Timer extends Component {
   componentDidUpdate() {
     if (this.props.lives === 0) {
       this.props.recordTimeFinished(this.state.time)
-      // window.addEventListener('keydown', (e) => e.stopPropagation(), true)
-      // window.addEventListener('keyup', (e) => e.stopPropagation(), true)
       this.showGameOverScreen()
     }
   }
