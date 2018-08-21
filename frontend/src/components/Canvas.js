@@ -1,17 +1,13 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { setThisCanvas } from '../actions'
-import { touristDensity, loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth, canvasHeight, backgroundMusicOn } from '../setupData'
+import { loudnessSpookLevel, loudnessRechargeInSeconds, canvasWidth, canvasHeight, backgroundMusicOn } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
 
-import Path from './Path'
-import Player from './Player'
-import Tourist from './Tourist'
-import Timer from './Timer'
 import GameStatistics from './GameStatistics'
+import GamePlayScreen from './GamePlayScreen'
 
 class Canvas extends Component {
-
   state = {
     playerYelled: false,
     scaredTouristListener: null,
@@ -61,35 +57,12 @@ class Canvas extends Component {
     }
   }
 
-  renderTourists = (numberOfTourists) => {
-    let tourists = []
-    if (this.props.lives > 0) {
-      for ( let i = 0; i < (numberOfTourists+this.props.stage); i++ ) {
-        if ( !this.props.garbageOfTourists.includes(i) ) {
-          tourists.push(<Tourist key={i} id={i} />)
-        }
-        else {
-          numberOfTourists++
-        }
-      }
-    }
-    return tourists
-  }
-
   render() {
     return (
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
         <canvas width={canvasWidth} height={canvasHeight} ref='playArea' id='playArea' className={this.props.bumpingShake ? 'bumpingShake' : null}></canvas>
-        <Timer />
-        { this.props.lives > 0 ?
-          <Fragment>
-            <Path />
-            {this.renderTourists(touristDensity)}
-            <Player />
-          </Fragment>
-          : <GameStatistics/>
-        }
+        { this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics/> }
       </Fragment>
     )
   }
@@ -102,6 +75,7 @@ const mapStateToProps = (state) => {
     touristRoaster: state.touristRoaster,
     stage: state.stage,
     bumpingShake: state.bumpingShake,
+    timeFinished: state.timeFinished
   }
 }
 
