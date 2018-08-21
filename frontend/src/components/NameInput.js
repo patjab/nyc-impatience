@@ -71,6 +71,10 @@ class NameInput extends Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleNameInput)
+  }
+
   clearInputArea = (ctx) => {
     ctx.beginPath()
     ctx.rect(100, 990, canvasWidth - (100*2), 70)
