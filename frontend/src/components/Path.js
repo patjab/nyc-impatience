@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor,
-  sideAreaColor, statusBarHeight, canvasWidth } from '../setupData'
+  sideAreaColor, statusBarHeight, canvasWidth, canvasHeight } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
@@ -92,15 +92,28 @@ class Path extends Component {
     return rowsWithBrickBorders
   }
 
+  static getInitialRow = () => {
+    const rowsWithBrickBorders = []
+    let spacing = 1
+    for ( let row = horizonLine; row <= canvasHeight; row += spacing ) {
+      const distanceFromHorizon = row - horizonLine
+      rowsWithBrickBorders.push(row)
+      spacing += (depthMultiplier*distanceFromHorizon)
+    }
+    rowsWithBrickBorders.push(canvasHeight)
+    rowsWithBrickBorders.sort((a,b)=>a-b)
+    return rowsWithBrickBorders
+  }
+
   makeBricks = (ctx) => {
     const angleOfConvergence = this.findAngle()
     let shouldAlternateOdd = true
     let previousPoints = []
-    const rowsWithBrickBorders = this.getRows()
+    this.rowsWithBrickBorders = this.getRows()
 
     let bricksList = []
 
-    for ( let row of rowsWithBrickBorders ) {
+    for ( let row of this.rowsWithBrickBorders ) {
       const distanceFromHorizon = row - this.horizonPosition
       this.drawHorizontalRow(ctx, row)
       const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
@@ -121,27 +134,110 @@ class Path extends Component {
   }
 
   makeSideStructures = (ctx) => {
-    const centralX = this.props.canvas.width/2
+    const centralX = canvasWidth/2
+    const centralY = canvasHeight/2
+    const buildingColor = '#BD8F51'
+    const otherBuildingColor = '#9A5900'
 
-    ctx.fillStyle = sideAreaColor
-    ctx.beginPath()
-    ctx.moveTo(0, this.props.canvas.height)
-    ctx.lineTo(centralX, this.horizonPosition)
-    ctx.lineTo(0, this.horizonPosition)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.fill()
+    const topLeftRoadX = 0.95*centralX
+    const bottomLeftRoadY = 0.40*canvasHeight
+    const topRoadWidth = (canvasWidth/2) - topLeftRoadX
+    const bottomRoadWidth = canvasHeight - bottomLeftRoadY
 
-    ctx.fillStyle = sideAreaColor
+    // START BUILDING
+    ctx.fillStyle = buildingColor
     ctx.beginPath()
     ctx.moveTo(this.props.canvas.width, this.props.canvas.height)
     ctx.lineTo(centralX, this.horizonPosition)
     ctx.lineTo(this.props.canvas.width, this.horizonPosition)
     ctx.lineTo(this.props.canvas.width, this.props.canvas.height)
     ctx.closePath()
-    ctx.stroke()
     ctx.fill()
 
+    ctx.beginPath()
+    ctx.rect(centralX, statusBarHeight, canvasWidth/2, horizonLine - statusBarHeight)
+    ctx.fillStyle = buildingColor
+    ctx.fill()
+    ctx.closePath()
+    // END BUILDING
+
+    //this.rowsWithBrickBorders[107])
+    // ctx.moveTo(0, this.rowsWithBrickBorders[107])
+    // ctx.lineTo(canvasWidth, this.rowsWithBrickBorders[107])
+    // ctx.strokeStyle = 'red'
+    // ctx.stroke()
+
+
+    // START ROAD
+    ctx.fillStyle = '#000000'
+    ctx.beginPath()
+    ctx.moveTo(0, this.props.canvas.height)
+    ctx.lineTo(centralX, this.horizonPosition)
+    ctx.lineTo(0, this.horizonPosition)
+    ctx.closePath()
+    ctx.fill()
+    // END ROAD
+
+    // START SIDEWALK ON THE OTHER SIDE
+    ctx.fillStyle = brickColor
+    ctx.beginPath()
+    ctx.moveTo(0, horizonLine)
+    ctx.lineTo(0, bottomLeftRoadY)
+    ctx.lineTo(topLeftRoadX, horizonLine)
+    ctx.closePath()
+    ctx.fill()
+    // END SIDEWALK ON THE OTHER SIDE
+
+    // START BUILDING ON OTHER SIDE
+    ctx.fillStyle = otherBuildingColor
+    ctx.beginPath()
+    ctx.rect(0, statusBarHeight, centralX*0.90, horizonLine - statusBarHeight)
+    ctx.closePath()
+    ctx.fill()
+
+    ctx.fillStyle = otherBuildingColor
+    ctx.beginPath()
+    ctx.moveTo(0, horizonLine)
+    ctx.lineTo(centralX*0.90, horizonLine)
+    ctx.lineTo(0, 500)
+    ctx.closePath()
+    ctx.fill()
+    // END BUILDING ON THE OTHER SIDE
+
+
+
+
+    const middleOfRoadX = topLeftRoadX + (topRoadWidth/2)
+
+    // // START STREET DIVIDERS
+    // ctx.beginPath()
+    //
+    //
+    // for ( let i = 103; i > 0; i-- ) {
+    //   ctx.strokeStyle = 'white'
+    //   ctx.moveTo(middleOfRoadX, horizonLine)
+    //   const divider1End = Path.getInitialRow()[103]
+    //   const slope = -1 * ((divider1End - horizonLine) / (middleOfRoadX))
+    //   ctx.lineTo(0, divider1End )
+    //   ctx.lineWidth = 5
+    //   ctx.stroke()
+    //   ctx.closePath()
+    // }
+    //
+    //
+    //
+    //
+    // ctx.beginPath()
+    // ctx.strokeStyle = 'white'
+    // ctx.moveTo(middleOfRoadX, horizonLine)
+    // const divider2End = canvasHeight - (0.90*bottomRoadWidth)
+    // ctx.lineTo(0, divider2End )
+    // ctx.stroke()
+    // ctx.closePath()
+    // ctx.lineWidth = 1
+    // // END STREET DIVIDERS
+
+    ctx.setLineDash([])
     ctx.fillStyle = sideAreaColor
     ctx.beginPath()
 
@@ -156,15 +252,15 @@ class Path extends Component {
   skylineStartY = 20
 
   componentDidMount () {
-    this.refs.nySkyline.onload = () => {
-      this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-    }
+    // this.refs.nySkyline.onload = () => {
+    //   this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+    // }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.canvas && this.refs.nySkyline) {
-      this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-    }
+    // if (this.props.canvas && this.refs.nySkyline) {
+    //   this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+    // }
     if ((this.props.centersOfBricks && this.props.centersOfBricks.length === 0) || prevProps.movement !== this.props.movement) {
       this.props.initializeBrickList(this.cfBricksList)
     }
@@ -181,10 +277,10 @@ class Path extends Component {
     if (ctx) {
       this.drawPathBackground(ctx)
       this.makeBricks(ctx)
-      this.makeSideStructures(ctx)
       this.drawSky(ctx)
+      this.makeSideStructures(ctx)
     }
-    return <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
+    return <Fragment></Fragment>
   }
 }
 

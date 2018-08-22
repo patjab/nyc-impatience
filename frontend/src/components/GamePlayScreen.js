@@ -28,8 +28,8 @@ class GamePlayScreen extends Component {
       <Fragment>
         <Timer />
         <Path />
-        {this.renderTourists(touristDensity)}
         <Player />
+        {this.renderTourists(touristDensity)}
       </Fragment>
     )
   }
