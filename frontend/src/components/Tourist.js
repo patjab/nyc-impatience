@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { initialPeopleSizes, canvasHeight, nearnessSpook, rendingTouristRowsPercentage, touristRunningMilliseconds } from '../setupData'
+import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook, rendingTouristRowsPercentage, touristRunningMilliseconds } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake,
@@ -85,8 +85,8 @@ const Tourist = class extends Component {
 
     const lowerLeftTourist = {x: this.state.positionX, y: this.state.positionY + sizeOfSide}
     const lowerRightTourist = {x: this.state.positionX + sizeOfSide, y: this.state.positionY + sizeOfSide}
-    const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPeopleSizes}
-    const lowerRightPlayer = {x: this.props.playerX + initialPeopleSizes, y: this.props.playerY + initialPeopleSizes}
+    const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPlayerSize}
+    const lowerRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY + initialPlayerSize}
 
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)

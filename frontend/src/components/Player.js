@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, setPlayer, setChangeInDirection} from '../actions'
-import { shiftingSpeed, initialPeopleSizes } from '../setupData'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
+import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
 class Player extends Component {
   diagonalMapSimultaneous = []
@@ -28,16 +29,32 @@ class Player extends Component {
 
       if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's')) ) {
         e.preventDefault()
-        if (e.keyCode === 37 && this.props.player.xPosition > 0) { this.props.moveLeft() }
+        if (e.keyCode === 37 && this.props.player.xPosition > 0) {
+          if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2)  - 0.50*initialPlayerSize ) {
+            this.props.moveLeft()
+          }
+        }
         else if (e.keyCode === 38) { this.props.moveUp() }
-        else if (e.keyCode === 39 && this.props.player.xPosition + 50 < this.props.canvas.width) { this.props.moveRight() }
+        else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width) {
+          if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
+            this.props.moveRight()
+          }
+        }
         else if (e.keyCode === 40) { this.props.moveDown() }
         else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(2) : this.props.changeSpeed(1) }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
 
-      if (!this.props.bumpingShake && upperLeft) {this.props.moveUpLeft()}
-      if (!this.props.bumpingShake && upperRight) {this.props.moveUpRight()}
+      if (!this.props.bumpingShake && upperLeft) {
+        if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2)  - 0.50*initialPlayerSize ) {
+          this.props.moveUpLeft()
+        }
+      }
+      if (!this.props.bumpingShake && upperRight) {
+        if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
+          this.props.moveUpRight()
+        }
+      }
     }
   }
 
@@ -78,7 +95,7 @@ class Player extends Component {
       const ctx = this.props.canvas.getContext("2d")
 
       if (this.refs.playerImg && ctx) {
-        ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
+        ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
       }
     }
     this.props.setPlayer(this)
@@ -86,7 +103,7 @@ class Player extends Component {
 
   componentDidUpdate() {
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
-    this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPeopleSizes, initialPeopleSizes)
+    this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
   }
 
   componentWillUnmount() {
