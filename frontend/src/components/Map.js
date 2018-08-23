@@ -18,7 +18,7 @@ class Map extends Component {
 
     const startOfMap = 50
     const endOfMap = canvasWidth - 50
-    const yPositionOfMap = canvasHeight - 100
+    const yPositionOfMap = canvasHeight - 110
     ctx.beginPath()
     ctx.moveTo(startOfMap, yPositionOfMap)
     ctx.lineTo(endOfMap, yPositionOfMap)
@@ -29,6 +29,7 @@ class Map extends Component {
 
 
     const percentOf5000 = this.props.movement % 5000
+    const lapsOf5000 = Math.trunc(this.props.movement / 5000)
     const lengthOfMap = (endOfMap - startOfMap)
     const pixelLengthOfCurrentProgress = (percentOf5000*lengthOfMap) / 5000
     ctx.beginPath()
@@ -38,6 +39,22 @@ class Map extends Component {
     ctx.lineWidth = 5
     ctx.stroke()
     ctx.closePath()
+
+
+    for ( let percent = 0.0; percent <= 1.0; percent += 0.20) {
+      ctx.beginPath()
+      ctx.arc(startOfMap + (percent * lengthOfMap), yPositionOfMap, 10, 0, 2 * Math.PI)
+      console.log("FILL STYLE", percent, percentOf5000 > (percent * 5000) ? "red" : "white")
+      ctx.fillStyle = percentOf5000 > (percent * 5000) ? "red" : "white"
+      ctx.fill()
+      ctx.closePath()
+
+      ctx.textAlign = 'center'
+      ctx.font = "20px Geneva"
+      ctx.fillStyle = "white"
+      ctx.fillText(`${Math.trunc((lapsOf5000 * 5000) + percent * 5000)}`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 40)
+    }
+
 
 
     ctx.strokeStyle = '#000000'
