@@ -1,11 +1,12 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook, rendingTouristRowsPercentage, touristRunningMilliseconds } from '../setupData'
+import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
+  rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience } from '../setupData'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake,
-  addToBumpedImages } from '../actions'
+  addToBumpedImages, modifyPatience } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -15,7 +16,7 @@ const Tourist = class extends Component {
     initialRow: null,
     positionOnArray: null,
     image: Math.trunc(Math.random() * 3),
-    images: ['../touristA.png', '../tourist2.png', '../tourist3.png'],
+    images: ['../tourist.png', '../tourist2.png', '../tourist3.png'],
     dontCallBumpAgain: false,
     mountedOnMovement: null,
     derivedStateOverride: false,
@@ -91,6 +92,7 @@ const Tourist = class extends Component {
     let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
     if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
+      this.props.modifyPatience(collidedImpatience)
       this.runBumpAnimations()
     }
   }
@@ -200,7 +202,8 @@ const mapDispatchToProps = (dispatch) => {
     forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation()),
     changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),
     toggleBumpingShake: () => dispatch(toggleBumpingShake()),
-    addToBumpedImages: (image) => dispatch(addToBumpedImages(image))
+    addToBumpedImages: (image) => dispatch(addToBumpedImages(image)),
+    modifyPatience: (modifier) => dispatch(modifyPatience(modifier))
   }
 }
 

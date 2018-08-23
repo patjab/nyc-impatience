@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, statusBarHeight } from '../setupData'
-import { setGameOver, setGameOverImage, recordTimeFinished } from '../actions'
+import { canvasWidth, statusBarHeight, movingQuicklyPatience } from '../setupData'
+import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience } from '../actions'
 
 import Patience from './Patience'
 
 class Timer extends Component {
   state = {
     time: 0,
-    willBeDone: false
+    willBeDone: false,
+    previousMovement: 0
   }
 
   formatTime() {
@@ -60,7 +61,7 @@ class Timer extends Component {
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`${this.formatMovement()}`, 120, 70)
+    ctx.fillText(`${Math.round(this.formatMovement())}`, 120, 70)
 
     // ctx.font = "20px Geneva"
     // ctx.fillStyle = "white"
@@ -103,7 +104,22 @@ class Timer extends Component {
 
   incrementTime = (e) => {
     if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      setInterval(() => this.setState({time: this.state.time + 1}), 10)
+      setInterval(() => this.setState({time: this.state.time + 1}, () => {
+        if (this.state.time % 500 === 0 ) {
+          const velocity = (this.props.movement - this.state.previousMovement) / 5
+          // if ( velocity > 100 )
+          console.log(velocity)
+          this.setState({previousMovement: this.props.movement})
+        }
+
+        if (this.state.time % 1000 === 0 && this.state.time > 0 ) {
+          console.log("REACHED 10s INTERVAL")
+          if ( (this.state.time / 1000) * 500 < this.props.movement ) {
+            console.log("ABOVE 1000")
+            this.props.modifyPatience(movingQuicklyPatience)
+          }
+        }
+      }), 10)
       window.removeEventListener('keydown', this.incrementTime)
     }
   }
@@ -126,7 +142,7 @@ class Timer extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.lives === 0 || this.props.patience <= 0) {
+    if (this.props.patience <= 0) {
       this.props.recordTimeFinished(this.state.time)
       this.showGameOverScreen()
     }
@@ -152,7 +168,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setGameOver: () => dispatch(setGameOver()),
     setGameOverImage: (image) => dispatch(setGameOverImage(image)),
-    recordTimeFinished: (time) => dispatch(recordTimeFinished(time))
+    recordTimeFinished: (time) => dispatch(recordTimeFinished(time)),
+    modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
   }
 }
 

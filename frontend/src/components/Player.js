@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience } from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience } from '../setupData'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience } from '../setupData'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
 class Player extends Component {
@@ -78,7 +78,8 @@ class Player extends Component {
       const impatientWait = setInterval(() => {
         setTimeout(() => {
           if ( this.props.movement !== 0 && this.props.movement === previousMovement ) {
-            this.props.modifyPatience(-5)
+            console.log("DEDUCTION")
+            this.props.modifyPatience(waitingImpatience)
           } else {
             clearInterval(impatientWait)
           }

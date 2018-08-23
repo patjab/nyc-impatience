@@ -193,7 +193,7 @@ const gameController = (state = initialState, action) => {
     case "MODIFY_PATIENCE":
       return {
         ...state,
-        patience: state.patience + action.payload
+        patience: state.patience + action.payload > 0 ? state.patience + action.payload : 0
       }
     case "RESET_ALL_STATE":
       return {

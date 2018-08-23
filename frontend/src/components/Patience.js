@@ -47,7 +47,15 @@ class Patience extends Component {
     ctx.closePath()
 
     ctx.beginPath()
-    ctx.fillStyle = "red"
+
+    if (this.formatPercentage() > 50) {
+      ctx.fillStyle = "green"
+    } else if (this.formatPercentage() < 50 && this.formatPercentage() >= 25) {
+      ctx.fillStyle = "yellow"
+    } else {
+      ctx.fillStyle = "red"
+    }
+    
     ctx.fillRect(250, 40, this.props.patience, 30)
     ctx.closePath()
     ctx.fillStyle = "white"
