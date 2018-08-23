@@ -71,33 +71,37 @@ class Player extends Component {
   }
 
   releaseCriteria = (e) => {
-    this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
-      this.props.modifyPatience(releaseCriteriaImpatience)
 
-      const previousMovement = this.props.movement
-      const impatientWait = setInterval(() => {
-        setTimeout(() => {
-          if ( this.props.movement !== 0 && this.props.movement === previousMovement ) {
-            console.log("DEDUCTION")
-            this.props.modifyPatience(waitingImpatience)
-          } else {
-            clearInterval(impatientWait)
-          }
-        })
-      }, 2000)
+    if ( e.keyCode >= 37 && e.keyCode <= 40) {
+          this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
+            this.props.modifyPatience(releaseCriteriaImpatience)
 
-      if (!this.props.gameOver) {
-        this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
-        this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
-        this.stillHoldingUp = e.key !== 'ArrowUp'
+            const previousMovement = this.props.movement
+            const impatientWait = setInterval(() => {
+              setTimeout(() => {
+                if ( this.props.movement !== 0 && this.props.movement === previousMovement ) {
+                  console.log("DEDUCTION")
+                  this.props.modifyPatience(waitingImpatience)
+                } else {
+                  clearInterval(impatientWait)
+                }
+              })
+            }, 2000)
 
-        if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
-          this.goodForMultipleUps = true
-        } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
-          this.goodForMultipleUps = false
-        }
+            if (!this.props.gameOver) {
+              this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
+              this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+              this.stillHoldingUp = e.key !== 'ArrowUp'
+
+              if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
+                this.goodForMultipleUps = true
+              } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
+                this.goodForMultipleUps = false
+              }
+            }
+          })
       }
-    })
+
   }
 
   componentDidMount() {
@@ -126,6 +130,7 @@ class Player extends Component {
     window.removeEventListener('keydown', this.handleWalking)
     window.removeEventListener('keyup', this.releaseCriteria)
     clearInterval(this.syntheticInterval)
+    // clearInterval(this.impatientWait)
   }
 
   render() {

@@ -195,3 +195,16 @@ export const modifyPatience = (modifier) => {
     payload: modifier
   }
 }
+
+export const signalBonusOut = () => {
+  return {
+    type: "SIGNAL_BONUS_OUT"
+  }
+}
+
+export const resetCurrentBonus = (num) => {
+  return {
+    type: "RESET_CURRENT_BONUS",
+    payload: num
+  }
+}

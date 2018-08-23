@@ -50,7 +50,7 @@ class Patience extends Component {
 
     if (this.formatPercentage() > 50) {
       ctx.fillStyle = "green"
-    } else if (this.formatPercentage() < 50 && this.formatPercentage() >= 25) {
+    } else if (this.formatPercentage() <= 50 && this.formatPercentage() >= 25) {
       ctx.fillStyle = "yellow"
       this.refs.lowPatienceSound.pause()
     } else {

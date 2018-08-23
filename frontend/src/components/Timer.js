@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, canvasHeight, statusBarHeight, movingQuicklyPatience } from '../setupData'
-import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience } from '../actions'
+import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut } from '../actions'
 
 import Patience from './Patience'
 
 class Timer extends Component {
   state = {
     time: 0,
-    willBeDone: false,
-    previousMovement: 0
+    willBeDone: false
   }
 
   formatTime() {
@@ -62,59 +61,26 @@ class Timer extends Component {
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
     ctx.fillText(`${Math.round(this.formatMovement())}`, 120, 70)
-
-    // ctx.font = "20px Geneva"
-    // ctx.fillStyle = "white"
-    // ctx.fillText(`Speed`, 260, 30)
-
-    // ctx.font = "36px Geneva"
-    // ctx.fillStyle = "red"
-    // const speed = Math.trunc(this.props.movement/(this.state.time/100))
-    // const formattedSpeed = isNaN(speed) ? '---' : speed + ' sps'
-    // ctx.fillText(`${formattedSpeed}`, 260, 70)
     ctx.textAlign = 'left'
 
   }
 
   drawLives = (ctx) => {
-
-
     const spacing = 10
     let cursorCoordinateX = 375
     const cursorCoordinateY = 45
     const lifeWidth = 40
     const lifeHeight = 30
-
-// ctx.fillStyle = "blue";
-
-
-    // ctx.moveTo(cursorCoordinateX, cursorCoordinateY)
-    // ctx.lineTo(cursorCoordinateX + this.props.movement, cursorCoordinateY)
-    // ctx.lineTo(cursorCoordinateX + this.props.movement, cursorCoordinateY + 10)
-    // ctx.lineTo(cursorCoordinateX, cursorCoordinateY + 10)
-    // ctx.fillStyle = 'blue'
-    // ctx.fill()
     ctx.closePath()
-
-    // for ( let i = 0; i < this.props.lives; i++ ) {
-      // this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
-      // cursorCoordinateX += spacing + lifeWidth
-    // }
   }
 
   incrementTime = (e) => {
     if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       setInterval(() => this.setState({time: this.state.time + 1}, () => {
-        if (this.state.time % 500 === 0 ) {
-          const velocity = (this.props.movement - this.state.previousMovement) / 5
-          // if ( velocity > 100 )
-          console.log(velocity)
-          this.setState({previousMovement: this.props.movement})
-        }
-
-        if (this.state.time % 1000 === 0 && this.state.time > 0 ) {
-          console.log("REACHED 10s INTERVAL")
-          if ( (this.state.time / 1000) * 500 < this.props.movement ) {
+        if (this.state.time % 2000 === 0 && this.state.time > 0 ) {
+          console.log("REACHED 20s INTERVAL")
+          this.props.signalBonusOut()
+          if ( (this.state.time / 2000) * 1000 < this.props.movement ) {
             console.log("ABOVE 1000")
             this.props.modifyPatience(movingQuicklyPatience)
           }
@@ -170,6 +136,7 @@ const mapDispatchToProps = (dispatch) => {
     setGameOverImage: (image) => dispatch(setGameOverImage(image)),
     recordTimeFinished: (time) => dispatch(recordTimeFinished(time)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
+    signalBonusOut: () => dispatch(signalBonusOut())
   }
 }
 
