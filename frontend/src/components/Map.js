@@ -104,7 +104,8 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     movement: state.movement,
     mapUpdater: state.mapUpdater,
-    currentBonus: state.currentBonus
+    currentBonus: state.currentBonus,
+    player: state.player
   }
 }
 

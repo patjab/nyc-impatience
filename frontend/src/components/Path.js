@@ -176,7 +176,18 @@ class Path extends Component {
     ctx.fill()
   }
 
-
+  drawBicycleLane(ctx) {
+    ctx.beginPath()
+    ctx.moveTo(canvasWidth/2, horizonLine)
+    ctx.lineTo(canvasWidth/2 - 10, horizonLine)
+    ctx.lineTo(0, canvasHeight)
+    ctx.lineTo(canvasWidth/10, canvasHeight)
+    ctx.closePath()
+    ctx.fillStyle = sideAreaColor
+    ctx.fill()
+    // ctx.strokeStyle = sideAreaColor
+    // ctx.stroke()
+  }
 
   render() {
     const ctx = this.props.canvas && this.props.canvas.getContext("2d")
@@ -185,6 +196,7 @@ class Path extends Component {
       this.makeBricks(ctx)
       this.makeSideStructures(ctx)
       this.drawSky(ctx)
+      this.drawBicycleLane(ctx)
     }
     return <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
   }

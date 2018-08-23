@@ -28,7 +28,7 @@ class StartScreen extends Component {
           this.props.changeCurrentScreen("highScores")
           break
         case 2:
-          alert("Information Not Available")
+          alert("Information to be written")
           break
         default:
           break
@@ -49,7 +49,7 @@ class StartScreen extends Component {
     ctx.textAlign = 'center'
     ctx.font = "100px Impact"
     ctx.fillStyle = "white"
-    ctx.fillText("      Tourists", canvasWidth/2, canvasHeight/2 - 300)
+    ctx.fillText("IMPATIENCE", canvasWidth/2, canvasHeight/2 - 300)
 
     ctx.textAlign = 'center'
     ctx.font = "40px Geneva"
@@ -75,11 +75,11 @@ class StartScreen extends Component {
     window.addEventListener('keydown', this.userInputStartScreen)
     const ctx = this.refs.startScreen.getContext("2d")
     this.userMenu(ctx)
-    const fTrainSymbol = this.refs.fTrainSymbol
-
-    fTrainSymbol.onload = () => {
-      ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
-    }
+    // const fTrainSymbol = this.refs.fTrainSymbol
+    //
+    // fTrainSymbol.onload = () => {
+    //   ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
+    // }
 
   }
 
@@ -88,7 +88,7 @@ class StartScreen extends Component {
     this.userMenu(ctx)
     const fTrainSymbol = this.refs.fTrainSymbol
 
-    ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
+    // ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
   }
 
   componentWillUnmount() {

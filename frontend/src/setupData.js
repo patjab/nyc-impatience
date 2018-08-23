@@ -46,7 +46,7 @@ export const brickBorderColor = '#000000'
 export const sideAreaColor = '#0CBE00'
 
 
-export const releaseCriteriaImpatience = -2
+export const releaseCriteriaImpatience = -5
 export const collidedImpatience = -100
 export const waitingImpatience = -10
 export const movingQuicklyPatience = 25

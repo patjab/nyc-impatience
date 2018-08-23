@@ -30,7 +30,7 @@ class Player extends Component {
       if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's')) ) {
         e.preventDefault()
         if (e.keyCode === 37 && this.props.player.xPosition > 0) {
-          if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2)  - 0.50*initialPlayerSize ) {
+          if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
             this.props.moveLeft()
           }
         }
@@ -46,7 +46,7 @@ class Player extends Component {
       }
 
       if (!this.props.bumpingShake && upperLeft) {
-        if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2)  - 0.50*initialPlayerSize ) {
+        if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
           this.props.moveUpLeft()
         }
       }
