@@ -5,6 +5,7 @@ import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
 
 import GamePlayScreen from './GamePlayScreen'
 import GameStatistics from './GameStatistics'
+import Map from './Map'
 
 class GamePlayContainer extends Component {
   state = {
@@ -58,6 +59,8 @@ class GamePlayContainer extends Component {
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
         { this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics /> }
+        <Map />
+
       </Fragment>
     )
   }

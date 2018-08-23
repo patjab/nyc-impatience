@@ -6,6 +6,7 @@ import Tourist from './Tourist'
 import Timer from './Timer'
 import Path from './Path'
 import Player from './Player'
+import Map from './Map'
 
 class GamePlayScreen extends Component {
   renderTourists = (numberOfTourists) => {

@@ -19,6 +19,7 @@ const initialState = {
   stage: 0,
   pathUpdater: 0,
   playerUpdater: 0,
+  mapUpdater: 0,
   disabled: false,
   bumpingShake: false,
   gameOver: false,
@@ -128,6 +129,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         playerUpdater: state.playerUpdater + 1
+      }
+    case "FORCE_UPDATE_OF_MAP_FOR_ANIMATION":
+      return {
+        ...state,
+        mapUpdater: state.mapUpdater + 1
       }
     case "CHANGE_MOVEMENT_ABILITY":
       return {

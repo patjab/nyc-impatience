@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor,
-  sideAreaColor, statusBarHeight, canvasWidth } from '../setupData'
+  sideAreaColor, statusBarHeight, canvasWidth, canvasHeight } from '../setupData'
 
 class Path extends Component {
   horizonPosition = horizonLine
@@ -175,6 +175,8 @@ class Path extends Component {
     ctx.fillStyle = '#6BD7FF'
     ctx.fill()
   }
+
+
 
   render() {
     const ctx = this.props.canvas && this.props.canvas.getContext("2d")

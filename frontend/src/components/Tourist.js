@@ -6,7 +6,7 @@ import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake,
-  addToBumpedImages, modifyPatience } from '../actions'
+  addToBumpedImages, modifyPatience, forceUpdateOfMapForAnimation } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -73,6 +73,7 @@ const Tourist = class extends Component {
           }
           this.props.forceUpdateOfPathForAnimation()
           this.props.forceUpdateOfPlayerForAnimation()
+          this.props.forceUpdateOfMapForAnimation()
           this.setState({touristUpdater: this.state.touristUpdater+1})
           i += 1
         })
@@ -200,6 +201,7 @@ const mapDispatchToProps = (dispatch) => {
     recordStreak: (streak) => dispatch(recordStreak(streak)),
     forceUpdateOfPathForAnimation: () => dispatch(forceUpdateOfPathForAnimation()),
     forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation()),
+    forceUpdateOfMapForAnimation: () => dispatch(forceUpdateOfMapForAnimation()),
     changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),
     toggleBumpingShake: () => dispatch(toggleBumpingShake()),
     addToBumpedImages: (image) => dispatch(addToBumpedImages(image)),

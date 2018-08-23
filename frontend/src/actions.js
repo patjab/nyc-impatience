@@ -102,6 +102,12 @@ export const forceUpdateOfPlayerForAnimation = () => {
   }
 }
 
+export const forceUpdateOfMapForAnimation = () => {
+  return {
+    type: "FORCE_UPDATE_OF_MAP_FOR_ANIMATION"
+  }
+}
+
 export const changeMovementAbility = (isDisabled) => {
   return {
     type: "CHANGE_MOVEMENT_ABILITY",

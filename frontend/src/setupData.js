@@ -20,7 +20,7 @@ export const touristDensity = 3
 export const initialPatience = 250
 
 export const playerStartX = (canvasWidth/2)-(initialPlayerSize/2)
-export const playerStartY = (canvasHeight)-(initialPlayerSize*2)
+export const playerStartY = (canvasHeight)-2*(initialPlayerSize*2)
 
 export const movementsPerStage = 1000
 

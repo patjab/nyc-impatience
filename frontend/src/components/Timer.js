@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, statusBarHeight, movingQuicklyPatience } from '../setupData'
+import { canvasWidth, canvasHeight, statusBarHeight, movingQuicklyPatience } from '../setupData'
 import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience } from '../actions'
 
 import Patience from './Patience'
