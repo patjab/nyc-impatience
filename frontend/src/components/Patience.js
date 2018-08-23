@@ -22,7 +22,7 @@ class Patience extends Component {
   }
 
   formatPercentage = () => {
-    if (Math.round(this.props.patience * 10000/initialPatience) / 100 > 99.4) {
+    if (Math.round(this.props.patience * 10000/initialPatience) / 100 > 99.1) {
       return 100
     } else if (Math.round(this.props.patience * 10000/initialPatience) / 100 < 0) {
       return 0
@@ -52,10 +52,12 @@ class Patience extends Component {
       ctx.fillStyle = "green"
     } else if (this.formatPercentage() < 50 && this.formatPercentage() >= 25) {
       ctx.fillStyle = "yellow"
+      this.refs.lowPatienceSound.pause()
     } else {
       ctx.fillStyle = "red"
+      this.refs.lowPatienceSound.play()
     }
-    
+
     ctx.fillRect(250, 40, this.props.patience, 30)
     ctx.closePath()
     ctx.fillStyle = "white"
@@ -67,7 +69,7 @@ class Patience extends Component {
   }
 
   render() {
-    return <Fragment></Fragment>
+    return <audio src='../lowPatience.wav' loop='true' ref='lowPatienceSound'/ >
   }
 }
 
