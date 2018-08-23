@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight } from '../setupData'
 import { setGameOver, setGameOverImage, recordTimeFinished } from '../actions'
 
+import Patience from './Patience'
+
 class Timer extends Component {
   state = {
     time: 0,
@@ -14,21 +16,29 @@ class Timer extends Component {
   }
 
   formatMovement() {
-    return this.state.willBeDone ? `${("00000" + Math.max.apply(null, this.props.streak)).slice(-6)}` : `${("00000" + this.props.movement).slice(-6)}`
+    return this.state.willBeDone ? `${("000000" + Math.max.apply(null, this.props.streak)).slice(-7)}` : `${("000000" + this.props.movement).slice(-7)}`
   }
 
   drawStatusBar = () => {
     const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
     if (ctx) {
-      ctx.clearRect(0, 0, canvasWidth, statusBarHeight)
+      ctx.clearRect(0, 0, canvasWidth*0.30, statusBarHeight)
       ctx.fillStyle = 'black'
-      ctx.fillRect(0, 0, canvasWidth, statusBarHeight)
+      ctx.fillRect(0, 0, canvasWidth*0.30, statusBarHeight)
+
+      ctx.clearRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
+      ctx.fillStyle = 'black'
+      ctx.fillRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
+
 
       this.drawLives(ctx)
       this.drawStepsCounter(ctx)
       this.drawTime(ctx)
     }
   }
+
+
+
 
   drawTime = (ctx) => {
     const currentTime = this.formatTime()
@@ -46,29 +56,27 @@ class Timer extends Component {
     ctx.textAlign = 'center'
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    this.state.willBeDone ? ctx.fillText(`Distance`, 90, 30) : ctx.fillText(`Distance`, 90, 30)
+    this.state.willBeDone ? ctx.fillText(`Distance`, 120, 30) : ctx.fillText(`Distance`, 120, 30)
 
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`${this.formatMovement()}`, 90, 70)
+    ctx.fillText(`${this.formatMovement()}`, 120, 70)
 
-    ctx.font = "20px Geneva"
-    ctx.fillStyle = "white"
-    ctx.fillText(`Speed`, 260, 30)
+    // ctx.font = "20px Geneva"
+    // ctx.fillStyle = "white"
+    // ctx.fillText(`Speed`, 260, 30)
 
-    ctx.font = "36px Geneva"
-    ctx.fillStyle = "red"
-    const speed = Math.trunc(this.props.movement/(this.state.time/100))
-    const formattedSpeed = isNaN(speed) ? '---' : speed + ' sps'
-    ctx.fillText(`${formattedSpeed}`, 260, 70)
+    // ctx.font = "36px Geneva"
+    // ctx.fillStyle = "red"
+    // const speed = Math.trunc(this.props.movement/(this.state.time/100))
+    // const formattedSpeed = isNaN(speed) ? '---' : speed + ' sps'
+    // ctx.fillText(`${formattedSpeed}`, 260, 70)
     ctx.textAlign = 'left'
 
   }
 
   drawLives = (ctx) => {
-    ctx.font = "20px Geneva"
-    ctx.fillStyle = "white"
-    ctx.fillText(`Lives`, 425, 30)
+
 
     const spacing = 10
     let cursorCoordinateX = 375
@@ -76,10 +84,21 @@ class Timer extends Component {
     const lifeWidth = 40
     const lifeHeight = 30
 
-    for ( let i = 0; i < this.props.lives; i++ ) {
-      this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
-      cursorCoordinateX += spacing + lifeWidth
-    }
+// ctx.fillStyle = "blue";
+
+
+    // ctx.moveTo(cursorCoordinateX, cursorCoordinateY)
+    // ctx.lineTo(cursorCoordinateX + this.props.movement, cursorCoordinateY)
+    // ctx.lineTo(cursorCoordinateX + this.props.movement, cursorCoordinateY + 10)
+    // ctx.lineTo(cursorCoordinateX, cursorCoordinateY + 10)
+    // ctx.fillStyle = 'blue'
+    // ctx.fill()
+    ctx.closePath()
+
+    // for ( let i = 0; i < this.props.lives; i++ ) {
+      // this.props.canvas.getContext("2d").drawImage(this.refs.lifeSymbol, cursorCoordinateX, cursorCoordinateY, lifeWidth, lifeHeight)
+      // cursorCoordinateX += spacing + lifeWidth
+    // }
   }
 
   incrementTime = (e) => {
@@ -107,7 +126,7 @@ class Timer extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.lives === 0) {
+    if (this.props.lives === 0 || this.props.patience <= 0) {
       this.props.recordTimeFinished(this.state.time)
       this.showGameOverScreen()
     }
@@ -115,7 +134,7 @@ class Timer extends Component {
 
   render() {
     this.drawStatusBar()
-    return <img src='../life.png' ref='lifeSymbol' className='hidden' alt='lifeSymbol'/>
+    return <Patience/>
   }
 }
 
@@ -125,6 +144,7 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     lives: state.lives,
     streak: state.streak,
+    patience: state.patience
   }
 }
 

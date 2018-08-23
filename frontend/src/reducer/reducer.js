@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY, walking, movementsPerStage, initialLives } from '../setupData'
+import { playerStartX, playerStartY, walking, movementsPerStage, initialLives, initialPatience } from '../setupData'
 
 const initialState = {
   canvas: null,
@@ -26,6 +26,7 @@ const initialState = {
   bumpedImages: [],
   timeFinished: null,
   changeInDirectionCounter: null,
+  patience: initialPatience,
   dataToBeRecorded: {
     "Name": null,
     "Distance": null,
@@ -188,6 +189,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         currentScreen: action.payload
+      }
+    case "MODIFY_PATIENCE":
+      return {
+        ...state,
+        patience: state.patience + action.payload
       }
     case "RESET_ALL_STATE":
       return {

@@ -92,14 +92,16 @@ class GameStatistics extends Component {
     ctx.fillStyle = "white"
     ctx.fillText(`GAME OVER`, canvasWidth/2, yCursor)
 
+    let numberOfBumpedImages = this.props.bumpedImages.length
+
     let sectionPadding = 20
     const availableSpaceOuterLength = canvasWidth - (marginAroundStats*2)
     const availableSpaceInnerLength = availableSpaceOuterLength - (paddingAroundStats*2)
 
     const marginAroundPictures = 10
-    const numberOfMargins = this.props.bumpedImages.length-1
+    const numberOfMargins = numberOfBumpedImages+1
     const spaceAvailableToAllImages = availableSpaceInnerLength - (numberOfMargins*marginAroundPictures)
-    const imageWidth = spaceAvailableToAllImages/this.props.bumpedImages.length
+    const imageWidth = numberOfBumpedImages <= 2 ? spaceAvailableToAllImages/3 : spaceAvailableToAllImages/(numberOfBumpedImages)
     const proportionalSizeImage = imageWidth/canvasWidth
     const imageHeight = proportionalSizeImage * canvasHeight
 
@@ -107,19 +109,27 @@ class GameStatistics extends Component {
     let imageCursorY = yCursor + sectionPadding // separate due to ASYNC behavior
     yCursor += sectionPadding
 
+    console.log(this.props.bumpedImages)
+    
     for (let img64 of this.props.bumpedImages) {
       const image = new Image()
       image.src = img64
       image.onload = () => {
-        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
+        if ( numberOfBumpedImages === 1 ) {
+          ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, (canvasWidth/2) - (imageWidth/2), imageCursorY, imageWidth, imageHeight)
+        } else {
+          ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
+        }
         imageCursorX += imageWidth + marginAroundPictures
       }
     }
 
+    const message = numberOfBumpedImages === 1 ? "You bumped into this tourist" : numberOfBumpedImages === 0 ? "You were just too impatient" : "You bumped into these tourists"
+
     yCursor += imageHeight + sectionPadding
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
-    ctx.fillText(`You bumped into these tourists`, canvasWidth/2, yCursor)
+    ctx.fillText(message, canvasWidth/2, yCursor)
     yCursor += sectionPadding
     sectionPadding = 50
 
@@ -139,14 +149,15 @@ class GameStatistics extends Component {
     }
 
     const recordData = {
-      "Distance": indivStreaks.reduce((a,b) => a+b),
-      "Average Speed": indivStreaks.reduce((a,b) => a+b) / (this.props.timeFinished/100),
+      "Distance": this.props.movement,
+      "Average Speed": this.props.movement / (this.props.timeFinished/100),
       "Time Lasted": this.props.timeFinished,
-      "Longest Streak": Math.max(...indivStreaks),
-      "Shortest Streak": Math.min(...indivStreaks),
+      "Longest Streak": indivStreaks.length !== 0 ? Math.max(...indivStreaks) : 0,
+      "Shortest Streak": indivStreaks.length !== 0 ? Math.min(...indivStreaks) : 0,
       "Direction Changes": this.props.changeInDirectionCounter,
       "Dir Changes per Sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
     }
+    console.log(recordData)
 
     this.props.recordGameStatistics(recordData)
 
@@ -237,7 +248,8 @@ const mapStateToProps = (state) => {
     streak: state.streak,
     timeFinished: state.timeFinished,
     changeInDirectionCounter: state.changeInDirectionCounter,
-    gameOverImage: state.gameOverImage
+    gameOverImage: state.gameOverImage,
+    movement: state.movement
   }
 }
 

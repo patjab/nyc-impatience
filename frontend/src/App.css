@@ -2,6 +2,15 @@
   text-align: center;
 }
 
+body, html {
+  height: 100%;
+  display: grid;
+  background-color: #222222;
+}
+#root { /* thing to center */
+  margin: auto;
+}
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
@@ -34,6 +43,7 @@
 canvas {
   display: block;
   margin: 0 auto;
+  border-radius: 20px;
 }
 
 #startScreen {

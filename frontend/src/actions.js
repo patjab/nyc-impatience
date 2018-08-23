@@ -182,3 +182,10 @@ export const resetAllState = () => {
     type: "RESET_ALL_STATE"
   }
 }
+
+export const modifyPatience = (modifier) => {
+  return {
+    type: "MODIFY_PATIENCE",
+    payload: modifier
+  }
+}

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection} from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth } from '../setupData'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience } from '../actions'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience } from '../setupData'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
 class Player extends Component {
@@ -41,7 +41,7 @@ class Player extends Component {
           }
         }
         else if (e.keyCode === 40) { this.props.moveDown() }
-        else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(2) : this.props.changeSpeed(1) }
+        else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(1.5) : this.props.changeSpeed(1) }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
 
@@ -72,6 +72,19 @@ class Player extends Component {
 
   releaseCriteria = (e) => {
     this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
+      this.props.modifyPatience(releaseCriteriaImpatience)
+
+      const previousMovement = this.props.movement
+      const impatientWait = setInterval(() => {
+        setTimeout(() => {
+          if ( this.props.movement !== 0 && this.props.movement === previousMovement ) {
+            this.props.modifyPatience(-5)
+          } else {
+            clearInterval(impatientWait)
+          }
+        })
+      }, 2000)
+
       if (!this.props.gameOver) {
         this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
@@ -102,8 +115,9 @@ class Player extends Component {
   }
 
   componentDidUpdate() {
+    const ctx = this.props.canvas.getContext("2d")
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
-    this.props.canvas.getContext("2d").drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
+    ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
   }
 
   componentWillUnmount() {
@@ -128,7 +142,8 @@ const mapStateToProps = (state) => {
     speed: state.speed,
     bumpingShake: state.bumpingShake,
     playerUpdater: state.playerUpdater,
-    gameOver: state.gameOver
+    gameOver: state.gameOver,
+    movement: state.movement
   }
 }
 
@@ -142,7 +157,8 @@ const mapDispatchToProps = (dispatch) => {
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed)),
     setPlayer: (player) => dispatch(setPlayer(player)),
-    setChangeInDirection: (count) => dispatch(setChangeInDirection(count))
+    setChangeInDirection: (count) => dispatch(setChangeInDirection(count)),
+    modifyPatience: (modifier) => dispatch(modifyPatience(modifier))
   }
 }
 

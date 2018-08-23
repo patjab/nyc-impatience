@@ -17,6 +17,8 @@ export const nearnessSpook = 6
 
 export const touristDensity = 3
 
+export const initialPatience = 250
+
 export const playerStartX = (canvasWidth/2)-(initialPlayerSize/2)
 export const playerStartY = (canvasHeight)-(initialPlayerSize*2)
 
@@ -42,3 +44,6 @@ export const paddingAroundStats = 20
 export const brickColor = '#CBCBCB'
 export const brickBorderColor = '#000000'
 export const sideAreaColor = '#0CBE00'
+
+
+export const releaseCriteriaImpatience = -1
