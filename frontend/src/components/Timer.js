@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, canvasHeight, statusBarHeight, movingQuicklyPatience } from '../setupData'
+import { canvasWidth, statusBarHeight, movingQuicklyPatience } from '../setupData'
 import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut } from '../actions'
 
 import Patience from './Patience'
@@ -31,7 +31,6 @@ class Timer extends Component {
       ctx.fillRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
 
 
-      this.drawLives(ctx)
       this.drawStepsCounter(ctx)
       this.drawTime(ctx)
     }
@@ -63,15 +62,6 @@ class Timer extends Component {
     ctx.fillText(`${Math.round(this.formatMovement())}`, 120, 70)
     ctx.textAlign = 'left'
 
-  }
-
-  drawLives = (ctx) => {
-    const spacing = 10
-    let cursorCoordinateX = 375
-    const cursorCoordinateY = 45
-    const lifeWidth = 40
-    const lifeHeight = 30
-    ctx.closePath()
   }
 
   incrementTime = (e) => {

@@ -109,8 +109,6 @@ class GameStatistics extends Component {
     let imageCursorY = yCursor + sectionPadding // separate due to ASYNC behavior
     yCursor += sectionPadding
 
-    console.log(this.props.bumpedImages)
-    
     for (let img64 of this.props.bumpedImages) {
       const image = new Image()
       image.src = img64
@@ -157,7 +155,6 @@ class GameStatistics extends Component {
       "Direction Changes": this.props.changeInDirectionCounter,
       "Dir Changes per Sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
     }
-    console.log(recordData)
 
     this.props.recordGameStatistics(recordData)
 

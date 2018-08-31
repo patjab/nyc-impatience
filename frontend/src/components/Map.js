@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { recordGameStatistics, changeCurrentScreen, resetCurrentBonus } from '../actions'
-import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats } from '../setupData'
-import { recordHighScore } from '../adapter/adapter'
+import { resetCurrentBonus } from '../actions'
+import { canvasWidth, canvasHeight } from '../setupData'
 
 class Map extends Component {
   previousFirstMarker = 0

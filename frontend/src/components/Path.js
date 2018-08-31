@@ -157,7 +157,22 @@ class Path extends Component {
 
   componentDidMount () {
     this.refs.nySkyline.onload = () => {
-      this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+      const ctx = this.props.canvas.getContext("2d")
+      ctx.drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+
+      const mapMargins = 0
+      const widthOfMap = canvasWidth - (mapMargins*2)
+      const heightOfMap = 150
+      ctx.beginPath()
+      ctx.rect(mapMargins, canvasHeight - mapMargins - heightOfMap, widthOfMap, heightOfMap)
+      ctx.fillStyle = "#000000"
+      ctx.fill()
+      ctx.closePath()
+
+      ctx.font = "36px Geneva"
+      ctx.fillStyle = "white"
+      ctx.fillText('Press UP arrow to start', canvasWidth/2, canvasHeight-75)
+      ctx.textAlign = 'center'
     }
   }
 

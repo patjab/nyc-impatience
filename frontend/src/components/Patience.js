@@ -1,17 +1,8 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight, initialPatience } from '../setupData'
-import { setGameOver, setGameOverImage, recordTimeFinished } from '../actions'
 
 class Patience extends Component {
-
-  // componentDidMount() {
-  //   const canvas = this.props.canvas
-  //   const ctx = canvas.getContext("2d")
-  //   if (canvas) {
-  //     this.drawLivesMeter(ctx)
-  //   }
-  // }
 
   componentDidUpdate() {
     const canvas = this.props.canvas
@@ -62,10 +53,6 @@ class Patience extends Component {
     ctx.closePath()
     ctx.fillStyle = "white"
     ctx.fillText(`${this.formatPercentage()}%`, canvasWidth/2, 62)
-
-    // ctx.fillStyle = "white"
-    // ctx.fillText(`${Math.round(this.props.patience * 10000/initialPatience) / 100}%`, canvasWidth/2, 62)
-
   }
 
   render() {

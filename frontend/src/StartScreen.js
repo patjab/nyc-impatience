@@ -28,7 +28,7 @@ class StartScreen extends Component {
           this.props.changeCurrentScreen("highScores")
           break
         case 2:
-          alert("Information to be written")
+          alert("Go around the tourists")
           break
         default:
           break
@@ -75,20 +75,11 @@ class StartScreen extends Component {
     window.addEventListener('keydown', this.userInputStartScreen)
     const ctx = this.refs.startScreen.getContext("2d")
     this.userMenu(ctx)
-    // const fTrainSymbol = this.refs.fTrainSymbol
-    //
-    // fTrainSymbol.onload = () => {
-    //   ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
-    // }
-
   }
 
   componentDidUpdate() {
     const ctx = this.refs.startScreen.getContext("2d")
     this.userMenu(ctx)
-    const fTrainSymbol = this.refs.fTrainSymbol
-
-    // ctx.drawImage(fTrainSymbol, this.xPosition, this.yPosition, this.sizeOfSide, this.sizeOfSide)
   }
 
   componentWillUnmount() {
